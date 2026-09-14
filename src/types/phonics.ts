@@ -19,6 +19,21 @@ export type SoundType =
   | 'boing'
   | 'fanfare';
 
+export type AudioType = 'phoneme' | 'letter' | 'word' | 'phrase' | 'prompt' | 'praise';
+export type AudioSource = 'cloudinary' | 'speech-synthesis';
+
+export interface AudioEntry {
+  id: string;
+  type: AudioType;
+  source: AudioSource;
+  url?: string;
+  fallbackText: string;
+  version?: number;
+  description?: string;
+}
+
+export type AudioManifest = Record<string, AudioEntry>;
+
 export interface PhonicsObject {
   id: string;
   name: string;
@@ -29,6 +44,8 @@ export interface PhonicsObject {
   accentColor: string;
   bgColor: string;
   funReaction: string; // e.g. "Oo-oo-ah-ah!", "Twinkle twinkle!", "Yummy!"
+  wordAudioId: string;   // e.g. "word.monkey"
+  phraseAudioId: string; // e.g. "phrase.m-monkey"
 }
 
 export interface LetterData {
@@ -46,6 +63,8 @@ export interface LetterData {
     badgeBg: string;
   };
   objects: PhonicsObject[];
+  letterAudioId: string;    // e.g. "letter.m"
+  phonemeAudioId: string;   // e.g. "phoneme.m"
 }
 
 export interface ChildProgress {
