@@ -1,0 +1,17 @@
+{
+  "name": "phonics",
+  "tools": [
+    "claude",
+    "cursor",
+    "git"
+  ],
+  "language": "typescript",
+  "packageManager": "npm",
+  "defaultBranch": "main",
+  "skillPacks": [
+    "testing",
+    "security",
+    "release"
+  ],
+  "profile": "full"
+}
