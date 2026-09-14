@@ -23,7 +23,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   useEffect(() => {
     // Warm greeting on entry
     const timer = setTimeout(() => {
-      audioService.speak("Hi! Let's play!");
+      audioService.playVoice('prompt.lets-play');
     }, 400);
 
     const speechTimer = setTimeout(() => {
@@ -72,7 +72,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           className="mb-4"
           onTap={() => {
             setMiloSpeech("Yay! Let's have fun!");
-            audioService.speak("Yay! Let's have fun!");
+            audioService.playVoice('prompt.have-fun');
           }}
         />
 

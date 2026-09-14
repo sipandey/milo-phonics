@@ -35,7 +35,7 @@ export const LetterDetailScreen: React.FC<LetterDetailScreenProps> = ({
       // Phase 1: Letter introduction
       setIsLetterAnimating(true);
       setMiloSpeech(letter.phoneme);
-      await audioService.speakPhoneme(letter.phonemeSpoken);
+      await audioService.playVoice(letter.phonemeAudioId);
       if (cancel) return;
       setIsLetterAnimating(false);
 
@@ -45,7 +45,7 @@ export const LetterDetailScreen: React.FC<LetterDetailScreenProps> = ({
         setIsObjectAnimating(true);
         setMiloSpeech(activeObject.spokenIntro);
         audioService.playSoundEffect('pop');
-        await audioService.speak(activeObject.spokenIntro, { delayMs: 150 });
+        await audioService.playVoice(activeObject.phraseAudioId, { delayMs: 150 });
         if (cancel) return;
         setIsObjectAnimating(false);
       }, 500);
@@ -55,6 +55,13 @@ export const LetterDetailScreen: React.FC<LetterDetailScreenProps> = ({
       hasIntroduced.current = true;
       runSequence();
     }
+
+    // Preload audio assets for this letter's objects
+    audioService.preload([
+      letter.phonemeAudioId,
+      ...letter.objects.map(o => o.phraseAudioId),
+      ...letter.objects.map(o => o.wordAudioId),
+    ]);
 
     return () => {
       cancel = true;
@@ -67,7 +74,7 @@ export const LetterDetailScreen: React.FC<LetterDetailScreenProps> = ({
     progressService.recordLetterInteraction(letter.id);
     audioService.playBoing();
     setMiloSpeech(letter.phoneme);
-    audioService.speakPhoneme(letter.phonemeSpoken);
+    audioService.playVoice(letter.phonemeAudioId);
 
     setTimeout(() => {
       setIsLetterAnimating(false);
@@ -80,7 +87,7 @@ export const LetterDetailScreen: React.FC<LetterDetailScreenProps> = ({
     progressService.recordObjectInteraction(activeObject.id, letter.id);
     audioService.playSoundEffect(activeObject.soundType);
     setMiloSpeech(activeObject.spokenIntro);
-    audioService.speak(activeObject.spokenIntro, { interrupt: false, delayMs: 150 });
+    audioService.playVoice(activeObject.phraseAudioId, { interrupt: false, delayMs: 150 });
     triggerGentleConfetti();
 
     setTimeout(() => {
@@ -99,7 +106,7 @@ export const LetterDetailScreen: React.FC<LetterDetailScreenProps> = ({
     audioService.playPop();
     setIsObjectAnimating(true);
     setMiloSpeech(newObj.spokenIntro);
-    audioService.speak(newObj.spokenIntro, { delayMs: 150 });
+    audioService.playVoice(newObj.phraseAudioId, { delayMs: 150 });
 
     setTimeout(() => {
       setIsObjectAnimating(false);
@@ -139,7 +146,7 @@ export const LetterDetailScreen: React.FC<LetterDetailScreenProps> = ({
           speechBubble={miloSpeech}
           onTap={() => {
             setMiloSpeech(activeObject.spokenIntro);
-            audioService.speak(activeObject.spokenIntro);
+            audioService.playVoice(activeObject.phraseAudioId);
           }}
         />
       </header>

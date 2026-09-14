@@ -1,4 +1,10 @@
 import { SoundType, AudioSettings } from '../types/phonics';
+import { getAudioEntry, getRandomPraiseAudioId } from '../data/audioManifest';
+
+export interface PlayVoiceOptions {
+  interrupt?: boolean;
+  delayMs?: number;
+}
 
 class AudioService {
   private audioCtx: AudioContext | null = null;
@@ -14,7 +20,11 @@ class AudioService {
     selectedVoiceName: null,
   };
 
-  // Speech listener callbacks for visual mouth sync
+  // Remote audio state & memory cache for preloaded assets
+  private currentAudioElement: HTMLAudioElement | null = null;
+  private audioCache: Map<string, HTMLAudioElement> = new Map();
+
+  // Speech listener callbacks for visual mouth sync (used by CharacterMilo)
   private speechStartListeners: Set<() => void> = new Set();
   private speechEndListeners: Set<() => void> = new Set();
 
@@ -69,6 +79,9 @@ class AudioService {
     if (this.sfxGain && this.audioCtx && newSettings.sfxVolume !== undefined) {
       this.sfxGain.gain.setValueAtTime(this.isMuted ? 0 : this.settings.sfxVolume, this.audioCtx.currentTime);
     }
+    if (this.currentAudioElement && newSettings.speechVolume !== undefined) {
+      this.currentAudioElement.volume = this.settings.speechVolume;
+    }
   }
 
   public toggleMute(): boolean {
@@ -76,8 +89,8 @@ class AudioService {
     if (this.audioCtx && this.sfxGain) {
       this.sfxGain.gain.setValueAtTime(this.isMuted ? 0 : this.settings.sfxVolume, this.audioCtx.currentTime);
     }
-    if (this.isMuted && this.synth) {
-      this.synth.cancel();
+    if (this.isMuted) {
+      this.stopVoice();
     }
     return this.isMuted;
   }
@@ -99,6 +112,159 @@ class AudioService {
   private notifySpeechEnd() {
     this.speechEndListeners.forEach(cb => cb());
   }
+
+  // ==========================================
+  // SEMANTIC VOICE AUDIO (PHASE 1 ABSTRACTION)
+  // ==========================================
+
+  /**
+   * Play voice audio via semantic audio ID (e.g. "word.monkey", "phoneme.m")
+   *
+   * 1. Looks up entry in central audioManifest.
+   * 2. If remote URL exists: plays remote audio with preloading & error fallback.
+   * 3. If no remote URL: falls back seamlessly to calibrated browser SpeechSynthesis.
+   * 4. Triggers speech lifecycle listeners so visual animations (Milo mouth) sync perfectly.
+   */
+  public async playVoice(audioId: string, options?: PlayVoiceOptions): Promise<void> {
+    if (this.isMuted) return;
+
+    // Special case for random praise
+    const resolvedId = audioId === 'praise.random' ? getRandomPraiseAudioId() : audioId;
+    const entry = getAudioEntry(resolvedId);
+
+    if (!entry) {
+      // Graceful fallback: if unknown ID, attempt to speak as plain text if it looks like words
+      if (audioId.includes(' ') || audioId.length > 20) {
+        return this.speak(audioId, options);
+      }
+      return;
+    }
+
+    const shouldInterrupt = options?.interrupt ?? true;
+    if (shouldInterrupt) {
+      this.stopVoice();
+    }
+
+    // Future remote Cloudinary / pre-generated audio playback
+    if (entry.url) {
+      return this.playRemoteVoice(entry.url, entry.fallbackText, options);
+    }
+
+    // Phase 1 fallback: use SpeechSynthesis with manifest's fallbackText
+    return this.speak(entry.fallbackText, options);
+  }
+
+  /**
+   * Play remote audio URL with fallback to speech synthesis on error
+   */
+  private playRemoteVoice(url: string, fallbackText: string, options?: PlayVoiceOptions): Promise<void> {
+    return new Promise((resolve) => {
+      const execute = () => {
+        try {
+          let audio = this.audioCache.get(url);
+          if (!audio) {
+            audio = new Audio(url);
+            this.audioCache.set(url, audio);
+          } else {
+            audio.currentTime = 0;
+          }
+
+          audio.volume = this.settings.speechVolume;
+          audio.muted = this.isMuted;
+          this.currentAudioElement = audio;
+
+          const onStart = () => {
+            this.notifySpeechStart();
+          };
+
+          const onFinish = () => {
+            audio.removeEventListener('play', onStart);
+            audio.removeEventListener('ended', onFinish);
+            audio.removeEventListener('error', onError);
+            this.notifySpeechEnd();
+            this.currentAudioElement = null;
+            resolve();
+          };
+
+          const onError = () => {
+            audio.removeEventListener('play', onStart);
+            audio.removeEventListener('ended', onFinish);
+            audio.removeEventListener('error', onError);
+            this.currentAudioElement = null;
+            // Graceful fallback to speech synthesis if network/media error occurs
+            this.speak(fallbackText, { interrupt: false }).then(resolve);
+          };
+
+          audio.addEventListener('play', onStart, { once: true });
+          audio.addEventListener('ended', onFinish, { once: true });
+          audio.addEventListener('error', onError, { once: true });
+
+          const playPromise = audio.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(() => {
+              // Handled via autoplay block or abort
+              onError();
+            });
+          }
+        } catch {
+          this.speak(fallbackText, { interrupt: false }).then(resolve);
+        }
+      };
+
+      if (options?.delayMs && options.delayMs > 0) {
+        setTimeout(execute, options.delayMs);
+      } else {
+        execute();
+      }
+    });
+  }
+
+  /**
+   * Stop any currently playing voice audio (both remote and synthesized)
+   */
+  public stopVoice() {
+    if (this.currentAudioElement) {
+      try {
+        this.currentAudioElement.pause();
+        this.currentAudioElement.currentTime = 0;
+      } catch {
+        // Ignore
+      }
+      this.currentAudioElement = null;
+    }
+
+    if (this.synth) {
+      this.synth.cancel();
+    }
+
+    this.notifySpeechEnd();
+  }
+
+  /**
+   * Preload audio assets into memory cache ahead of interaction
+   */
+  public async preload(audioIds: string[]): Promise<void> {
+    if (typeof window === 'undefined') return;
+
+    for (const id of audioIds) {
+      const entry = getAudioEntry(id);
+      if (entry?.url && !this.audioCache.has(entry.url)) {
+        try {
+          const audio = new Audio();
+          audio.preload = 'auto';
+          audio.src = entry.url;
+          audio.load();
+          this.audioCache.set(entry.url, audio);
+        } catch {
+          // Preload error is non-fatal
+        }
+      }
+    }
+  }
+
+  // ==========================================
+  // SPEECH SYNTHESIS ENGINE (FALLBACK / CORE)
+  // ==========================================
 
   /**
    * High quality speech synthesizer tuned for toddlers
@@ -174,30 +340,37 @@ class AudioService {
   }
 
   /**
-   * Dedicated helper for pronouncing single letter phonemes
+   * Dedicated helper for pronouncing single letter phonemes (backward-compatible)
    */
   public async speakPhoneme(phonemeSpoken: string): Promise<void> {
     await this.speak(phonemeSpoken, { interrupt: true });
   }
 
   /**
-   * Speaks the phoneme sound followed by the full word (e.g., "Mmmm... monkey!")
+   * Speaks the phoneme sound followed by the full word (backward-compatible)
    */
   public async speakPhonemeAndWord(phoneme: string, word: string): Promise<void> {
-    // E.g. "Mmmm... monkey!"
     const phrase = `${phoneme}... ${word}!`;
     await this.speak(phrase, { interrupt: true });
   }
 
+  /**
+   * Spoken encouragement praise (backward-compatible)
+   */
   public async speakPraise(): Promise<void> {
-    const praises = ['Yay!', 'Super!', 'Hooray!', 'Wonderful!', 'Look at that!', 'Great tapping!'];
-    const randomPraise = praises[Math.floor(Math.random() * praises.length)];
-    await this.speak(randomPraise, { interrupt: false, delayMs: 150 });
+    await this.playVoice('praise.random', { interrupt: false, delayMs: 150 });
   }
 
   // ==========================================
   // PROCEDURAL WEB AUDIO SFX ENGINE
   // ==========================================
+
+  /**
+   * Clean alias for playing procedural SFX
+   */
+  public playSfx(type: SoundType) {
+    this.playSoundEffect(type);
+  }
 
   public playPop() {
     if (this.isMuted) return;
@@ -561,3 +734,4 @@ class AudioService {
 }
 
 export const audioService = new AudioService();
+export const audioManager = audioService;

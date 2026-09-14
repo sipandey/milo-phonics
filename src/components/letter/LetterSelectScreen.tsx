@@ -16,9 +16,9 @@ export const LetterSelectScreen: React.FC<LetterSelectScreenProps> = ({
   const letters = getAllLetters();
   const upcomingLetters = ['T', 'P', 'B', 'D', 'C', 'F', 'R'];
 
-  const handleChoose = (letterId: string, phonemeSpoken: string) => {
+  const handleChoose = (letterId: string, phonemeAudioId: string) => {
     audioService.playChime();
-    audioService.speakPhoneme(phonemeSpoken);
+    audioService.playVoice(phonemeAudioId);
     progressService.recordLetterInteraction(letterId);
     onSelectLetter(letterId);
   };
@@ -58,7 +58,7 @@ export const LetterSelectScreen: React.FC<LetterSelectScreenProps> = ({
           {letters.map((letter) => (
             <button
               key={letter.id}
-              onClick={() => handleChoose(letter.id, letter.phonemeSpoken)}
+              onClick={() => handleChoose(letter.id, letter.phonemeAudioId)}
               className="squish-tap relative flex flex-col items-center justify-between p-6 rounded-5xl border-8 shadow-xl cursor-pointer hover:scale-105 transition-all duration-200 focus:outline-none min-h-[220px]"
               style={{
                 backgroundColor: letter.colorTheme.bg,

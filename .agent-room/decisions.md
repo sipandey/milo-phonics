@@ -16,6 +16,12 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-09-14 — Phase 1 Audio Architecture: Semantic Audio IDs & Manifest Registry
+
+**Decision:** Refactored audio architecture to route all spoken content through semantic audio IDs (e.g. `letter.m`, `phoneme.m`, `word.monkey`, `phrase.m-monkey`) registered in `src/data/audioManifest.ts`. `AudioManager` resolves IDs, supports remote URL playback with in-memory caching and preloading, and falls back to calibrated `SpeechSynthesis` using manifest `fallbackText`. Procedural Web Audio SFX remain distinct and local.
+**Why:** Decouples game components from browser speech synthesis and prepares the application for pre-generated Cloudinary audio assets in Phase 2 without changing component contracts or learner interactions.
+**Rejected:** Embedding remote Cloudinary URLs directly in component files or replacing procedural Web Audio SFX with streamed audio files.
+
 ### 2026-09-14 — Progressive Letter Introduction Starting with M, S, A
 
 **Decision:** Do not present toddlers with an A–Z alphabet grid. Introduce letters progressively, starting specifically with **M**, then expanding to **S** and **A**.

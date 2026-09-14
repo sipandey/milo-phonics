@@ -44,7 +44,7 @@ export const CharacterMilo: React.FC<CharacterMiloProps> = ({
     if (onTap) {
       onTap();
     } else {
-      audioService.speakPraise();
+      audioService.playVoice('praise.random', { interrupt: false, delayMs: 150 });
     }
   };
 

@@ -40,17 +40,22 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
       if (!hasIntroduced.current) {
         hasIntroduced.current = true;
         setMiloSpeech("Hi! Let's find some sounds!");
-        await audioService.speak("Hi! Let's find some sounds!");
+        await audioService.playVoice('prompt.find-sounds');
         if (cancel) return;
       }
 
-      // Introduce object sound
+      // Introduce object sound via semantic ID
       setMiloSpeech(currentObject.spokenIntro);
       audioService.playSoundEffect('pop');
-      await audioService.speak(currentObject.spokenIntro, { delayMs: 200 });
+      await audioService.playVoice(currentObject.phraseAudioId, { delayMs: 200 });
     };
 
     playIntroSequence();
+
+    // Preload next upcoming audio asset
+    const nextIdx = (currentIndex + 1) % allObjects.length;
+    const nextObj = allObjects[nextIdx];
+    audioService.preload([currentObject.phraseAudioId, nextObj.phraseAudioId, currentLetter.phonemeAudioId]);
 
     return () => {
       cancel = true;
@@ -65,9 +70,9 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     // Play tactile sound effect
     audioService.playSoundEffect(currentObject.soundType);
 
-    // Speak phoneme + word
+    // Speak phoneme + word via semantic audio ID
     setMiloSpeech(currentObject.spokenIntro);
-    audioService.speak(currentObject.spokenIntro, { interrupt: false, delayMs: 150 });
+    audioService.playVoice(currentObject.phraseAudioId, { interrupt: false, delayMs: 150 });
 
     // Gentle visual celebration
     triggerGentleConfetti();
@@ -83,7 +88,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     progressService.recordLetterInteraction(currentLetter.id);
     audioService.playBoing();
     setMiloSpeech(currentLetter.phoneme);
-    audioService.speakPhoneme(currentLetter.phonemeSpoken);
+    audioService.playVoice(currentLetter.phonemeAudioId);
 
     setTimeout(() => {
       setIsLetterAnimating(false);
@@ -153,7 +158,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
           className="mb-3"
           onTap={() => {
             setMiloSpeech(currentObject.spokenIntro);
-            audioService.speak(currentObject.spokenIntro);
+            audioService.playVoice(currentObject.phraseAudioId);
           }}
         />
 
