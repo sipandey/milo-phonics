@@ -7,6 +7,7 @@ import { Settings, Volume2, VolumeX } from 'lucide-react';
 interface HomeScreenProps {
   onStartPlay: () => void;
   onOpenLetters: () => void;
+  onOpenOxfordSounds: () => void;
   onOpenParentGate: () => void;
   onTeaserClick: (title: string, message: string) => void;
 }
@@ -14,6 +15,7 @@ interface HomeScreenProps {
 export const HomeScreen: React.FC<HomeScreenProps> = ({
   onStartPlay,
   onOpenLetters,
+  onOpenOxfordSounds,
   onOpenParentGate,
   onTeaserClick,
 }) => {
@@ -90,7 +92,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
 
         {/* Secondary Toddler Choices */}
-        <div className="grid grid-cols-3 gap-3 sm:gap-4 w-full max-w-lg px-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 w-full max-w-2xl px-2">
           {/* Letters Screen */}
           <BigButton
             variant="coral"
@@ -98,6 +100,17 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             onClick={onOpenLetters}
             icon={<span className="text-4xl">🔤</span>}
             label="Letters"
+            className="w-full"
+          />
+
+          {/* British Sounds Screen */}
+          <BigButton
+            variant="sky"
+            size="md"
+            onClick={onOpenOxfordSounds}
+            icon={<span className="text-4xl">🇬🇧</span>}
+            label="Sounds"
+            badge="Oxford"
             className="w-full"
           />
 

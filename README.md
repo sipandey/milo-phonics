@@ -17,33 +17,37 @@ The primary learning objective is developing **phonemic awareness, letter-sound 
 
 ---
 
-## 🚀 Core Features (Phase 1 MVP)
+## 🚀 Core Features
 
-### 1. 🦁 "Let's Play" Guided Surprise Loop
-* The primary experience:
-  $$\text{Home} \longrightarrow \text{Milo Greets} \longrightarrow \text{Letter M} \longrightarrow \text{"Mmmm!"} \longrightarrow \text{Monkey (🐵)} \longrightarrow \text{Tactile Jump \& Audio} \longrightarrow \text{Repeat}$$
-* Toddlers can tap the active object, the giant letter badge, or companion Milo as many times as they want without being forced to progress.
+### 1. 🇬🇧 Authentic Oxford Dictionary British Phonics Audio
+* **Human-Recorded British English**: All 47 phonemes sourced directly from the Oxford Dictionary pronunciation dataset (`/audio/phoneme_<letter>.mp3`).
+* **Pedagogical Blend Sequence**: Object interactions speak the authentic Oxford phoneme sound first, pause 280ms, then speak the word slowly in British English (*"/m/... Monkey!"*).
+* **100% Local Static Bundling**: All phoneme and word audio files are served locally from `public/audio/` for instant zero-latency playback with zero network dropouts.
 
-### 2. 🐵 Milo the Lion Companion
-* Expressive animated character with real-time mouth movement synchronized with speech synthesis.
+### 2. 🔤 26-Letter Alphabet Explorer with In-Place Sound Buttons
+* Full A through Z alphabet board featuring 84 interactive child-friendly objects.
+* Each letter card features an instant **🔊 sound button** and clickable phoneme pill, letting toddlers tap and explore pure British phoneme sounds directly on the grid.
+* Tapping a tile transitions smoothly to the deep-dive interactive Letter Detail Stage.
+
+### 3. 🗣️ British English Sounds Chart (`Sounds 🇬🇧`)
+* Dedicated sound chart organized by phonetic categories:
+  * **Consonants (25 sounds)**: /p/, /b/, /t/, /d/, /k/, /g/, /m/, /n/, etc.
+  * **Vowels (14 sounds)**: /iː/, /ɪ/, /e/, /æ/, /ə/, /ʌ/, etc.
+  * **Diphthongs (8 sounds)**: /eɪ/, /əʊ/, /aɪ/, /aʊ/, /ɔɪ/, etc.
+* Dual playback: tap any phonetic symbol to hear the pure isolated phoneme; tap any example word to hear native pronunciation.
+
+### 4. 🦁 "Let's Play" Guided Surprise Loop
+* Guided exploration through random objects and letters with tactile celebration, cartoon pops, and sound effects.
+* Toddlers can tap the active object, letter badge, or companion Milo as many times as they want without being forced to progress.
+
+### 5. 🐵 Milo the Lion Companion
+* Expressive animated character with real-time mouth movement synchronized with speech audio.
 * Natural eye-blinking and squash-tap interaction (giggles and wiggles when tapped).
 
-### 3. 🔊 Centralized Audio Engine
-* **Procedural Web Audio SFX**: Synthesizes pops, cartoon boings, sparkles, major chord chimes, and distinct animal noises (monkey chattering, apple crunches, liquid slurps, etc.) without relying on brittle external audio asset downloads.
-* **Toddler Speech Synthesis**: Calibrated at 0.82x speed and warm 1.08x pitch for clear articulation of phonemes (*"Mmmmm"*, *"Sssss"*, *"Ahhh"*) and sound-word associations (*"Mmmm... monkey!"*).
-
-### 4. 🔤 Progressive Letter Explorer (M, S, A)
-* 3 initial letters featuring 5 familiar objects each (15 unique interactive objects):
-  * **M**: 🐵 Monkey, 🌙 Moon, 🥛 Milk, 🐭 Mouse, 🥭 Mango
-  * **S**: ☀️ Sun, ⭐ Star, 🐍 Snake, 🐑 Sheep, 🧦 Sock
-  * **A**: 🍎 Apple, 🐜 Ant, 🐊 Alligator, 🧑‍🚀 Astronaut, 🏹 Arrow
-* Previews for upcoming letters: **T, P, B, D, C, F, R**.
-
-### 5. 🛡️ Parent Mode & Arithmetic Gate
-* Accessible via a small, discreet gear icon in the top header.
-* Protected by a simple adult math challenge (e.g. *"4 + 3 = ?"*) preventing accidental toddler entry.
-* Non-academic play observations (*"Total Play Taps: 42"*, *"Letter M explored 12 times"*, *"Your child enjoyed Monkey"*).
-* Voice speed adjustments, speech synthesizer tester, and progress reset.
+### 6. 🛡️ Parent Mode & Arithmetic Gate
+* Accessible via a discreet gear icon, protected by a simple adult math challenge (`a + b = ?`).
+* Non-academic play observations (*"Total Play Taps: 42"*, *"Letter M explored 12 times"*).
+* Voice speed adjustments, audio tester, and progress reset.
 
 ---
 

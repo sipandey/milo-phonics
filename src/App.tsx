@@ -4,6 +4,7 @@ import { HomeScreen } from './components/home/HomeScreen';
 import { LetsPlayScreen } from './components/play/LetsPlayScreen';
 import { LetterSelectScreen } from './components/letter/LetterSelectScreen';
 import { LetterDetailScreen } from './components/letter/LetterDetailScreen';
+import { OxfordSoundsScreen } from './components/sounds/OxfordSoundsScreen';
 import { ParentGateModal } from './components/common/ParentGateModal';
 import { ParentDashboard } from './components/parent/ParentDashboard';
 import { TeaserModal } from './components/common/TeaserModal';
@@ -26,6 +27,10 @@ export function App() {
 
   const handleOpenLetters = () => {
     setCurrentScreen('letters');
+  };
+
+  const handleOpenOxfordSounds = () => {
+    setCurrentScreen('oxford-sounds');
   };
 
   const handleSelectLetter = (letterId: string) => {
@@ -64,6 +69,7 @@ export function App() {
         <HomeScreen
           onStartPlay={handleStartPlay}
           onOpenLetters={handleOpenLetters}
+          onOpenOxfordSounds={handleOpenOxfordSounds}
           onOpenParentGate={handleOpenParentGate}
           onTeaserClick={handleShowTeaser}
         />
@@ -87,6 +93,12 @@ export function App() {
         <LetterDetailScreen
           letterId={selectedLetterId}
           onBack={handleOpenLetters}
+          onGoHome={handleGoHome}
+        />
+      )}
+
+      {currentScreen === 'oxford-sounds' && (
+        <OxfordSoundsScreen
           onGoHome={handleGoHome}
         />
       )}

@@ -9,3 +9,4 @@ Review this periodically (or in code review) so bypasses stay visible
 instead of scrolling off a terminal and being forgotten.
 
 <!-- Entries below this line, newest first, appended automatically. -->
+- 2026-09-15T10:19:14.942Z | author: Siddharth Pandey <siddharth.pandey06@gmail.com> | bypassed: Change scope exceeds guidance: 226 files changed (limit 20); Change scope exceeds guidance: 4866 lines changed (limit 500)

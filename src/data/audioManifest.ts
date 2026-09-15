@@ -1,4 +1,5 @@
 import { AudioEntry, AudioManifest } from '../types/phonics';
+import { generatedAudioManifest } from './generatedAudioManifest';
 
 /**
  * Central Audio Manifest
@@ -10,56 +11,85 @@ import { AudioEntry, AudioManifest } from '../types/phonics';
  */
 export const audioManifest: AudioManifest = {
   // ==========================================
-  // LETTERS & PHONEMES
+  // 26 LETTERS & OXFORD BRITISH ENGLISH PHONEMES
   // ==========================================
-  'letter.m': {
-    id: 'letter.m',
-    type: 'letter',
-    source: 'speech-synthesis',
-    fallbackText: 'Letter M',
-    version: 1,
-    description: 'Letter name M',
-  },
-  'phoneme.m': {
-    id: 'phoneme.m',
-    type: 'phoneme',
-    source: 'speech-synthesis',
-    fallbackText: 'Mmmmm',
-    version: 1,
-    description: 'M sound /m/',
-  },
-  'letter.s': {
-    id: 'letter.s',
-    type: 'letter',
-    source: 'speech-synthesis',
-    fallbackText: 'Letter S',
-    version: 1,
-    description: 'Letter name S',
-  },
-  'phoneme.s': {
-    id: 'phoneme.s',
-    type: 'phoneme',
-    source: 'speech-synthesis',
-    fallbackText: 'Sssss',
-    version: 1,
-    description: 'S sound /s/',
-  },
-  'letter.a': {
-    id: 'letter.a',
-    type: 'letter',
-    source: 'speech-synthesis',
-    fallbackText: 'Letter A',
-    version: 1,
-    description: 'Letter name A',
-  },
-  'phoneme.a': {
-    id: 'phoneme.a',
-    type: 'phoneme',
-    source: 'speech-synthesis',
-    fallbackText: 'Ahhh',
-    version: 1,
-    description: 'Short A sound /æ/',
-  },
+  'letter.a': { id: 'letter.a', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter A', version: 1, description: 'Letter name A' },
+  'phoneme.a': { id: 'phoneme.a', type: 'phoneme', source: 'local', url: '/audio/phoneme_a.mp3', fallbackText: '/æ/', version: 1, description: 'Oxford British English short A sound /æ/' },
+
+  'letter.b': { id: 'letter.b', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter B', version: 1, description: 'Letter name B' },
+  'phoneme.b': { id: 'phoneme.b', type: 'phoneme', source: 'local', url: '/audio/phoneme_b.mp3', fallbackText: '/b/', version: 1, description: 'Oxford British English B sound /b/' },
+
+  'letter.c': { id: 'letter.c', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter C', version: 1, description: 'Letter name C' },
+  'phoneme.c': { id: 'phoneme.c', type: 'phoneme', source: 'local', url: '/audio/phoneme_c.mp3', fallbackText: '/k/', version: 1, description: 'Oxford British English hard C sound /k/' },
+
+  'letter.d': { id: 'letter.d', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter D', version: 1, description: 'Letter name D' },
+  'phoneme.d': { id: 'phoneme.d', type: 'phoneme', source: 'local', url: '/audio/phoneme_d.mp3', fallbackText: '/d/', version: 1, description: 'Oxford British English D sound /d/' },
+
+  'letter.e': { id: 'letter.e', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter E', version: 1, description: 'Letter name E' },
+  'phoneme.e': { id: 'phoneme.e', type: 'phoneme', source: 'local', url: '/audio/phoneme_e.mp3', fallbackText: '/e/', version: 1, description: 'Oxford British English short E sound /e/' },
+
+  'letter.f': { id: 'letter.f', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter F', version: 1, description: 'Letter name F' },
+  'phoneme.f': { id: 'phoneme.f', type: 'phoneme', source: 'local', url: '/audio/phoneme_f.mp3', fallbackText: '/f/', version: 1, description: 'Oxford British English F sound /f/' },
+
+  'letter.g': { id: 'letter.g', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter G', version: 1, description: 'Letter name G' },
+  'phoneme.g': { id: 'phoneme.g', type: 'phoneme', source: 'local', url: '/audio/phoneme_g.mp3', fallbackText: '/g/', version: 1, description: 'Oxford British English hard G sound /g/' },
+
+  'letter.h': { id: 'letter.h', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter H', version: 1, description: 'Letter name H' },
+  'phoneme.h': { id: 'phoneme.h', type: 'phoneme', source: 'local', url: '/audio/phoneme_h.mp3', fallbackText: '/h/', version: 1, description: 'Oxford British English H sound /h/' },
+
+  'letter.i': { id: 'letter.i', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter I', version: 1, description: 'Letter name I' },
+  'phoneme.i': { id: 'phoneme.i', type: 'phoneme', source: 'local', url: '/audio/phoneme_i.mp3', fallbackText: '/ɪ/', version: 1, description: 'Oxford British English short I sound /ɪ/' },
+
+  'letter.j': { id: 'letter.j', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter J', version: 1, description: 'Letter name J' },
+  'phoneme.j': { id: 'phoneme.j', type: 'phoneme', source: 'local', url: '/audio/phoneme_j.mp3', fallbackText: '/dʒ/', version: 1, description: 'Oxford British English J sound /dʒ/' },
+
+  'letter.k': { id: 'letter.k', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter K', version: 1, description: 'Letter name K' },
+  'phoneme.k': { id: 'phoneme.k', type: 'phoneme', source: 'local', url: '/audio/phoneme_k.mp3', fallbackText: '/k/', version: 1, description: 'Oxford British English K sound /k/' },
+
+  'letter.l': { id: 'letter.l', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter L', version: 1, description: 'Letter name L' },
+  'phoneme.l': { id: 'phoneme.l', type: 'phoneme', source: 'local', url: '/audio/phoneme_l.mp3', fallbackText: '/l/', version: 1, description: 'Oxford British English L sound /l/' },
+
+  'letter.m': { id: 'letter.m', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter M', version: 1, description: 'Letter name M' },
+  'phoneme.m': { id: 'phoneme.m', type: 'phoneme', source: 'local', url: '/audio/phoneme_m.mp3', fallbackText: '/m/', version: 1, description: 'Oxford British English M sound /m/' },
+
+  'letter.n': { id: 'letter.n', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter N', version: 1, description: 'Letter name N' },
+  'phoneme.n': { id: 'phoneme.n', type: 'phoneme', source: 'local', url: '/audio/phoneme_n.mp3', fallbackText: '/n/', version: 1, description: 'Oxford British English N sound /n/' },
+
+  'letter.o': { id: 'letter.o', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter O', version: 1, description: 'Letter name O' },
+  'phoneme.o': { id: 'phoneme.o', type: 'phoneme', source: 'local', url: '/audio/phoneme_o.mp3', fallbackText: '/ɒ/', version: 1, description: 'Oxford British English short O sound /ɒ/' },
+
+  'letter.p': { id: 'letter.p', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter P', version: 1, description: 'Letter name P' },
+  'phoneme.p': { id: 'phoneme.p', type: 'phoneme', source: 'local', url: '/audio/phoneme_p.mp3', fallbackText: '/p/', version: 1, description: 'Oxford British English P sound /p/' },
+
+  'letter.q': { id: 'letter.q', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter Q', version: 1, description: 'Letter name Q' },
+  'phoneme.q': { id: 'phoneme.q', type: 'phoneme', source: 'local', url: '/audio/phoneme_q.mp3', fallbackText: '/kw/', version: 1, description: 'Oxford British English Q sound /k/' },
+
+  'letter.r': { id: 'letter.r', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter R', version: 1, description: 'Letter name R' },
+  'phoneme.r': { id: 'phoneme.r', type: 'phoneme', source: 'local', url: '/audio/phoneme_r.mp3', fallbackText: '/r/', version: 1, description: 'Oxford British English R sound /r/' },
+
+  'letter.s': { id: 'letter.s', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter S', version: 1, description: 'Letter name S' },
+  'phoneme.s': { id: 'phoneme.s', type: 'phoneme', source: 'local', url: '/audio/phoneme_s.mp3', fallbackText: '/s/', version: 1, description: 'Oxford British English S sound /s/' },
+
+  'letter.t': { id: 'letter.t', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter T', version: 1, description: 'Letter name T' },
+  'phoneme.t': { id: 'phoneme.t', type: 'phoneme', source: 'local', url: '/audio/phoneme_t.mp3', fallbackText: '/t/', version: 1, description: 'Oxford British English T sound /t/' },
+
+  'letter.u': { id: 'letter.u', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter U', version: 1, description: 'Letter name U' },
+  'phoneme.u': { id: 'phoneme.u', type: 'phoneme', source: 'local', url: '/audio/phoneme_u.mp3', fallbackText: '/ʌ/', version: 1, description: 'Oxford British English short U sound /ʌ/' },
+
+  'letter.v': { id: 'letter.v', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter V', version: 1, description: 'Letter name V' },
+  'phoneme.v': { id: 'phoneme.v', type: 'phoneme', source: 'local', url: '/audio/phoneme_v.mp3', fallbackText: '/v/', version: 1, description: 'Oxford British English V sound /v/' },
+
+  'letter.w': { id: 'letter.w', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter W', version: 1, description: 'Letter name W' },
+  'phoneme.w': { id: 'phoneme.w', type: 'phoneme', source: 'local', url: '/audio/phoneme_w.mp3', fallbackText: '/w/', version: 1, description: 'Oxford British English W sound /w/' },
+
+  'letter.x': { id: 'letter.x', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter X', version: 1, description: 'Letter name X' },
+  'phoneme.x': { id: 'phoneme.x', type: 'phoneme', source: 'local', url: '/audio/phoneme_x.mp3', fallbackText: '/ks/', version: 1, description: 'Oxford British English X sound /ks/' },
+
+  'letter.y': { id: 'letter.y', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter Y', version: 1, description: 'Letter name Y' },
+  'phoneme.y': { id: 'phoneme.y', type: 'phoneme', source: 'local', url: '/audio/phoneme_y.mp3', fallbackText: '/j/', version: 1, description: 'Oxford British English Y sound /j/' },
+
+  'letter.z': { id: 'letter.z', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter Z', version: 1, description: 'Letter name Z' },
+  'phoneme.z': { id: 'phoneme.z', type: 'phoneme', source: 'local', url: '/audio/phoneme_z.mp3', fallbackText: '/z/', version: 1, description: 'Oxford British English Z sound /z/' },
 
   // ==========================================
   // WORDS & INTRO PHRASES (LETTER M)
@@ -379,7 +409,35 @@ const praiseKeys = [
 ];
 
 export const getAudioEntry = (audioId: string): AudioEntry | undefined => {
-  return audioManifest[audioId];
+  // All 84 curriculum words are bundled as local static assets in public/audio/words/
+  if (audioId.startsWith('word.')) {
+    const base = audioManifest[audioId];
+    return {
+      id: audioId,
+      type: 'word',
+      source: 'local',
+      url: `/audio/words/${audioId}.mp3`,
+      fallbackText: base?.fallbackText || audioId.replace(/^word\.[a-z]-?/, ''),
+      version: 1,
+      description: base?.description || 'Curriculum word audio',
+    };
+  }
+
+  const base = audioManifest[audioId];
+  if (!base) return undefined;
+
+  const generated = generatedAudioManifest[audioId];
+  if (generated?.url) {
+    // Phase 2 merge: Cloudinary URL + source override the base entry transparently.
+    // fallbackText stays intact for error-recovery fallback.
+    return {
+      ...base,
+      url: generated.url,
+      source: 'cloudinary',
+    };
+  }
+
+  return base;
 };
 
 export const getRandomPraiseAudioId = (): string => {

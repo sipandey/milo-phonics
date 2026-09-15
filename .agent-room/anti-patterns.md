@@ -21,7 +21,11 @@ Append a new entry every time:
 
 <!-- Entries go below this line, newest first. -->
 
-### 2026-09-14 — Root type module breaking CommonJS agent hooks
+### 2026-09-15 — SpeechSynthesis user gesture expiry after HTMLAudioElement playback
+
+**What happened:** Calling `window.speechSynthesis.speak()` after awaiting an `HTMLAudioElement` (`audio.play()`) resulted in complete silence on Chrome and Safari with no error thrown.
+**Root cause:** Modern browsers enforce transient user activation (gesture tokens). While the initial user touch unlocks audio, the 1–2 second delay of playing the first audio file causes the user gesture window to expire. Browsers silently drop subsequent `SpeechSynthesis` requests that occur outside the immediate event loop turn of a user touch.
+**Avoid:** Bundle sequenced audio pairs (such as phoneme $\to$ word blends) as static local audio files (`new Audio(url)`) or Web Audio buffers. Do not mix asynchronous promises between HTMLAudio and SpeechSynthesis.
 
 **What happened:** Git pre-commit hook running `.agent-room/hooks/guardrails-check.js` crashed with `ReferenceError: require is not defined in ES module scope`.
 **Root cause:** The root `package.json` declared `"type": "module"`, causing Node.js to interpret all `.js` files in subdirectories as ES modules, breaking CommonJS `require()` calls in hooks.

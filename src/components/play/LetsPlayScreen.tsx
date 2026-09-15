@@ -44,10 +44,14 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
         if (cancel) return;
       }
 
-      // Introduce object sound via semantic ID
+      // Introduce object sound via Oxford sound + slow British word
       setMiloSpeech(currentObject.spokenIntro);
       audioService.playSoundEffect('pop');
-      await audioService.playVoice(currentObject.phraseAudioId, { delayMs: 200 });
+      await audioService.playPhonemeWordBlend(
+        currentLetter.phonemeAudioId,
+        currentObject.wordAudioId,
+        currentObject.name
+      );
     };
 
     playIntroSequence();
@@ -55,7 +59,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     // Preload next upcoming audio asset
     const nextIdx = (currentIndex + 1) % allObjects.length;
     const nextObj = allObjects[nextIdx];
-    audioService.preload([currentObject.phraseAudioId, nextObj.phraseAudioId, currentLetter.phonemeAudioId]);
+    audioService.preload([currentObject.wordAudioId, nextObj.wordAudioId, currentLetter.phonemeAudioId]);
 
     return () => {
       cancel = true;
@@ -70,9 +74,13 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     // Play tactile sound effect
     audioService.playSoundEffect(currentObject.soundType);
 
-    // Speak phoneme + word via semantic audio ID
+    // Speak phoneme + word via Oxford sound + slow British word
     setMiloSpeech(currentObject.spokenIntro);
-    audioService.playVoice(currentObject.phraseAudioId, { interrupt: false, delayMs: 150 });
+    audioService.playPhonemeWordBlend(
+      currentLetter.phonemeAudioId,
+      currentObject.wordAudioId,
+      currentObject.name
+    );
 
     // Gentle visual celebration
     triggerGentleConfetti();
@@ -158,7 +166,11 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
           className="mb-3"
           onTap={() => {
             setMiloSpeech(currentObject.spokenIntro);
-            audioService.playVoice(currentObject.phraseAudioId);
+            audioService.playPhonemeWordBlend(
+              currentLetter.phonemeAudioId,
+              currentObject.wordAudioId,
+              currentObject.name
+            );
           }}
         />
 

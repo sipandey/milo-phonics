@@ -27,25 +27,25 @@ export const LetterDetailScreen: React.FC<LetterDetailScreenProps> = ({
 
   const activeObject: PhonicsObject = letter.objects[selectedObjectIndex];
 
-  // Entry sequence: Animate letter + audio "Mmmm!" -> show object + audio "Mmmm... monkey!"
+  // Entry sequence: Animate letter + Oxford phoneme -> show object + Oxford phoneme + slow British word
   useEffect(() => {
     let cancel = false;
 
     const runSequence = async () => {
-      // Phase 1: Letter introduction
+      // Phase 1: Letter introduction with authentic Oxford sound
       setIsLetterAnimating(true);
       setMiloSpeech(letter.phoneme);
       await audioService.playVoice(letter.phonemeAudioId);
       if (cancel) return;
       setIsLetterAnimating(false);
 
-      // Phase 2: Object introduction
+      // Phase 2: Object introduction with slow word sound
       setTimeout(async () => {
         if (cancel) return;
         setIsObjectAnimating(true);
         setMiloSpeech(activeObject.spokenIntro);
         audioService.playSoundEffect('pop');
-        await audioService.playVoice(activeObject.phraseAudioId, { delayMs: 150 });
+        await audioService.playVoice(activeObject.wordAudioId, { delayMs: 150 });
         if (cancel) return;
         setIsObjectAnimating(false);
       }, 500);
@@ -68,7 +68,7 @@ export const LetterDetailScreen: React.FC<LetterDetailScreenProps> = ({
     };
   }, [letterId]);
 
-  // Handle tap on the Giant Letter
+  // Handle tap on the Giant Letter (authentic Oxford sound)
   const handleTapLetter = () => {
     setIsLetterAnimating(true);
     progressService.recordLetterInteraction(letter.id);
@@ -81,13 +81,18 @@ export const LetterDetailScreen: React.FC<LetterDetailScreenProps> = ({
     }, 600);
   };
 
-  // Handle tap on the Active Object
+  // Handle tap on the Active Object (Oxford sound + slow British word)
   const handleTapObject = () => {
     setIsObjectAnimating(true);
     progressService.recordObjectInteraction(activeObject.id, letter.id);
     audioService.playSoundEffect(activeObject.soundType);
     setMiloSpeech(activeObject.spokenIntro);
-    audioService.playVoice(activeObject.phraseAudioId, { interrupt: false, delayMs: 150 });
+    
+    audioService.playPhonemeWordBlend(
+      letter.phonemeAudioId,
+      activeObject.wordAudioId,
+      activeObject.name
+    );
     triggerGentleConfetti();
 
     setTimeout(() => {
@@ -95,7 +100,7 @@ export const LetterDetailScreen: React.FC<LetterDetailScreenProps> = ({
     }, 600);
   };
 
-  // Select another object from the 5 objects
+  // Select another object from the objects list
   const handleSelectObject = (idx: number) => {
     if (idx === selectedObjectIndex) {
       handleTapObject();
@@ -106,7 +111,12 @@ export const LetterDetailScreen: React.FC<LetterDetailScreenProps> = ({
     audioService.playPop();
     setIsObjectAnimating(true);
     setMiloSpeech(newObj.spokenIntro);
-    audioService.playVoice(newObj.phraseAudioId, { delayMs: 150 });
+
+    audioService.playPhonemeWordBlend(
+      letter.phonemeAudioId,
+      newObj.wordAudioId,
+      newObj.name
+    );
 
     setTimeout(() => {
       setIsObjectAnimating(false);
@@ -146,7 +156,11 @@ export const LetterDetailScreen: React.FC<LetterDetailScreenProps> = ({
           speechBubble={miloSpeech}
           onTap={() => {
             setMiloSpeech(activeObject.spokenIntro);
-            audioService.playVoice(activeObject.phraseAudioId);
+            audioService.playPhonemeWordBlend(
+              letter.phonemeAudioId,
+              activeObject.wordAudioId,
+              activeObject.name
+            );
           }}
         />
       </header>

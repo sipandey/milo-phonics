@@ -20,7 +20,7 @@ export type SoundType =
   | 'fanfare';
 
 export type AudioType = 'phoneme' | 'letter' | 'word' | 'phrase' | 'prompt' | 'praise';
-export type AudioSource = 'cloudinary' | 'speech-synthesis';
+export type AudioSource = 'local' | 'cloudinary' | 'speech-synthesis';
 
 export interface AudioEntry {
   id: string;
@@ -83,4 +83,4 @@ export interface AudioSettings {
   selectedVoiceName: string | null;
 }
 
-export type ScreenType = 'home' | 'lets-play' | 'letters' | 'letter-detail' | 'sound-safari' | 'story' | 'parent';
+export type ScreenType = 'home' | 'lets-play' | 'letters' | 'letter-detail' | 'sound-safari' | 'story' | 'parent' | 'oxford-sounds';

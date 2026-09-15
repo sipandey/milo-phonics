@@ -16,7 +16,11 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
-### 2026-09-14 — Phase 1 Audio Architecture: Semantic Audio IDs & Manifest Registry
+### 2026-09-15 — Oxford Dictionary British Audio & Local Static Word Bundling
+
+**Decision:** Sourced authentic human British English recordings for all 47 phonemes from the Oxford Dictionary dataset (`xiaozhah/phoneme_audio`) as static files (`/audio/phoneme_<letter>.mp3`). Generated all 84 curriculum words using OpenAI TTS (voice: `coral`, speed: `0.70`) bundled directly into `public/audio/words/`. Expanded curriculum from 3 to all 26 letters with in-place sound buttons.
+**Why:** Synthetic AI models struggle with pure isolated phonemes without letter-name contamination. Browser `SpeechSynthesis` silently fails or drops audio when called asynchronously after audio elements due to user-activation expiry and missing British OS voice packs. 100% local static MP3 files guarantee zero latency, zero API costs, zero CORS/proxy issues, and 100% offline reliability across all platforms.
+**Rejected:** Remote Cloudinary streaming (blocked by local proxy/CORS), browser SpeechSynthesis for words (silent drops in Chrome/Safari), and synthetic formant phoneme approximation.
 
 **Decision:** Refactored audio architecture to route all spoken content through semantic audio IDs (e.g. `letter.m`, `phoneme.m`, `word.monkey`, `phrase.m-monkey`) registered in `src/data/audioManifest.ts`. `AudioManager` resolves IDs, supports remote URL playback with in-memory caching and preloading, and falls back to calibrated `SpeechSynthesis` using manifest `fallbackText`. Procedural Web Audio SFX remain distinct and local.
 **Why:** Decouples game components from browser speech synthesis and prepares the application for pre-generated Cloudinary audio assets in Phase 2 without changing component contracts or learner interactions.

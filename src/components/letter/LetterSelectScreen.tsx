@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { getAllLetters } from '../../data/lettersData';
 import { audioService } from '../../services/audioService';
 import { progressService } from '../../services/progressService';
-import { Home } from 'lucide-react';
+import { Home, Volume2 } from 'lucide-react';
 
 interface LetterSelectScreenProps {
   onSelectLetter: (letterId: string) => void;
@@ -14,13 +14,26 @@ export const LetterSelectScreen: React.FC<LetterSelectScreenProps> = ({
   onGoHome,
 }) => {
   const letters = getAllLetters();
-  const upcomingLetters = ['T', 'P', 'B', 'D', 'C', 'F', 'R'];
+  const [playingLetterId, setPlayingLetterId] = useState<string | null>(null);
+
+  const handlePlaySoundOnly = (e: React.MouseEvent, phonemeAudioId: string, letterId: string) => {
+    e.stopPropagation();
+    setPlayingLetterId(letterId);
+    audioService.playVoice(phonemeAudioId);
+    progressService.recordLetterInteraction(letterId);
+    setTimeout(() => {
+      setPlayingLetterId(null);
+    }, 800);
+  };
 
   const handleChoose = (letterId: string, phonemeAudioId: string) => {
+    setPlayingLetterId(letterId);
     audioService.playChime();
     audioService.playVoice(phonemeAudioId);
     progressService.recordLetterInteraction(letterId);
-    onSelectLetter(letterId);
+    setTimeout(() => {
+      onSelectLetter(letterId);
+    }, 220);
   };
 
   return (
@@ -49,74 +62,87 @@ export const LetterSelectScreen: React.FC<LetterSelectScreenProps> = ({
       <main className="flex-1 flex flex-col items-center justify-center my-2">
         <div className="text-center mb-6">
           <p className="text-xl sm:text-2xl font-black text-amber-800">
-            Touch a letter to explore!
+            Touch a letter to explore! 🔊
+          </p>
+          <p className="text-sm font-semibold text-amber-700/70 mt-1">
+            Tap sound buttons to hear Oxford British English phonemes
           </p>
         </div>
 
-        {/* 3 Giant Active Letter Tiles: M, S, A */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-6 w-full max-w-2xl px-2">
-          {letters.map((letter) => (
-            <button
-              key={letter.id}
-              onClick={() => handleChoose(letter.id, letter.phonemeAudioId)}
-              className="squish-tap relative flex flex-col items-center justify-between p-6 rounded-5xl border-8 shadow-xl cursor-pointer hover:scale-105 transition-all duration-200 focus:outline-none min-h-[220px]"
-              style={{
-                backgroundColor: letter.colorTheme.bg,
-                borderColor: letter.colorTheme.primary,
-                boxShadow: `0 12px 0 ${letter.colorTheme.primary}40`,
-              }}
-            >
-              {/* Top Letter Symbol */}
-              <span
-                className="text-7xl sm:text-8xl font-black font-fun leading-none mt-2 drop-shadow-sm"
-                style={{ color: letter.colorTheme.text }}
-              >
-                {letter.symbol}
-              </span>
-
-              {/* Phoneme Label */}
+        {/* Responsive 26-Letter Alphabet Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4 w-full max-w-4xl px-2">
+          {letters.map((letter) => {
+            const isPlaying = playingLetterId === letter.id;
+            return (
               <div
-                className="px-4 py-1.5 rounded-full text-xl font-black mt-2"
+                key={letter.id}
+                onClick={() => handleChoose(letter.id, letter.phonemeAudioId)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    handleChoose(letter.id, letter.phonemeAudioId);
+                  }
+                }}
+                className={`squish-tap relative flex flex-col items-center justify-between p-4 sm:p-5 rounded-4xl border-4 shadow-md cursor-pointer hover:scale-105 transition-all duration-200 focus:outline-none min-h-[175px] ${
+                  isPlaying ? 'scale-105 ring-4 ring-amber-400' : ''
+                }`}
                 style={{
-                  backgroundColor: letter.colorTheme.badgeBg,
-                  color: letter.colorTheme.text,
+                  backgroundColor: letter.colorTheme.bg,
+                  borderColor: letter.colorTheme.primary,
+                  boxShadow: `0 6px 0 ${letter.colorTheme.primary}30`,
                 }}
               >
-                "{letter.phoneme}"
-              </div>
+                {/* Speaker icon in corner for instant sound playback */}
+                <button
+                  onClick={(e) => handlePlaySoundOnly(e, letter.phonemeAudioId, letter.id)}
+                  aria-label={`Listen to Oxford sound for ${letter.symbol}`}
+                  className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full flex items-center justify-center shadow-sm text-white hover:scale-115 active:scale-95 transition-transform"
+                  style={{ backgroundColor: letter.colorTheme.primary }}
+                >
+                  <Volume2 className={`w-4 h-4 ${isPlaying ? 'animate-bounce' : ''}`} />
+                </button>
 
-              {/* Preview 3 object emojis */}
-              <div className="flex gap-2 text-2xl mt-4 bg-white/70 px-3 py-1 rounded-2xl">
-                {letter.objects.slice(0, 3).map((obj) => (
-                  <span key={obj.id}>{obj.emoji}</span>
-                ))}
-              </div>
-            </button>
-          ))}
-        </div>
+                {/* Top Letter Symbol */}
+                <span
+                  className={`text-5xl sm:text-6xl font-black font-fun leading-none drop-shadow-sm transition-transform ${
+                    isPlaying ? 'scale-110' : ''
+                  }`}
+                  style={{ color: letter.colorTheme.text }}
+                >
+                  {letter.symbol}
+                </span>
 
-        {/* Upcoming Letters (M S A T P B D C F R) */}
-        <div className="mt-8 text-center w-full max-w-xl">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">
-            More Letters Coming Soon
-          </p>
-          <div className="flex flex-wrap justify-center gap-2">
-            {upcomingLetters.map((char) => (
-              <div
-                key={char}
-                className="w-11 h-11 rounded-2xl bg-white/60 border border-gray-200 text-gray-400 flex items-center justify-center font-bold text-lg"
-              >
-                {char}
+                {/* Phoneme Label - clickable sound pill */}
+                <button
+                  onClick={(e) => handlePlaySoundOnly(e, letter.phonemeAudioId, letter.id)}
+                  aria-label={`Sound ${letter.phoneme}`}
+                  className="flex items-center gap-1 px-3 py-1 rounded-full text-base sm:text-lg font-black mt-1.5 hover:scale-108 active:scale-95 transition-transform shadow-xs"
+                  style={{
+                    backgroundColor: letter.colorTheme.badgeBg,
+                    color: letter.colorTheme.text,
+                  }}
+                >
+                  <span>{letter.phoneme}</span>
+                  <Volume2 className="w-3.5 h-3.5 opacity-70" />
+                </button>
+
+                {/* Preview object emojis */}
+                <div className="flex gap-1 text-xl sm:text-2xl mt-2 bg-white/70 px-2.5 py-0.5 rounded-xl">
+                  {letter.objects.slice(0, 3).map((obj) => (
+                    <span key={obj.id}>{obj.emoji}</span>
+                  ))}
+                </div>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </main>
 
       {/* Footer */}
       <footer className="text-center py-2">
         <p className="text-amber-800/60 font-semibold text-sm">
-          Listen to the sounds and find friendly objects! 🌟
+          Listen to authentic Oxford British sounds & learn to read! 🇬🇧🌟
         </p>
       </footer>
     </div>

@@ -4,6 +4,8 @@ import { getAudioEntry, getRandomPraiseAudioId } from '../data/audioManifest';
 export interface PlayVoiceOptions {
   interrupt?: boolean;
   delayMs?: number;
+  rate?: number;
+  lang?: string;
 }
 
 class AudioService {
@@ -13,7 +15,7 @@ class AudioService {
   private voices: SpeechSynthesisVoice[] = [];
   private isMuted: boolean = false;
   private settings: AudioSettings = {
-    voiceSpeed: 0.82,     // Toddler pacing: slow, clear, articulate
+    voiceSpeed: 0.68,     // Slower toddler pacing: calm, slow, articulate
     voicePitch: 1.08,     // Warm, friendly, slightly elevated
     sfxVolume: 0.9,
     speechVolume: 1.0,
@@ -24,16 +26,27 @@ class AudioService {
   private currentAudioElement: HTMLAudioElement | null = null;
   private audioCache: Map<string, HTMLAudioElement> = new Map();
 
+  // Active SpeechSynthesisUtterance references held in memory to prevent Chrome V8 GC
+  private activeUtterances: Set<SpeechSynthesisUtterance> = new Set();
+  // Timer ID for scheduled delayed speak calls
+  private pendingSpeakTimer: ReturnType<typeof setTimeout> | null = null;
+
   // Speech listener callbacks for visual mouth sync (used by CharacterMilo)
   private speechStartListeners: Set<() => void> = new Set();
   private speechEndListeners: Set<() => void> = new Set();
 
   constructor() {
     if (typeof window !== 'undefined') {
+      // Retain active utterances on window as GC root
+      (window as unknown as { __activeUtterances?: Set<SpeechSynthesisUtterance> }).__activeUtterances = this.activeUtterances;
+
       // Lazy init for SpeechSynthesis
       if ('speechSynthesis' in window) {
         this.synth = window.speechSynthesis;
         this.loadVoices();
+        if (typeof this.synth.addEventListener === 'function') {
+          this.synth.addEventListener('voiceschanged', () => this.loadVoices());
+        }
         if (this.synth.onvoiceschanged !== undefined) {
           this.synth.onvoiceschanged = () => this.loadVoices();
         }
@@ -133,6 +146,9 @@ class AudioService {
     const entry = getAudioEntry(resolvedId);
 
     if (!entry) {
+      if (audioId.startsWith('word.')) {
+        return this.playRemoteVoice(`/audio/words/${audioId}.mp3`, audioId.replace(/^word\.[a-z]-?/, ''), options);
+      }
       // Graceful fallback: if unknown ID, attempt to speak as plain text if it looks like words
       if (audioId.includes(' ') || audioId.length > 20) {
         return this.speak(audioId, options);
@@ -142,15 +158,21 @@ class AudioService {
 
     const shouldInterrupt = options?.interrupt ?? true;
     if (shouldInterrupt) {
-      this.stopVoice();
+      this.stopRemoteAudio();
     }
 
     // Future remote Cloudinary / pre-generated audio playback
     if (entry.url) {
+      if (shouldInterrupt && this.synth) {
+        if (this.synth.speaking || this.synth.pending) {
+          this.synth.cancel();
+        }
+      }
       return this.playRemoteVoice(entry.url, entry.fallbackText, options);
     }
 
     // Phase 1 fallback: use SpeechSynthesis with manifest's fallbackText
+    // Let speak() manage utterance queuing and cancellation cleanly
     return this.speak(entry.fallbackText, options);
   }
 
@@ -190,6 +212,11 @@ class AudioService {
             audio.removeEventListener('play', onStart);
             audio.removeEventListener('ended', onFinish);
             audio.removeEventListener('error', onError);
+            // If another audio has already superseded this one, do not trigger fallback
+            if (this.currentAudioElement !== audio && this.currentAudioElement !== null) {
+              resolve();
+              return;
+            }
             this.currentAudioElement = null;
             // Graceful fallback to speech synthesis if network/media error occurs
             this.speak(fallbackText, { interrupt: false }).then(resolve);
@@ -201,8 +228,24 @@ class AudioService {
 
           const playPromise = audio.play();
           if (playPromise !== undefined) {
-            playPromise.catch(() => {
-              // Handled via autoplay block or abort
+            playPromise.catch((err: unknown) => {
+              // Ignore intentional aborts (e.g. toddler rapidly tapped another item or stopped audio)
+              if (err instanceof DOMException && err.name === 'AbortError') {
+                audio.removeEventListener('play', onStart);
+                audio.removeEventListener('ended', onFinish);
+                audio.removeEventListener('error', onError);
+                resolve();
+                return;
+              }
+              // If this audio element was already superseded by another, do not trigger fallback
+              if (this.currentAudioElement !== audio && this.currentAudioElement !== null) {
+                audio.removeEventListener('play', onStart);
+                audio.removeEventListener('ended', onFinish);
+                audio.removeEventListener('error', onError);
+                resolve();
+                return;
+              }
+              // Handled via autoplay block or real media error
               onError();
             });
           }
@@ -220,9 +263,54 @@ class AudioService {
   }
 
   /**
-   * Stop any currently playing voice audio (both remote and synthesized)
+   * Play authentic British English sound from Oxford Dictionary dataset
+   * @param symbol IPA or sound symbol (e.g. "m", "æ", "dʒ", "p")
+   * @param kind "isolation" (pure phoneme) or "words" (example word)
    */
-  public stopVoice() {
+  public async playOxfordSound(
+    symbol: string,
+    kind: 'isolation' | 'words' = 'isolation',
+    options?: PlayVoiceOptions
+  ): Promise<void> {
+    if (this.isMuted) return;
+    const filename = `${encodeURIComponent(symbol)}_${kind}.mp3`;
+    const url = `/audio/${filename}`;
+    const fallbackText = kind === 'isolation' ? `Sound ${symbol}` : symbol;
+    return this.playRemoteVoice(url, fallbackText, options);
+  }
+
+  /**
+   * Play pedagogical blend: authentic Oxford isolated phoneme sound,
+   * followed by a calm toddler breath pause, then the word spoken slowly in British English.
+   * e.g. /m/... Monkey!
+   */
+  public async playPhonemeWordBlend(
+    phonemeAudioId: string,
+    wordAudioId: string,
+    fallbackWordText?: string
+  ): Promise<void> {
+    if (this.isMuted) return;
+
+    // 1. Play authentic Oxford isolated phoneme sound
+    await this.playVoice(phonemeAudioId, { interrupt: true });
+
+    // 2. Short breath pause for toddler comprehension
+    await new Promise((resolve) => setTimeout(resolve, 280));
+
+    // 3. Play the authentic / slow AI-generated word audio asset
+    const wordEntry = getAudioEntry(wordAudioId);
+    if (wordEntry?.url) {
+      await this.playVoice(wordAudioId, { interrupt: false });
+    } else {
+      const textToSpeak = fallbackWordText || wordEntry?.fallbackText || wordAudioId.replace(/^word\.[a-z]-?/, '');
+      await this.speak(textToSpeak, { interrupt: false, rate: 0.65 });
+    }
+  }
+
+  /**
+   * Stop only remote audio element
+   */
+  private stopRemoteAudio() {
     if (this.currentAudioElement) {
       try {
         this.currentAudioElement.pause();
@@ -232,11 +320,26 @@ class AudioService {
       }
       this.currentAudioElement = null;
     }
+  }
 
-    if (this.synth) {
-      this.synth.cancel();
+  /**
+   * Stop any currently playing voice audio (both remote and synthesized)
+   */
+  public stopVoice() {
+    if (this.pendingSpeakTimer !== null) {
+      clearTimeout(this.pendingSpeakTimer);
+      this.pendingSpeakTimer = null;
     }
 
+    this.stopRemoteAudio();
+
+    if (this.synth) {
+      if (this.synth.speaking || this.synth.pending) {
+        this.synth.cancel();
+      }
+    }
+
+    this.activeUtterances.clear();
     this.notifySpeechEnd();
   }
 
@@ -267,9 +370,12 @@ class AudioService {
   // ==========================================
 
   /**
-   * High quality speech synthesizer tuned for toddlers
+   * High quality speech synthesizer tuned for toddlers with British English default
    */
-  public speak(text: string, options?: { interrupt?: boolean; delayMs?: number }): Promise<void> {
+  public speak(
+    text: string,
+    options?: { interrupt?: boolean; delayMs?: number; rate?: number; lang?: string }
+  ): Promise<void> {
     return new Promise((resolve) => {
       if (this.isMuted || !this.synth) {
         resolve();
@@ -277,18 +383,54 @@ class AudioService {
       }
 
       const shouldInterrupt = options?.interrupt ?? true;
+
+      // Cancel any pending queued speak timer from a previous call
+      if (this.pendingSpeakTimer !== null) {
+        clearTimeout(this.pendingSpeakTimer);
+        this.pendingSpeakTimer = null;
+      }
+
+      // If interrupting, stop previous speech and allow Chrome audio thread to flush IPC
+      let postCancelDelay = 0;
       if (shouldInterrupt) {
-        this.synth.cancel();
+        if (this.synth.speaking || this.synth.pending) {
+          this.synth.cancel();
+          postCancelDelay = 35; // 35ms micro-delay prevents Chrome IPC cancel race
+        }
         this.notifySpeechEnd();
       }
 
+      // Resume if Chrome was trapped in paused state
+      if (this.synth.paused) {
+        this.synth.resume();
+      }
+
+      const userDelay = options?.delayMs ?? 0;
+      const effectiveDelay = Math.max(userDelay, postCancelDelay);
+
       const executeSpeak = () => {
+        this.pendingSpeakTimer = null;
+
+        if (!this.synth || this.isMuted) {
+          resolve();
+          return;
+        }
+
+        // Unpause Chrome if synthesis engine stalled
+        if (this.synth.paused) {
+          this.synth.resume();
+        }
+
+        const targetLang = options?.lang || 'en-GB';
+        const targetRate = options?.rate ?? this.settings.voiceSpeed;
+
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = this.settings.voiceSpeed;
+        utterance.lang = targetLang;
+        utterance.rate = targetRate;
         utterance.pitch = this.settings.voicePitch;
         utterance.volume = this.settings.speechVolume;
 
-        // Choose best natural English voice
+        // Choose best natural British English voice
         const enVoices = this.getAvailableVoices();
         let chosenVoice: SpeechSynthesisVoice | undefined;
 
@@ -297,42 +439,106 @@ class AudioService {
         }
 
         if (!chosenVoice) {
-          // Priority to natural, warm sounding voices
-          const preferredNames = [
-            'Samantha', 'Daniel', 'Karen', 'Victoria', 'Moira', 'Google US English', 'Natural'
+          // Priority 1: High quality British English voices
+          const preferredBritishNames = [
+            'Daniel',
+            'Serena',
+            'Oliver',
+            'Kate',
+            'George',
+            'Fiona',
+            'Arthur',
+            'Martha',
+            'Google UK English Female',
+            'Google UK English Male',
+            'Libby',
+            'Ryan',
+            'Sonia',
           ];
-          for (const name of preferredNames) {
+          for (const name of preferredBritishNames) {
+            chosenVoice = enVoices.find(v => v.name.toLowerCase().includes(name.toLowerCase()));
+            if (chosenVoice) break;
+          }
+        }
+
+        if (!chosenVoice) {
+          // Priority 2: Any en-GB voice
+          chosenVoice = enVoices.find(v =>
+            v.lang.replace('_', '-').toLowerCase().startsWith('en-gb') ||
+            v.name.toLowerCase().includes('british') ||
+            v.name.toLowerCase().includes('united kingdom')
+          );
+        }
+
+        if (!chosenVoice) {
+          // Priority 3: Natural / warm English voices
+          const generalPreferred = ['Samantha', 'Karen', 'Victoria', 'Moira', 'Google US English', 'Natural'];
+          for (const name of generalPreferred) {
             chosenVoice = enVoices.find(v => v.name.includes(name));
             if (chosenVoice) break;
           }
-          if (!chosenVoice && enVoices.length > 0) {
-            chosenVoice = enVoices[0];
-          }
+        }
+
+        if (!chosenVoice && enVoices.length > 0) {
+          chosenVoice = enVoices[0];
         }
 
         if (chosenVoice) {
           utterance.voice = chosenVoice;
+          utterance.lang = chosenVoice.lang || targetLang;
+        } else if (enVoices.length > 0) {
+          utterance.lang = enVoices[0].lang;
         }
+
+        // CRITICAL BUGFIX FOR CHROME:
+        // Hold strong JS reference in activeUtterances Set to prevent V8 GC from killing utterance before/during playback.
+        this.activeUtterances.add(utterance);
+
+        let hasEnded = false;
+        let safetyTimer: ReturnType<typeof setTimeout> | null = null;
+
+        const cleanupAndFinish = () => {
+          if (hasEnded) return;
+          hasEnded = true;
+          if (safetyTimer !== null) {
+            clearTimeout(safetyTimer);
+            safetyTimer = null;
+          }
+          this.activeUtterances.delete(utterance);
+          this.notifySpeechEnd();
+          resolve();
+        };
 
         utterance.onstart = () => {
           this.notifySpeechStart();
         };
 
         utterance.onend = () => {
-          this.notifySpeechEnd();
-          resolve();
+          cleanupAndFinish();
         };
 
         utterance.onerror = () => {
-          this.notifySpeechEnd();
-          resolve();
+          cleanupAndFinish();
         };
 
-        this.synth?.speak(utterance);
+        // Safety fallback timer so state never hangs if Chrome drops onend
+        const words = text.trim().split(/\s+/).length;
+        const estimatedDurationMs = Math.max(3000, words * 800 + 2000);
+        safetyTimer = setTimeout(() => {
+          if (!hasEnded) {
+            cleanupAndFinish();
+          }
+        }, estimatedDurationMs);
+
+        try {
+          this.synth.speak(utterance);
+        } catch {
+          cleanupAndFinish();
+        }
       };
 
-      if (options?.delayMs && options.delayMs > 0) {
-        setTimeout(executeSpeak, options.delayMs);
+      if (effectiveDelay > 0) {
+        this.pendingSpeakTimer = setTimeout(executeSpeak, effectiveDelay);
       } else {
         executeSpeak();
       }
