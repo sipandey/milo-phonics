@@ -22,6 +22,10 @@ export default {
       fontFamily: {
         fun: ['"Nunito"', '"Fredoka"', 'system-ui', 'sans-serif'],
       },
+      spacing: {
+        '18': '4.5rem', // 72px
+        '22': '5.5rem', // 88px
+      },
       borderRadius: {
         '4xl': '2rem',
         '5xl': '2.5rem',

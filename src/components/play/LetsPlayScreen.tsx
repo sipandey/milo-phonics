@@ -517,25 +517,25 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
         </div>
       </main>
 
-      {/* 6. Big, Juicy, Toddler-Proof Action Buttons (Guaranteed 72px-84px tall!) */}
-      <footer className="w-full flex justify-center items-center gap-3 sm:gap-4 pt-2 pb-2 shrink-0">
-        {/* Big Circular Audio Replay Button */}
+      {/* 6. Big, Juicy, Toddler-Proof Action Buttons (Perfect 80px-96px proportions) */}
+      <footer className="w-full flex justify-center items-center gap-2.5 sm:gap-4 pt-2 pb-3 sm:pb-4 shrink-0 px-1">
+        {/* Symmetrical Squircle Audio Replay Button (80x80px minimum) */}
         <button
           onClick={handleTapObject}
           aria-label="Play sound again"
-          className="squish-tap w-18 h-18 sm:w-22 sm:h-22 rounded-4xl bg-white text-amber-700 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex flex-col items-center justify-center shrink-0 cursor-pointer"
+          className="squish-tap w-20 h-20 sm:w-24 sm:h-24 aspect-square rounded-3xl bg-white text-amber-700 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex flex-col items-center justify-center p-1.5 shrink-0 cursor-pointer"
         >
-          <RotateCcw className="w-7 h-7 sm:w-9 sm:h-9 stroke-[2.5]" />
-          <span className="text-xs sm:text-sm font-black mt-0.5">Again</span>
+          <RotateCcw className="w-8 h-8 sm:w-9 sm:h-9 stroke-[2.5]" />
+          <span className="text-[11px] sm:text-xs font-black mt-1 leading-none">Again</span>
         </button>
 
-        {/* Big Surprise Me Button */}
+        {/* Big Chunky Surprise Me Button */}
         <button
           onClick={handleSurprise}
           aria-label="Random Surprise in Level"
-          className="squish-tap flex-1 max-w-[170px] sm:max-w-[200px] h-18 sm:h-22 rounded-4xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white border-4 border-purple-400 shadow-[0_6px_0_#6D28D9] active:translate-y-1 active:shadow-[0_2px_0_#6D28D9] flex items-center justify-center gap-2 font-black text-lg sm:text-2xl cursor-pointer"
+          className="squish-tap flex-1 h-20 sm:h-24 rounded-3xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white border-4 border-purple-400 shadow-[0_6px_0_#6D28D9] active:translate-y-1 active:shadow-[0_2px_0_#6D28D9] flex items-center justify-center gap-1.5 sm:gap-2 font-black text-lg sm:text-2xl cursor-pointer"
         >
-          <Dices className="w-6 h-6 sm:w-7 sm:h-7 animate-wiggle" />
+          <Dices className="w-6 h-6 sm:w-7 sm:h-7 animate-wiggle shrink-0" />
           <span>Surprise!</span>
         </button>
 
@@ -543,10 +543,10 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
         <button
           onClick={handleNext}
           aria-label="Next Sound"
-          className="squish-tap flex-1 max-w-[170px] sm:max-w-[200px] h-18 sm:h-22 rounded-4xl bg-bubble-yellow text-amber-950 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex items-center justify-center gap-2 font-black text-lg sm:text-2xl cursor-pointer"
+          className="squish-tap flex-1 h-20 sm:h-24 rounded-3xl bg-bubble-yellow text-amber-950 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex items-center justify-center gap-1.5 sm:gap-2 font-black text-lg sm:text-2xl cursor-pointer"
         >
           <span>Next</span>
-          <ArrowRight className="w-6 h-6 sm:w-8 sm:h-8 stroke-[3]" />
+          <ArrowRight className="w-6 h-6 sm:w-8 sm:h-8 stroke-[3] shrink-0" />
         </button>
       </footer>
     </div>
