@@ -60,7 +60,7 @@ export function App() {
   };
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-b from-amber-50/70 via-orange-50/40 to-yellow-50/70 overflow-hidden font-fun">
+    <div className="relative min-h-screen min-h-[100dvh] bg-gradient-to-b from-amber-50/70 via-orange-50/40 to-yellow-50/70 overflow-x-hidden font-fun">
       {/* Gentle Floating Ambient Background */}
       <FloatingBubblesBackground />
 

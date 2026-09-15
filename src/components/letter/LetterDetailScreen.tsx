@@ -124,7 +124,7 @@ export const LetterDetailScreen: React.FC<LetterDetailScreenProps> = ({
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between p-4 sm:p-6 max-w-4xl mx-auto relative z-10 select-none">
+    <div className="min-h-screen flex flex-col justify-between p-4 sm:p-6 max-w-4xl mx-auto relative z-10 select-none touch-pan-y pb-10 sm:pb-6">
       {/* Top Header */}
       <header className="flex justify-between items-center w-full">
         <div className="flex gap-2">

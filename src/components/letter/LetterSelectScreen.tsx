@@ -37,25 +37,25 @@ export const LetterSelectScreen: React.FC<LetterSelectScreenProps> = ({
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between p-4 sm:p-6 max-w-4xl mx-auto relative z-10 select-none">
-      {/* Top Header */}
-      <header className="flex justify-between items-center w-full mb-4">
+    <div className="min-h-screen flex flex-col justify-between p-4 sm:p-6 max-w-4xl mx-auto relative z-10 select-none touch-pan-y pb-16 sm:pb-10">
+      {/* Top Header - Sticky so Home is always accessible when scrolling */}
+      <header className="sticky top-0 z-20 bg-bubble-cream/90 backdrop-blur-md py-2 flex justify-between items-center w-full mb-3 rounded-2xl">
         <button
           onClick={() => {
             audioService.playPop();
             onGoHome();
           }}
           aria-label="Go Home"
-          className="w-16 h-16 rounded-3xl bg-white shadow-md border-3 border-amber-200 flex items-center justify-center text-amber-700 squish-tap"
+          className="w-14 h-14 sm:w-16 sm:h-16 rounded-3xl bg-white shadow-md border-3 border-amber-200 flex items-center justify-center text-amber-700 squish-tap"
         >
-          <Home className="w-8 h-8" />
+          <Home className="w-7 h-7 sm:w-8 sm:h-8" />
         </button>
 
         <h1 className="text-3xl sm:text-4xl font-black font-fun text-amber-900 tracking-wide">
           Letters 🔤
         </h1>
 
-        <div className="w-16 h-16" /> {/* Placeholder balance */}
+        <div className="w-14 sm:w-16" /> {/* Placeholder balance */}
       </header>
 
       {/* Main Active Letters Grid */}

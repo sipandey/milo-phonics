@@ -113,18 +113,18 @@ export const OxfordSoundsScreen: React.FC<OxfordSoundsScreenProps> = ({ onGoHome
       : SECTIONS.filter((s) => s.category === selectedCategory);
 
   return (
-    <div className="min-h-screen flex flex-col justify-between p-4 sm:p-6 max-w-5xl mx-auto relative z-10 select-none font-fun">
-      {/* Top Header */}
-      <header className="flex justify-between items-center w-full mb-4">
+    <div className="min-h-screen flex flex-col justify-between p-4 sm:p-6 max-w-5xl mx-auto relative z-10 select-none font-fun touch-pan-y pb-16 sm:pb-10">
+      {/* Top Header - Sticky so navigation is always available */}
+      <header className="sticky top-0 z-20 bg-bubble-cream/90 backdrop-blur-md py-2 flex justify-between items-center w-full mb-3 rounded-2xl">
         <button
           onClick={() => {
             audioService.playPop();
             onGoHome();
           }}
           aria-label="Go Home"
-          className="w-16 h-16 rounded-3xl bg-white shadow-md border-3 border-amber-200 flex items-center justify-center text-amber-700 squish-tap"
+          className="w-14 h-14 sm:w-16 sm:h-16 rounded-3xl bg-white shadow-md border-3 border-amber-200 flex items-center justify-center text-amber-700 squish-tap"
         >
-          <Home className="w-8 h-8" />
+          <Home className="w-7 h-7 sm:w-8 sm:h-8" />
         </button>
 
         <div className="text-center">
@@ -136,7 +136,7 @@ export const OxfordSoundsScreen: React.FC<OxfordSoundsScreenProps> = ({ onGoHome
           </p>
         </div>
 
-        <div className="w-16 h-16" />
+        <div className="w-14 sm:w-16" />
       </header>
 
       {/* Category Filter Pills */}
