@@ -7,6 +7,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'sat',
     word: 'sat',
+    cvcAudioId: 'cvc.sat',
+    sentenceAudioId: 'sentence.sat',
     levelId: 1,
     letters: ['s', 'a', 't'],
     phonemeAudioIds: ['phoneme.s', 'phoneme.a', 'phoneme.t'],
@@ -17,6 +19,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'pat',
     word: 'pat',
+    cvcAudioId: 'cvc.pat',
+    sentenceAudioId: 'sentence.pat',
     levelId: 1,
     letters: ['p', 'a', 't'],
     phonemeAudioIds: ['phoneme.p', 'phoneme.a', 'phoneme.t'],
@@ -27,6 +31,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'tap',
     word: 'tap',
+    cvcAudioId: 'cvc.tap',
+    sentenceAudioId: 'sentence.tap',
     levelId: 1,
     letters: ['t', 'a', 'p'],
     phonemeAudioIds: ['phoneme.t', 'phoneme.a', 'phoneme.p'],
@@ -37,6 +43,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'sap',
     word: 'sap',
+    cvcAudioId: 'cvc.sap',
+    sentenceAudioId: 'sentence.sap',
     levelId: 1,
     letters: ['s', 'a', 'p'],
     phonemeAudioIds: ['phoneme.s', 'phoneme.a', 'phoneme.p'],
@@ -47,6 +55,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'at',
     word: 'at',
+    cvcAudioId: 'cvc.at',
+    sentenceAudioId: 'sentence.at',
     levelId: 1,
     letters: ['a', 't'],
     phonemeAudioIds: ['phoneme.a', 'phoneme.t'],
@@ -61,6 +71,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'pan',
     word: 'pan',
+    cvcAudioId: 'cvc.pan',
+    sentenceAudioId: 'sentence.pan',
     levelId: 2,
     letters: ['p', 'a', 'n'],
     phonemeAudioIds: ['phoneme.p', 'phoneme.a', 'phoneme.n'],
@@ -72,6 +84,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'pin',
     word: 'pin',
+    cvcAudioId: 'cvc.pin',
+    sentenceAudioId: 'sentence.pin',
     levelId: 2,
     letters: ['p', 'i', 'n'],
     phonemeAudioIds: ['phoneme.p', 'phoneme.i', 'phoneme.n'],
@@ -82,6 +96,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'mat',
     word: 'mat',
+    cvcAudioId: 'cvc.mat',
+    sentenceAudioId: 'sentence.mat',
     levelId: 2,
     letters: ['m', 'a', 't'],
     phonemeAudioIds: ['phoneme.m', 'phoneme.a', 'phoneme.t'],
@@ -92,6 +108,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'dad',
     word: 'dad',
+    cvcAudioId: 'cvc.dad',
+    sentenceAudioId: 'sentence.dad',
     levelId: 2,
     letters: ['d', 'a', 'd'],
     phonemeAudioIds: ['phoneme.d', 'phoneme.a', 'phoneme.d'],
@@ -102,6 +120,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'tin',
     word: 'tin',
+    cvcAudioId: 'cvc.tin',
+    sentenceAudioId: 'sentence.tin',
     levelId: 2,
     letters: ['t', 'i', 'n'],
     phonemeAudioIds: ['phoneme.t', 'phoneme.i', 'phoneme.n'],
@@ -112,6 +132,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'sad',
     word: 'sad',
+    cvcAudioId: 'cvc.sad',
+    sentenceAudioId: 'sentence.sad',
     levelId: 2,
     letters: ['s', 'a', 'd'],
     phonemeAudioIds: ['phoneme.s', 'phoneme.a', 'phoneme.d'],
@@ -122,6 +144,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'tip',
     word: 'tip',
+    cvcAudioId: 'cvc.tip',
+    sentenceAudioId: 'sentence.tip',
     levelId: 2,
     letters: ['t', 'i', 'p'],
     phonemeAudioIds: ['phoneme.t', 'phoneme.i', 'phoneme.p'],
@@ -132,6 +156,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'man',
     word: 'man',
+    cvcAudioId: 'cvc.man',
+    sentenceAudioId: 'sentence.man',
     levelId: 2,
     letters: ['m', 'a', 'n'],
     phonemeAudioIds: ['phoneme.m', 'phoneme.a', 'phoneme.n'],
@@ -146,6 +172,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'cat',
     word: 'cat',
+    cvcAudioId: 'cvc.cat',
+    sentenceAudioId: 'sentence.cat',
     levelId: 3,
     letters: ['c', 'a', 't'],
     phonemeAudioIds: ['phoneme.c', 'phoneme.a', 'phoneme.t'],
@@ -157,6 +185,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'dog',
     word: 'dog',
+    cvcAudioId: 'cvc.dog',
+    sentenceAudioId: 'sentence.dog',
     levelId: 3,
     letters: ['d', 'o', 'g'],
     phonemeAudioIds: ['phoneme.d', 'phoneme.o', 'phoneme.g'],
@@ -168,6 +198,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'pot',
     word: 'pot',
+    cvcAudioId: 'cvc.pot',
+    sentenceAudioId: 'sentence.pot',
     levelId: 3,
     letters: ['p', 'o', 't'],
     phonemeAudioIds: ['phoneme.p', 'phoneme.o', 'phoneme.t'],
@@ -178,6 +210,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'top',
     word: 'top',
+    cvcAudioId: 'cvc.top',
+    sentenceAudioId: 'sentence.top',
     levelId: 3,
     letters: ['t', 'o', 'p'],
     phonemeAudioIds: ['phoneme.t', 'phoneme.o', 'phoneme.p'],
@@ -188,6 +222,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'can',
     word: 'can',
+    cvcAudioId: 'cvc.can',
+    sentenceAudioId: 'sentence.can',
     levelId: 3,
     letters: ['c', 'a', 'n'],
     phonemeAudioIds: ['phoneme.c', 'phoneme.a', 'phoneme.n'],
@@ -198,6 +234,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'cap',
     word: 'cap',
+    cvcAudioId: 'cvc.cap',
+    sentenceAudioId: 'sentence.cap',
     levelId: 3,
     letters: ['c', 'a', 'p'],
     phonemeAudioIds: ['phoneme.c', 'phoneme.a', 'phoneme.p'],
@@ -208,6 +246,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'kid',
     word: 'kid',
+    cvcAudioId: 'cvc.kid',
+    sentenceAudioId: 'sentence.kid',
     levelId: 3,
     letters: ['k', 'i', 'd'],
     phonemeAudioIds: ['phoneme.k', 'phoneme.i', 'phoneme.d'],
@@ -222,6 +262,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'sun',
     word: 'sun',
+    cvcAudioId: 'cvc.sun',
+    sentenceAudioId: 'sentence.sun',
     levelId: 4,
     letters: ['s', 'u', 'n'],
     phonemeAudioIds: ['phoneme.s', 'phoneme.u', 'phoneme.n'],
@@ -233,6 +275,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'run',
     word: 'run',
+    cvcAudioId: 'cvc.run',
+    sentenceAudioId: 'sentence.run',
     levelId: 4,
     letters: ['r', 'u', 'n'],
     phonemeAudioIds: ['phoneme.r', 'phoneme.u', 'phoneme.n'],
@@ -243,6 +287,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'red',
     word: 'red',
+    cvcAudioId: 'cvc.red',
+    sentenceAudioId: 'sentence.red',
     levelId: 4,
     letters: ['r', 'e', 'd'],
     phonemeAudioIds: ['phoneme.r', 'phoneme.e', 'phoneme.d'],
@@ -254,6 +300,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'bed',
     word: 'bed',
+    cvcAudioId: 'cvc.bed',
+    sentenceAudioId: 'sentence.bed',
     levelId: 4,
     letters: ['b', 'e', 'd'],
     phonemeAudioIds: ['phoneme.b', 'phoneme.e', 'phoneme.d'],
@@ -264,6 +312,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'cup',
     word: 'cup',
+    cvcAudioId: 'cvc.cup',
+    sentenceAudioId: 'sentence.cup',
     levelId: 4,
     letters: ['c', 'u', 'p'],
     phonemeAudioIds: ['phoneme.c', 'phoneme.u', 'phoneme.p'],
@@ -275,6 +325,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'nut',
     word: 'nut',
+    cvcAudioId: 'cvc.nut',
+    sentenceAudioId: 'sentence.nut',
     levelId: 4,
     letters: ['n', 'u', 't'],
     phonemeAudioIds: ['phoneme.n', 'phoneme.u', 'phoneme.t'],
@@ -290,6 +342,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'hat',
     word: 'hat',
+    cvcAudioId: 'cvc.hat',
+    sentenceAudioId: 'sentence.hat',
     levelId: 5,
     letters: ['h', 'a', 't'],
     phonemeAudioIds: ['phoneme.h', 'phoneme.a', 'phoneme.t'],
@@ -301,6 +355,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'bag',
     word: 'bag',
+    cvcAudioId: 'cvc.bag',
+    sentenceAudioId: 'sentence.bag',
     levelId: 5,
     letters: ['b', 'a', 'g'],
     phonemeAudioIds: ['phoneme.b', 'phoneme.a', 'phoneme.g'],
@@ -312,6 +368,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'leg',
     word: 'leg',
+    cvcAudioId: 'cvc.leg',
+    sentenceAudioId: 'sentence.leg',
     levelId: 5,
     letters: ['l', 'e', 'g'],
     phonemeAudioIds: ['phoneme.l', 'phoneme.e', 'phoneme.g'],
@@ -323,6 +381,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'fan',
     word: 'fan',
+    cvcAudioId: 'cvc.fan',
+    sentenceAudioId: 'sentence.fan',
     levelId: 5,
     letters: ['f', 'a', 'n'],
     phonemeAudioIds: ['phoneme.f', 'phoneme.a', 'phoneme.n'],
@@ -333,6 +393,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'box',
     word: 'box',
+    cvcAudioId: 'cvc.box',
+    sentenceAudioId: 'sentence.box',
     levelId: 5,
     letters: ['b', 'o', 'x'],
     phonemeAudioIds: ['phoneme.b', 'phoneme.o', 'phoneme.x'],
@@ -348,6 +410,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'jam',
     word: 'jam',
+    cvcAudioId: 'cvc.jam',
+    sentenceAudioId: 'sentence.jam',
     levelId: 6,
     letters: ['j', 'a', 'm'],
     phonemeAudioIds: ['phoneme.j', 'phoneme.a', 'phoneme.m'],
@@ -359,6 +423,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'van',
     word: 'van',
+    cvcAudioId: 'cvc.van',
+    sentenceAudioId: 'sentence.van',
     levelId: 6,
     letters: ['v', 'a', 'n'],
     phonemeAudioIds: ['phoneme.v', 'phoneme.a', 'phoneme.n'],
@@ -370,6 +436,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'wet',
     word: 'wet',
+    cvcAudioId: 'cvc.wet',
+    sentenceAudioId: 'sentence.wet',
     levelId: 6,
     letters: ['w', 'e', 't'],
     phonemeAudioIds: ['phoneme.w', 'phoneme.e', 'phoneme.t'],
@@ -381,6 +449,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'fox',
     word: 'fox',
+    cvcAudioId: 'cvc.fox',
+    sentenceAudioId: 'sentence.fox',
     levelId: 6,
     letters: ['f', 'o', 'x'],
     phonemeAudioIds: ['phoneme.f', 'phoneme.o', 'phoneme.x'],
@@ -392,6 +462,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'six',
     word: 'six',
+    cvcAudioId: 'cvc.six',
+    sentenceAudioId: 'sentence.six',
     levelId: 6,
     letters: ['s', 'i', 'x'],
     phonemeAudioIds: ['phoneme.s', 'phoneme.i', 'phoneme.x'],
@@ -407,6 +479,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'yes',
     word: 'yes',
+    cvcAudioId: 'cvc.yes',
+    sentenceAudioId: 'sentence.yes',
     levelId: 7,
     letters: ['y', 'e', 's'],
     phonemeAudioIds: ['phoneme.y', 'phoneme.e', 'phoneme.s'],
@@ -418,6 +492,8 @@ export const BLENDING_WORDS: BlendingWord[] = [
   {
     id: 'zip',
     word: 'zip',
+    cvcAudioId: 'cvc.zip',
+    sentenceAudioId: 'sentence.zip',
     levelId: 7,
     letters: ['z', 'i', 'p'],
     phonemeAudioIds: ['phoneme.z', 'phoneme.i', 'phoneme.p'],

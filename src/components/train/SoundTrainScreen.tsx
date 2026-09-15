@@ -47,12 +47,17 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
   const [highlightedCarriage, setHighlightedCarriage] = useState<number>(-1);
   const [isBlending, setIsBlending] = useState(false);
   const [isWordRevealed, setIsWordRevealed] = useState(false);
+  const [isPlayingSentence, setIsPlayingSentence] = useState(false);
+  const [isPlayingWord, setIsPlayingWord] = useState(false);
   const [miloSpeech, setMiloSpeech] = useState<string>("All aboard! Tap each sound, then blend!");
 
-  // When word changes, reset reveal state and introduce word sounds
+  // When word changes, reset reveal state and stop active speech
   useEffect(() => {
     setIsWordRevealed(false);
     setHighlightedCarriage(-1);
+    setIsPlayingSentence(false);
+    setIsPlayingWord(false);
+    audioService.stopVoice();
     setMiloSpeech(`Can you blend ${currentWord.letters.join(' - ')}? Choo-choo!`);
   }, [currentWord.id]);
 
@@ -70,11 +75,33 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
     }, 450);
   };
 
+  // Play isolated blended word
+  const handlePlayWord = async () => {
+    if (isBlending) return;
+    setIsPlayingWord(true);
+    audioService.playPop();
+    setMiloSpeech(`${currentWord.word.toUpperCase()}!`);
+    await audioService.playCvcWord(currentWord.id, currentWord.word);
+    setIsPlayingWord(false);
+  };
+
+  // Play slow contextual sentence
+  const handlePlaySentence = async () => {
+    if (isBlending) return;
+    setIsPlayingSentence(true);
+    audioService.playChime();
+    setMiloSpeech(currentWord.meaning);
+    await audioService.playSentence(currentWord.id, currentWord.meaning);
+    setIsPlayingSentence(false);
+  };
+
   // Full sequential train blend
   const handleBlendWord = async () => {
     if (isBlending) return;
     setIsBlending(true);
     setIsWordRevealed(false);
+    setIsPlayingSentence(false);
+    setIsPlayingWord(false);
     setMiloSpeech("Listen closely as we blend...");
 
     await audioService.playSequentialBlend(
@@ -90,8 +117,15 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
     setIsWordRevealed(true);
     triggerGentleConfetti();
     audioService.playChime();
-    setMiloSpeech(`Brilliant! ${currentWord.word.toUpperCase()}! ${currentWord.meaning}`);
+    setMiloSpeech(`Brilliant! ${currentWord.word.toUpperCase()}!`);
     setIsBlending(false);
+
+    // Read the story sentence slowly after a brief breath pause
+    setTimeout(async () => {
+      setIsPlayingSentence(true);
+      await audioService.playSentence(currentWord.id, currentWord.meaning);
+      setIsPlayingSentence(false);
+    }, 650);
   };
 
   // Next word
@@ -343,32 +377,67 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
             </button>
           </div>
         ) : (
-          /* Revealed Word Card Popup with Celebratory Reward */
+          /* Revealed Word Card Popup with Celebratory Reward & Slow Sentence Narration */
           <div className="mt-1 w-full max-w-sm px-2 animate-pop-in">
-            <div className="p-3 sm:p-4 rounded-3xl bg-white border-4 border-amber-300 shadow-xl flex items-center justify-between gap-3">
-              <span className="text-5xl sm:text-6xl animate-bounce-gentle shrink-0">
-                {currentWord.emoji}
-              </span>
+            <div className="p-3 sm:p-4 rounded-3xl bg-white border-4 border-amber-300 shadow-xl flex flex-col gap-2">
+              {/* Top Row: Emoji, Big Word, and Play Word Button */}
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-5xl sm:text-6xl animate-bounce-gentle shrink-0">
+                  {currentWord.emoji}
+                </span>
 
-              <div className="flex-1 text-left">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-3xl sm:text-4xl font-black font-fun text-gray-900 tracking-wide uppercase">
-                    {currentWord.word}
-                  </h3>
-                  <CheckCircle2 className="w-6 h-6 text-emerald-500 shrink-0" />
+                <div className="flex-1 text-left min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <h3 className="text-3xl sm:text-4xl font-black font-fun text-gray-900 tracking-wide uppercase truncate">
+                      {currentWord.word}
+                    </h3>
+                    <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500 shrink-0" />
+                  </div>
+                  <p className="text-[11px] sm:text-xs font-bold text-amber-700">
+                    {isPlayingWord ? 'Speaking word...' : isPlayingSentence ? 'Reading story...' : 'Tap below to listen!'}
+                  </p>
                 </div>
-                <p className="text-xs sm:text-sm font-bold text-amber-800 leading-tight mt-0.5">
-                  {currentWord.meaning}
-                </p>
+
+                {/* Word Replay Button */}
+                <button
+                  onClick={handlePlayWord}
+                  disabled={isBlending}
+                  aria-label={`Hear word ${currentWord.word}`}
+                  className={`p-2.5 sm:p-3 rounded-2xl border-2 flex items-center justify-center squish-tap shrink-0 cursor-pointer transition-all ${
+                    isPlayingWord
+                      ? 'bg-amber-400 text-white border-amber-500 scale-105 shadow-md ring-2 ring-amber-300'
+                      : 'bg-amber-100 hover:bg-amber-200 text-amber-800 border-amber-300 shadow-xs'
+                  }`}
+                  title="Hear word"
+                >
+                  <Volume2 className={`w-5 h-5 sm:w-6 sm:h-6 ${isPlayingWord ? 'animate-bounce' : ''}`} />
+                </button>
               </div>
 
+              {/* Bottom Row: Interactive Slow Sentence Card / Story Bubble */}
               <button
-                onClick={handleBlendWord}
-                aria-label="Hear word blend again"
-                className="p-2.5 rounded-2xl bg-amber-100 hover:bg-amber-200 text-amber-800 squish-tap shrink-0 cursor-pointer"
-                title="Hear again"
+                onClick={handlePlaySentence}
+                disabled={isBlending}
+                aria-label={`Hear sentence: ${currentWord.meaning}`}
+                className={`w-full p-2 sm:p-2.5 rounded-2xl border-2 text-left flex items-center justify-between gap-2 transition-all squish-tap cursor-pointer ${
+                  isPlayingSentence
+                    ? 'bg-amber-100 border-amber-400 ring-3 ring-amber-300 shadow-md'
+                    : 'bg-amber-50/80 hover:bg-amber-100/70 border-amber-200 shadow-xs'
+                }`}
               >
-                <Volume2 className="w-6 h-6" />
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <span className="text-xl sm:text-2xl shrink-0">📖</span>
+                  <p className="text-xs sm:text-sm font-bold text-amber-950 leading-snug">
+                    "{currentWord.meaning}"
+                  </p>
+                </div>
+
+                <div className="shrink-0 flex items-center gap-1 bg-white px-2 py-1 rounded-xl border border-amber-200 shadow-xs">
+                  <Volume2 className={`w-3.5 h-3.5 text-amber-600 ${isPlayingSentence ? 'animate-bounce' : ''}`} />
+                  <span className="text-[10px] font-black text-amber-800 uppercase tracking-wider">
+                    {isPlayingSentence ? 'Playing' : 'Slow'}
+                  </span>
+                </div>
               </button>
             </div>
           </div>

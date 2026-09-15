@@ -121,7 +121,9 @@ export interface BlendingWord {
   letters: string[];         // e.g. ['s', 'a', 't']
   emoji: string;             // e.g. '🐈'
   meaning: string;           // e.g. 'Sat on a mat'
-  wordAudioId?: string;      // e.g. 'word.sat' or fallback
+  wordAudioId?: string;      // Legacy audio ID mapping if available
+  cvcAudioId?: string;       // e.g. 'cvc.sat'
+  sentenceAudioId?: string;  // e.g. 'sentence.sat'
   color: string;
 }
 

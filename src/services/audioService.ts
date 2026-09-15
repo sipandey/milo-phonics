@@ -1,5 +1,6 @@
 import { SoundType, AudioSettings } from '../types/phonics';
 import { getAudioEntry, getRandomPraiseAudioId } from '../data/audioManifest';
+import { getCvcWordAudioUrl, getCvcSentenceAudioUrl } from '../data/cvcAudioManifest';
 
 export interface PlayVoiceOptions {
   interrupt?: boolean;
@@ -311,6 +312,10 @@ class AudioService {
    * Sequential CVC Blending for the Sound Train:
    * Plays each phoneme one-by-one with highlight callback, pauses, then speaks the blended word.
    */
+  /**
+   * Sequential CVC Blending for the Sound Train:
+   * Plays each phoneme one-by-one with highlight callback, pauses, then speaks the blended word.
+   */
   public async playSequentialBlend(
     phonemeAudioIds: string[],
     wordAudioId?: string,
@@ -331,6 +336,19 @@ class AudioService {
     await new Promise((resolve) => setTimeout(resolve, 320));
 
     // 2. Play the final blended whole word
+    // Priority A: Dedicated CVC audio asset (local /audio/cvc/ or Cloudinary)
+    const cleanWord = (fallbackWordText || wordAudioId || '').toLowerCase().replace(/^(word|cvc)\./, '');
+    if (cleanWord) {
+      const cvcUrl = getCvcWordAudioUrl(cleanWord);
+      try {
+        await this.playRemoteVoice(cvcUrl, cleanWord, { interrupt: false });
+        return;
+      } catch {
+        // Fall through to other audio entry if CVC play fails
+      }
+    }
+
+    // Priority B: Audio Manifest entry (e.g. word.p-pan)
     if (wordAudioId) {
       const wordEntry = getAudioEntry(wordAudioId);
       if (wordEntry?.url) {
@@ -339,9 +357,36 @@ class AudioService {
       }
     }
 
+    // Priority C: SpeechSynthesis fallback
     if (fallbackWordText) {
       await this.speak(fallbackWordText, { interrupt: false, rate: 0.65 });
     }
+  }
+
+  /**
+   * Play blended CVC word with zero-latency local audio or Cloudinary fallback
+   * @param wordId Word identifier (e.g. "sat", "pin", "cat")
+   * @param fallbackWordText Spoken word fallback
+   */
+  public async playCvcWord(wordId: string, fallbackWordText?: string): Promise<void> {
+    if (this.isMuted) return;
+    const cleanId = wordId.toLowerCase().replace(/^(word|cvc)\./, '');
+    const url = getCvcWordAudioUrl(cleanId);
+    const text = fallbackWordText || cleanId;
+    return this.playRemoteVoice(url, text, { interrupt: true });
+  }
+
+  /**
+   * Play slow, articulate British English sentence reading
+   * @param wordId Word identifier (e.g. "sat", "pin", "cat")
+   * @param fallbackSentenceText Sentence text for fallback
+   */
+  public async playSentence(wordId: string, fallbackSentenceText?: string): Promise<void> {
+    if (this.isMuted) return;
+    const cleanId = wordId.toLowerCase().replace(/^(sentence|word|cvc)\./, '');
+    const url = getCvcSentenceAudioUrl(cleanId);
+    const text = fallbackSentenceText || cleanId;
+    return this.playRemoteVoice(url, text, { interrupt: true });
   }
 
   /**
