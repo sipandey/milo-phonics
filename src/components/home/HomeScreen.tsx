@@ -66,8 +66,19 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </button>
       </header>
 
-      {/* Hero: Friendly Milo Lion Companion */}
-      <main className="flex-1 flex flex-col items-center justify-center my-2 sm:my-4">
+      {/* Hero: Friendly Milo Lion Companion & Title */}
+      <main className="flex-1 flex flex-col items-center justify-center my-2 sm:my-3">
+        {/* Brand Title */}
+        <div className="text-center mb-3 sm:mb-4">
+          <h1 className="text-4xl sm:text-5xl font-black font-fun text-amber-950 tracking-tight flex items-center justify-center gap-2 drop-shadow-xs">
+            <span>Milo Phonics</span>
+            <span className="text-3xl sm:text-4xl">🇬🇧</span>
+          </h1>
+          <p className="text-xs sm:text-sm font-extrabold text-amber-800/80 mt-0.5">
+            Pure British Sounds for Little Learners
+          </p>
+        </div>
+
         <CharacterMilo
           size="lg"
           speechBubble={miloSpeech}

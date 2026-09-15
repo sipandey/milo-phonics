@@ -1,4 +1,5 @@
-# 🦁 Playful Phonics for Toddlers (Ages 2–3)
+# 🦁 Milo Phonics (Ages 2–6)
+*Pure British Sounds & Systematic Synthetic Phonics for Little Learners*
 
 A production-quality, audio-first early language and phonics learning application designed specifically for toddlers aged 2–3 years old. Built with React 18, TypeScript, Tailwind CSS, Web Audio API, and mechanical agent governance via [`create-agent-room`](https://www.npmjs.com/package/create-agent-room).
 
