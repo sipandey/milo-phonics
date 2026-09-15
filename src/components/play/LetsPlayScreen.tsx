@@ -15,6 +15,8 @@ import {
   BookOpen,
   Star,
   Lock,
+  MapPin,
+  X,
 } from 'lucide-react';
 
 interface LetsPlayScreenProps {
@@ -28,6 +30,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
 }) => {
   const [progress, setProgress] = useState<ChildProgress>(progressService.getProgress());
   const [selectedLevelId, setSelectedLevelId] = useState<number>(progress.currentLevelId || 1);
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
 
   // Subscribe to reactive progress updates
   useEffect(() => {
@@ -44,7 +47,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
   // Selected letter within the active level
   const [selectedLetterId, setSelectedLetterId] = useState<string>(activeLevel.letterIds[0]);
 
-  // If level changes, ensure selected letter is valid for this level
+  // Ensure selected letter is always valid for the active level
   useEffect(() => {
     if (!activeLevel.letterIds.includes(selectedLetterId)) {
       setSelectedLetterId(activeLevel.letterIds[0]);
@@ -55,6 +58,11 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
   const currentLetter = useMemo(() => {
     return getLetterById(selectedLetterId);
   }, [selectedLetterId]);
+
+  // Clean phoneme notation (removes pre-existing slashes so it never prints //s//)
+  const cleanPhoneme = useMemo(() => {
+    return currentLetter.phoneme.replace(/\//g, '');
+  }, [currentLetter.phoneme]);
 
   const [currentObjectIndex, setCurrentObjectIndex] = useState<number>(0);
 
@@ -76,7 +84,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     const playIntro = async () => {
       if (!hasIntroduced.current) {
         hasIntroduced.current = true;
-        setMiloSpeech(`Level ${activeLevel.id}: Let's learn /${currentLetter.phoneme}/!`);
+        setMiloSpeech(`Level ${activeLevel.id}: /${cleanPhoneme}/!`);
         await audioService.playVoice('prompt.find-sounds');
         if (cancel) return;
       }
@@ -95,7 +103,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     return () => {
       cancel = true;
     };
-  }, [currentObject.id, currentLetter.id]);
+  }, [currentObject.id, currentLetter.id, cleanPhoneme, activeLevel.id]);
 
   // Tap Object interaction: plays sound blend, awards stars, checks unlock
   const handleTapObject = () => {
@@ -131,11 +139,11 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     }, 600);
   };
 
-  // Tap Letter badge
+  // Tap Letter badge / phoneme pill
   const handleTapLetter = () => {
     setIsLetterAnimating(true);
     audioService.playBoing();
-    setMiloSpeech(`/${currentLetter.phoneme}/`);
+    setMiloSpeech(`/${cleanPhoneme}/`);
     audioService.playVoice(currentLetter.phonemeAudioId);
 
     const { newlyEarned, newlyUnlockedLevels } = progressService.recordLetterInteraction(currentLetter.id);
@@ -194,6 +202,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
         setSelectedLetterId(targetLvl.letterIds[0]);
         setCurrentObjectIndex(0);
       }
+      setIsMapModalOpen(false);
     } else {
       audioService.playBoing();
       const starsNeeded = (targetLvl?.requiredStarsToUnlock || 0) - progress.totalStars;
@@ -202,24 +211,24 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between p-4 sm:p-6 max-w-4xl mx-auto relative z-10 select-none touch-pan-y pb-8">
-      {/* Level Unlock Celebration Modal */}
+    <div className="h-[100dvh] max-h-[100dvh] w-full flex flex-col justify-between p-2.5 sm:p-4 max-w-4xl mx-auto relative z-10 select-none overflow-hidden">
+      {/* 1. Level Unlock Celebration Modal */}
       {levelUnlockAlert && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-pop-in">
           <div className="bg-white rounded-4xl p-6 sm:p-8 max-w-md w-full text-center shadow-2xl border-4 border-amber-300">
-            <span className="text-5xl animate-bounce">🎉</span>
+            <span className="text-6xl animate-bounce">🎉</span>
             <h3 className="text-2xl sm:text-3xl font-black font-fun text-gray-900 mt-2">
               Level {levelUnlockAlert} Unlocked!
             </h3>
             <p className="text-sm font-bold text-amber-800 mt-1">
-              Brilliant reading! You unlocked{' '}
+              Brilliant! You unlocked{' '}
               <span className="font-extrabold text-amber-950">
                 {getLevelById(levelUnlockAlert)?.title}
               </span>
               !
             </p>
 
-            <div className="my-4 p-3 bg-amber-50 rounded-2xl border border-amber-200 flex justify-center gap-2 text-xl font-black text-amber-900">
+            <div className="my-4 p-3 bg-amber-50 rounded-2xl border border-amber-200 flex justify-center gap-2 text-2xl font-black text-amber-900">
               {getLevelById(levelUnlockAlert)?.letterIds.map((l) => (
                 <span key={l} className="px-3 py-1 bg-white rounded-xl shadow-xs border border-amber-300">
                   {l.toUpperCase()}
@@ -248,79 +257,144 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
         </div>
       )}
 
-      {/* Top Header: Home, Star Count, and Explore Letter */}
-      <header className="flex justify-between items-center w-full gap-2 mb-2">
+      {/* 2. Full-Screen Island Adventure Map Modal (Replaces cramped top L1-L7 tab pills!) */}
+      {isMapModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-pop-in">
+          <div className="bg-white rounded-4xl p-5 sm:p-6 max-w-lg w-full shadow-2xl border-4 border-amber-300 max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100 mb-3">
+              <div className="flex items-center gap-2">
+                <span className="text-3xl">🗺️</span>
+                <div>
+                  <h3 className="text-xl font-black font-fun text-gray-900">Phonics World Map</h3>
+                  <p className="text-xs text-amber-800 font-bold">Pick an unlocked island to explore!</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsMapModalOpen(false)}
+                className="p-2 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors cursor-pointer"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-2.5 pr-1">
+              {CURRICULUM_LEVELS.map((lvl) => {
+                const isUnlocked = progress.unlockedLevels.includes(lvl.id);
+                const isCurrent = selectedLevelId === lvl.id;
+                let lvlStars = 0;
+                lvl.letterIds.forEach((l) => {
+                  lvlStars += progress.letterStars[l] || 0;
+                });
+                const maxStars = lvl.letterIds.length * 3;
+
+                return (
+                  <button
+                    key={lvl.id}
+                    onClick={() => handleSelectLevel(lvl.id)}
+                    className={`w-full p-3.5 rounded-2xl border-3 flex items-center justify-between text-left transition-all squish-tap cursor-pointer ${
+                      isCurrent
+                        ? 'bg-amber-100/90 border-amber-400 ring-3 ring-amber-300 shadow-md'
+                        : isUnlocked
+                        ? 'bg-white hover:bg-amber-50/50 border-amber-200 shadow-sm'
+                        : 'bg-gray-50 border-gray-200 opacity-60'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl sm:text-4xl">{lvl.badgeEmoji}</span>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-black text-sm sm:text-base text-gray-900">
+                            Level {lvl.id}: {lvl.title}
+                          </h4>
+                          {isCurrent && (
+                            <span className="text-[10px] bg-amber-500 text-white font-bold px-2 py-0.5 rounded-full">
+                              Playing Now
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs font-bold text-gray-600">
+                          Sounds: {lvl.letterIds.map((l) => l.toUpperCase()).join('  •  ')}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="text-right shrink-0">
+                      {isUnlocked ? (
+                        <div className="flex items-center gap-1 font-black text-amber-700 text-xs sm:text-sm bg-amber-50 px-2.5 py-1 rounded-xl border border-amber-200">
+                          <Star className="w-4 h-4 fill-amber-400 text-amber-500" />
+                          <span>{lvlStars}/{maxStars}</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1 text-xs text-gray-400 font-bold bg-gray-100 px-2.5 py-1 rounded-xl border border-gray-200">
+                          <Lock className="w-3.5 h-3.5" />
+                          <span>{lvl.requiredStarsToUnlock}★</span>
+                        </div>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Top Header: Clean, Chunky, Toddler-Proof (Home, Island Badge, Explorer) */}
+      <header className="flex justify-between items-center w-full gap-2 pt-1 pb-1">
+        {/* Chunky Home Button (60x60px) */}
         <button
           onClick={() => {
             audioService.playPop();
             onGoHome();
           }}
           aria-label="Go Home"
-          className="w-13 h-13 sm:w-16 sm:h-16 rounded-3xl bg-white shadow-md border-3 border-amber-200 flex items-center justify-center text-amber-700 squish-tap shrink-0 cursor-pointer"
+          className="w-14 h-14 sm:w-16 sm:h-16 rounded-3xl bg-white shadow-[0_4px_0_#FDE68A] border-3 border-amber-200 flex items-center justify-center text-amber-700 squish-tap shrink-0 cursor-pointer hover:scale-105 active:scale-95"
         >
-          <Home className="w-6 h-6 sm:w-8 sm:h-8" />
+          <Home className="w-7 h-7 sm:w-8 sm:h-8" />
         </button>
 
-        {/* Level Title & Total Stars */}
-        <div className="flex items-center gap-2 bg-white/90 backdrop-blur-md px-3 sm:px-5 py-2 rounded-full border-3 border-amber-200 shadow-sm">
-          <span className="text-xl sm:text-2xl">{activeLevel.badgeEmoji}</span>
+        {/* Level & Stars Island Badge (Tapping opens World Map Modal) */}
+        <button
+          onClick={() => {
+            audioService.playChime();
+            setIsMapModalOpen(true);
+          }}
+          aria-label="Open Phonics World Map"
+          className="flex items-center gap-2 sm:gap-3 bg-white/95 backdrop-blur-md px-4 sm:px-6 py-2.5 rounded-full border-3 border-amber-200 shadow-[0_4px_0_#FDE68A] squish-tap cursor-pointer hover:scale-103"
+        >
+          <span className="text-2xl sm:text-3xl">{activeLevel.badgeEmoji}</span>
           <div className="text-left">
-            <h2 className="text-xs sm:text-sm font-black text-gray-900 leading-tight">
-              Level {activeLevel.id}: {activeLevel.title}
-            </h2>
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs sm:text-sm font-black text-gray-900 leading-tight">
+                Level {activeLevel.id}
+              </span>
+              <MapPin className="w-3.5 h-3.5 text-amber-500" />
+            </div>
             <div className="flex items-center gap-1 text-[11px] font-extrabold text-amber-600">
               <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
               <span>{progress.totalStars} Stars</span>
             </div>
           </div>
-        </div>
+        </button>
 
-        {/* Shortcut to Letter Detail */}
+        {/* Chunky Explorer Shortcut Button (60x60px) */}
         <button
           onClick={() => {
             audioService.playPop();
             onExploreLetter(currentLetter.id);
           }}
           aria-label={`Explore letter ${currentLetter.symbol}`}
-          className="w-13 h-13 sm:w-16 sm:h-16 rounded-3xl bg-white shadow-md border-3 border-amber-200 flex flex-col items-center justify-center text-amber-800 squish-tap shrink-0 hover:scale-105 cursor-pointer"
+          className="w-14 h-14 sm:w-16 sm:h-16 rounded-3xl bg-white shadow-[0_4px_0_#FDE68A] border-3 border-amber-200 flex flex-col items-center justify-center text-amber-800 squish-tap shrink-0 hover:scale-105 cursor-pointer active:scale-95"
           title={`Explore Letter ${currentLetter.symbol}`}
         >
-          <BookOpen className="w-5 h-5 sm:w-7 sm:h-7 text-amber-600" />
+          <BookOpen className="w-6 h-6 sm:w-7 sm:h-7 text-amber-600" />
           <span className="text-[10px] font-black leading-none mt-0.5">{currentLetter.symbol}</span>
         </button>
       </header>
 
-      {/* 7 Levels Navigation Ribbon */}
-      <div className="w-full my-1">
-        <div className="flex items-center gap-1.5 overflow-x-auto py-1 px-1 no-scrollbar touch-pan-x">
-          {CURRICULUM_LEVELS.map((lvl) => {
-            const isUnlocked = progress.unlockedLevels.includes(lvl.id);
-            const isSelected = selectedLevelId === lvl.id;
-            return (
-              <button
-                key={lvl.id}
-                onClick={() => handleSelectLevel(lvl.id)}
-                className={`px-3 py-1.5 rounded-2xl text-xs sm:text-sm font-black whitespace-nowrap transition-all squish-tap flex items-center gap-1.5 shrink-0 border-2 cursor-pointer ${
-                  isSelected
-                    ? 'bg-amber-500 text-white shadow-md border-amber-600 scale-105 ring-2 ring-amber-300'
-                    : isUnlocked
-                    ? 'bg-white/90 text-amber-950 border-amber-200 hover:bg-white'
-                    : 'bg-gray-100 text-gray-400 border-gray-300 opacity-60'
-                }`}
-                title={lvl.title}
-              >
-                <span>{lvl.badgeEmoji}</span>
-                <span>L{lvl.id}</span>
-                {!isUnlocked && <Lock className="w-3 h-3 text-gray-400" />}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Level Sounds (Stepping Stones) - Shows ONLY current level's letters */}
-      <div className="w-full my-1 flex justify-center">
-        <div className="flex items-center gap-2 sm:gap-3 p-1.5 bg-white/70 backdrop-blur-md rounded-3xl border-2 border-amber-200 shadow-xs max-w-md w-full justify-around">
+      {/* 4. Giant Stepping Stones Bar (Active Level's Sounds: Big, Juicy, 70px+ targets) */}
+      <div className="w-full my-1 flex justify-center shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 bg-white/80 backdrop-blur-md rounded-3xl border-3 border-amber-200 shadow-sm max-w-md w-full justify-around">
           {activeLevel.letterIds.map((letterId) => {
             const letter = getLetterById(letterId);
             const isSelected = selectedLetterId === letterId;
@@ -334,29 +408,28 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
                   setSelectedLetterId(letterId);
                   setCurrentObjectIndex(0);
                 }}
-                className={`flex-1 py-1.5 px-2 rounded-2xl flex flex-col items-center justify-center transition-all squish-tap cursor-pointer border-2 ${
+                className={`flex-1 h-16 sm:h-20 rounded-2xl flex flex-col items-center justify-center transition-all squish-tap cursor-pointer border-3 ${
                   isSelected
-                    ? 'scale-108 shadow-md ring-3 ring-amber-400 font-black'
+                    ? 'scale-110 shadow-lg ring-4 ring-amber-400 font-black border-amber-500'
                     : 'opacity-85 hover:opacity-100 hover:scale-102 border-transparent'
                 }`}
                 style={{
                   backgroundColor: letter.colorTheme.badgeBg,
-                  borderColor: isSelected ? letter.colorTheme.primary : 'transparent',
                 }}
               >
                 <span
-                  className="text-xl sm:text-2xl font-black font-fun"
+                  className="text-2xl sm:text-3xl font-black font-fun leading-none"
                   style={{ color: letter.colorTheme.text }}
                 >
                   {letter.symbol}
                 </span>
 
                 {/* Stars Indicator for this sound */}
-                <div className="flex gap-0.5 mt-0.5">
+                <div className="flex gap-0.5 mt-1">
                   {[1, 2, 3].map((starIdx) => (
                     <Star
                       key={starIdx}
-                      className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${
+                      className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${
                         starIdx <= stars
                           ? 'fill-amber-400 text-amber-500'
                           : 'fill-gray-200 text-gray-300'
@@ -370,13 +443,13 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
         </div>
       </div>
 
-      {/* Main Play Area */}
-      <main className="flex-1 flex flex-col items-center justify-center my-1 sm:my-2">
-        {/* Companion Milo with speech bubble */}
+      {/* 5. Main Hero Arena: Large Character + Giant Tactile Sound Card */}
+      <main className="flex-1 flex flex-col items-center justify-center my-auto min-h-0">
+        {/* Companion Milo with friendly speech bubble */}
         <CharacterMilo
           size="md"
           speechBubble={miloSpeech}
-          className="mb-2"
+          className="mb-1 sm:mb-2 shrink-0"
           onTap={() => {
             setMiloSpeech(currentObject.spokenIntro);
             audioService.playPhonemeWordBlend(
@@ -387,100 +460,93 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
           }}
         />
 
-        {/* Big Interactive Sound & Object Stage */}
+        {/* Central Giant Interactive Sound & Object Stage */}
         <div className="relative w-full max-w-sm flex flex-col items-center justify-center">
           {/* Glowing Aura Background */}
           <div
-            className="absolute inset-0 rounded-full filter blur-2xl opacity-40 animate-pulse-glow"
+            className="absolute inset-0 rounded-full filter blur-3xl opacity-35 animate-pulse-glow"
             style={{ backgroundColor: currentObject.accentColor }}
           />
 
-          {/* Interactive Card */}
+          {/* Huge Touch Hero Card */}
           <button
             onClick={handleTapObject}
             aria-label={`Tap ${currentObject.name}`}
-            className={`squish-tap relative w-56 h-56 sm:w-68 sm:h-68 rounded-5xl border-8 shadow-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 focus:outline-none ${
+            className={`squish-tap relative w-64 h-64 sm:w-76 sm:h-76 rounded-5xl border-8 shadow-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 focus:outline-none ${
               isObjectAnimating
-                ? 'scale-110 rotate-3 shadow-[0_20px_35px_rgba(0,0,0,0.15)]'
-                : 'hover:scale-104 shadow-[0_12px_24px_rgba(0,0,0,0.1)]'
+                ? 'scale-108 rotate-2 shadow-[0_20px_35px_rgba(0,0,0,0.2)]'
+                : 'hover:scale-103 shadow-[0_12px_24px_rgba(0,0,0,0.12)]'
             }`}
             style={{
               backgroundColor: currentObject.bgColor,
               borderColor: currentObject.accentColor,
             }}
           >
-            {/* Top Phoneme Pill */}
+            {/* Clean Phoneme Pill (NO //s// bug, strictly /{cleanPhoneme}/) */}
             <div
               onClick={(e) => {
                 e.stopPropagation();
                 handleTapLetter();
               }}
-              className={`absolute -top-3 px-4 py-1 rounded-full bg-white shadow-md border-2 flex items-center gap-1 font-black text-sm sm:text-base cursor-pointer transition-transform ${
-                isLetterAnimating ? 'scale-125 rotate-6' : 'hover:scale-105'
+              className={`absolute -top-4 px-5 py-1.5 rounded-full bg-white shadow-md border-3 flex items-center gap-1.5 font-black text-base sm:text-lg cursor-pointer transition-transform ${
+                isLetterAnimating ? 'scale-125 rotate-6' : 'hover:scale-108'
               }`}
               style={{ borderColor: currentLetter.colorTheme.primary, color: currentLetter.colorTheme.text }}
             >
-              <span>/{currentLetter.phoneme}/</span>
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>/{cleanPhoneme}/</span>
+              <Sparkles className="w-4 h-4 text-amber-500" />
             </div>
 
             {/* Giant Visual Emoji / Illustration */}
             <span
-              className={`text-8xl sm:text-9xl transition-transform duration-300 filter drop-shadow-md ${
+              className={`text-8xl sm:text-9xl transition-transform duration-300 filter drop-shadow-md select-none ${
                 isObjectAnimating ? 'scale-120 animate-wiggle' : ''
               }`}
             >
               {currentObject.emoji}
             </span>
 
-            {/* Friendly Object Name */}
+            {/* Friendly Big Object Name */}
             <span
-              className="mt-1 sm:mt-2 text-2xl sm:text-3xl font-black font-fun tracking-wide capitalize"
+              className="mt-2 text-3xl sm:text-4xl font-black font-fun tracking-wide capitalize select-none"
               style={{ color: currentObject.accentColor }}
             >
               {currentObject.name}
             </span>
           </button>
         </div>
-
-        {/* Decodable Word Preview Pill */}
-        <div className="mt-2 text-center">
-          <p className="text-[11px] font-extrabold text-amber-800 bg-amber-100/70 px-3 py-1 rounded-full border border-amber-200">
-            📖 Level Words: {activeLevel.decodableWordsPreview.join(' • ')}
-          </p>
-        </div>
       </main>
 
-      {/* Toddler-Friendly Action Controls: Repeat, Surprise Me, & Next */}
-      <footer className="w-full flex justify-center items-center gap-3 sm:gap-4 pt-1 pb-1">
-        {/* Repeat Button */}
+      {/* 6. Big, Juicy, Toddler-Proof Action Buttons (Guaranteed 72px-84px tall!) */}
+      <footer className="w-full flex justify-center items-center gap-3 sm:gap-4 pt-2 pb-2 shrink-0">
+        {/* Big Circular Audio Replay Button */}
         <button
           onClick={handleTapObject}
           aria-label="Play sound again"
-          className="squish-tap w-15 h-15 sm:w-18 sm:h-18 rounded-3xl bg-white text-amber-700 border-4 border-amber-300 shadow-[0_5px_0_#D97706] flex flex-col items-center justify-center shrink-0 cursor-pointer"
+          className="squish-tap w-18 h-18 sm:w-22 sm:h-22 rounded-4xl bg-white text-amber-700 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex flex-col items-center justify-center shrink-0 cursor-pointer"
         >
-          <RotateCcw className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2.5]" />
-          <span className="text-[10px] sm:text-xs font-black mt-0.5">Again</span>
+          <RotateCcw className="w-7 h-7 sm:w-9 sm:h-9 stroke-[2.5]" />
+          <span className="text-xs sm:text-sm font-black mt-0.5">Again</span>
         </button>
 
-        {/* Surprise Me Button (Level-specific random jump) */}
+        {/* Big Surprise Me Button */}
         <button
           onClick={handleSurprise}
           aria-label="Random Surprise in Level"
-          className="squish-tap flex-1 max-w-[170px] sm:max-w-[200px] h-15 sm:h-18 rounded-3xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white border-4 border-purple-400 shadow-[0_5px_0_#6D28D9] flex items-center justify-center gap-2 font-black text-base sm:text-xl cursor-pointer"
+          className="squish-tap flex-1 max-w-[170px] sm:max-w-[200px] h-18 sm:h-22 rounded-4xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white border-4 border-purple-400 shadow-[0_6px_0_#6D28D9] active:translate-y-1 active:shadow-[0_2px_0_#6D28D9] flex items-center justify-center gap-2 font-black text-lg sm:text-2xl cursor-pointer"
         >
-          <Dices className="w-5 h-5 sm:w-6 sm:h-6 animate-wiggle" />
+          <Dices className="w-6 h-6 sm:w-7 sm:h-7 animate-wiggle" />
           <span>Surprise!</span>
         </button>
 
-        {/* Big Next Button */}
+        {/* Big Juicy Next Button */}
         <button
           onClick={handleNext}
           aria-label="Next Sound"
-          className="squish-tap flex-1 max-w-[150px] sm:max-w-[180px] h-15 sm:h-18 rounded-3xl bg-bubble-yellow text-amber-950 border-4 border-amber-300 shadow-[0_5px_0_#D97706] flex items-center justify-center gap-2 font-black text-base sm:text-xl cursor-pointer"
+          className="squish-tap flex-1 max-w-[170px] sm:max-w-[200px] h-18 sm:h-22 rounded-4xl bg-bubble-yellow text-amber-950 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex items-center justify-center gap-2 font-black text-lg sm:text-2xl cursor-pointer"
         >
           <span>Next</span>
-          <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 stroke-[3]" />
+          <ArrowRight className="w-6 h-6 sm:w-8 sm:h-8 stroke-[3]" />
         </button>
       </footer>
     </div>
