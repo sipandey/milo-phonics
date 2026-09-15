@@ -67,12 +67,42 @@ export interface LetterData {
   phonemeAudioId: string;   // e.g. "phoneme.m"
 }
 
+export interface PhonicsLevel {
+  id: number;
+  title: string;
+  subtitle: string;
+  badgeEmoji: string;
+  letterIds: string[];
+  requiredStarsToUnlock: number;
+  colorTheme: {
+    from: string;
+    to: string;
+    accent: string;
+    cardBg: string;
+    border: string;
+  };
+  decodableWordsPreview: string[];
+}
+
+export interface LevelProgress {
+  levelId: number;
+  unlocked: boolean;
+  starsEarned: number;
+  completed: boolean;
+}
+
 export interface ChildProgress {
+  currentLevelId: number;
+  unlockedLevels: number[];
+  letterStars: Record<string, number>; // letterId -> 0..3 stars
+  levels: Record<number, LevelProgress>;
+  totalStars: number;
   exploredLetters: Record<string, number>;
   exploredObjects: Record<string, number>;
   totalTaps: number;
   lastPlayed: string;
   lastLetter: string;
+  cloudSyncedAt?: string;
 }
 
 export interface AudioSettings {

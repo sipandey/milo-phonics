@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { getAllLetters } from '../../data/lettersData';
 import { audioService } from '../../services/audioService';
 import { progressService } from '../../services/progressService';
-import { Home, Volume2 } from 'lucide-react';
+import { Home, Volume2, Star } from 'lucide-react';
 
 interface LetterSelectScreenProps {
   onSelectLetter: (letterId: string) => void;
@@ -15,6 +15,11 @@ export const LetterSelectScreen: React.FC<LetterSelectScreenProps> = ({
 }) => {
   const letters = getAllLetters();
   const [playingLetterId, setPlayingLetterId] = useState<string | null>(null);
+  const [progress, setProgress] = useState(progressService.getProgress());
+
+  React.useEffect(() => {
+    return progressService.subscribe((updated) => setProgress(updated));
+  }, []);
 
   const handlePlaySoundOnly = (e: React.MouseEvent, phonemeAudioId: string, letterId: string) => {
     e.stopPropagation();
@@ -93,6 +98,20 @@ export const LetterSelectScreen: React.FC<LetterSelectScreenProps> = ({
                   boxShadow: `0 6px 0 ${letter.colorTheme.primary}30`,
                 }}
               >
+                {/* Star rating badge on top-left */}
+                <div className="absolute top-3 left-3 flex gap-0.5">
+                  {[1, 2, 3].map((starNum) => (
+                    <Star
+                      key={starNum}
+                      className={`w-3.5 h-3.5 ${
+                        starNum <= (progress.letterStars[letter.id] || 0)
+                          ? 'fill-amber-400 text-amber-500'
+                          : 'fill-black/10 text-transparent'
+                      }`}
+                    />
+                  ))}
+                </div>
+
                 {/* Speaker icon in corner for instant sound playback */}
                 <button
                   onClick={(e) => handlePlaySoundOnly(e, letter.phonemeAudioId, letter.id)}
