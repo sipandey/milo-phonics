@@ -113,4 +113,17 @@ export interface AudioSettings {
   selectedVoiceName: string | null;
 }
 
-export type ScreenType = 'home' | 'lets-play' | 'letters' | 'letter-detail' | 'sound-safari' | 'story' | 'parent' | 'oxford-sounds';
+export interface BlendingWord {
+  id: string;
+  word: string;
+  levelId: number;
+  phonemeAudioIds: string[]; // e.g. ['phoneme.s', 'phoneme.a', 'phoneme.t']
+  letters: string[];         // e.g. ['s', 'a', 't']
+  emoji: string;             // e.g. '🐈'
+  meaning: string;           // e.g. 'Sat on a mat'
+  wordAudioId?: string;      // e.g. 'word.sat' or fallback
+  color: string;
+}
+
+export type ScreenType = 'home' | 'lets-play' | 'letters' | 'letter-detail' | 'sound-safari' | 'story' | 'parent' | 'oxford-sounds' | 'sound-train';
+

@@ -5,6 +5,7 @@ import { LetsPlayScreen } from './components/play/LetsPlayScreen';
 import { LetterSelectScreen } from './components/letter/LetterSelectScreen';
 import { LetterDetailScreen } from './components/letter/LetterDetailScreen';
 import { OxfordSoundsScreen } from './components/sounds/OxfordSoundsScreen';
+import { SoundTrainScreen } from './components/train/SoundTrainScreen';
 import { ParentGateModal } from './components/common/ParentGateModal';
 import { ParentDashboard } from './components/parent/ParentDashboard';
 import { TeaserModal } from './components/common/TeaserModal';
@@ -23,6 +24,10 @@ export function App() {
 
   const handleStartPlay = () => {
     setCurrentScreen('lets-play');
+  };
+
+  const handleOpenSoundTrain = () => {
+    setCurrentScreen('sound-train');
   };
 
   const handleOpenLetters = () => {
@@ -68,6 +73,7 @@ export function App() {
       {currentScreen === 'home' && (
         <HomeScreen
           onStartPlay={handleStartPlay}
+          onOpenSoundTrain={handleOpenSoundTrain}
           onOpenLetters={handleOpenLetters}
           onOpenOxfordSounds={handleOpenOxfordSounds}
           onOpenParentGate={handleOpenParentGate}
@@ -75,10 +81,17 @@ export function App() {
         />
       )}
 
+      {currentScreen === 'sound-train' && (
+        <SoundTrainScreen
+          onGoHome={handleGoHome}
+        />
+      )}
+
       {currentScreen === 'lets-play' && (
         <LetsPlayScreen
           onGoHome={handleGoHome}
           onExploreLetter={handleSelectLetter}
+          onOpenSoundTrain={handleOpenSoundTrain}
         />
       )}
 

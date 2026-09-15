@@ -22,11 +22,13 @@ import {
 interface LetsPlayScreenProps {
   onGoHome: () => void;
   onExploreLetter: (letterId: string) => void;
+  onOpenSoundTrain?: () => void;
 }
 
 export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
   onGoHome,
   onExploreLetter,
+  onOpenSoundTrain,
 }) => {
   const [progress, setProgress] = useState<ChildProgress>(progressService.getProgress());
   const [selectedLevelId, setSelectedLevelId] = useState<number>(progress.currentLevelId || 1);
@@ -377,19 +379,37 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
           </div>
         </button>
 
-        {/* Chunky Explorer Shortcut Button (60x60px) */}
-        <button
-          onClick={() => {
-            audioService.playPop();
-            onExploreLetter(currentLetter.id);
-          }}
-          aria-label={`Explore letter ${currentLetter.symbol}`}
-          className="w-14 h-14 sm:w-16 sm:h-16 rounded-3xl bg-white shadow-[0_4px_0_#FDE68A] border-3 border-amber-200 flex flex-col items-center justify-center text-amber-800 squish-tap shrink-0 hover:scale-105 cursor-pointer active:scale-95"
-          title={`Explore Letter ${currentLetter.symbol}`}
-        >
-          <BookOpen className="w-6 h-6 sm:w-7 sm:h-7 text-amber-600" />
-          <span className="text-[10px] font-black leading-none mt-0.5">{currentLetter.symbol}</span>
-        </button>
+        {/* Right Header Buttons: Sound Train & Letter Explorer */}
+        <div className="flex items-center gap-1.5 shrink-0">
+          {onOpenSoundTrain && (
+            <button
+              onClick={() => {
+                audioService.playPop();
+                onOpenSoundTrain();
+              }}
+              aria-label="Blend Words in Sound Train"
+              className="w-13 h-13 sm:w-16 sm:h-16 rounded-3xl bg-white shadow-[0_4px_0_#A7F3D0] border-3 border-emerald-300 flex flex-col items-center justify-center text-emerald-800 squish-tap shrink-0 hover:scale-105 cursor-pointer active:scale-95"
+              title="Blend Words in Sound Train 🚂"
+            >
+              <span className="text-xl sm:text-2xl leading-none">🚂</span>
+              <span className="text-[9px] font-black leading-none mt-0.5 text-emerald-800">TRAIN</span>
+            </button>
+          )}
+
+          {/* Chunky Explorer Shortcut Button */}
+          <button
+            onClick={() => {
+              audioService.playPop();
+              onExploreLetter(currentLetter.id);
+            }}
+            aria-label={`Explore letter ${currentLetter.symbol}`}
+            className="w-13 h-13 sm:w-16 sm:h-16 rounded-3xl bg-white shadow-[0_4px_0_#FDE68A] border-3 border-amber-200 flex flex-col items-center justify-center text-amber-800 squish-tap shrink-0 hover:scale-105 cursor-pointer active:scale-95"
+            title={`Explore Letter ${currentLetter.symbol}`}
+          >
+            <BookOpen className="w-5 h-5 sm:w-7 sm:h-7 text-amber-600" />
+            <span className="text-[10px] font-black leading-none mt-0.5">{currentLetter.symbol}</span>
+          </button>
+        </div>
       </header>
 
       {/* 4. Giant Stepping Stones Bar (Active Level's Sounds: Big, Juicy, 70px+ targets) */}

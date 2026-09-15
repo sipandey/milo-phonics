@@ -308,6 +308,43 @@ class AudioService {
   }
 
   /**
+   * Sequential CVC Blending for the Sound Train:
+   * Plays each phoneme one-by-one with highlight callback, pauses, then speaks the blended word.
+   */
+  public async playSequentialBlend(
+    phonemeAudioIds: string[],
+    wordAudioId?: string,
+    fallbackWordText?: string,
+    onHighlight?: (index: number) => void
+  ): Promise<void> {
+    if (this.isMuted) return;
+
+    // 1. Play each phoneme sequentially
+    for (let i = 0; i < phonemeAudioIds.length; i++) {
+      onHighlight?.(i);
+      this.playBoing();
+      await this.playVoice(phonemeAudioIds[i], { interrupt: true });
+      await new Promise((resolve) => setTimeout(resolve, 220));
+    }
+
+    onHighlight?.(-1);
+    await new Promise((resolve) => setTimeout(resolve, 320));
+
+    // 2. Play the final blended whole word
+    if (wordAudioId) {
+      const wordEntry = getAudioEntry(wordAudioId);
+      if (wordEntry?.url) {
+        await this.playVoice(wordAudioId, { interrupt: false });
+        return;
+      }
+    }
+
+    if (fallbackWordText) {
+      await this.speak(fallbackWordText, { interrupt: false, rate: 0.65 });
+    }
+  }
+
+  /**
    * Stop only remote audio element
    */
   private stopRemoteAudio() {

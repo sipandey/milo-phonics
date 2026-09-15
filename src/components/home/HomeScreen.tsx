@@ -6,6 +6,7 @@ import { Settings, Volume2, VolumeX } from 'lucide-react';
 
 interface HomeScreenProps {
   onStartPlay: () => void;
+  onOpenSoundTrain: () => void;
   onOpenLetters: () => void;
   onOpenOxfordSounds: () => void;
   onOpenParentGate: () => void;
@@ -14,6 +15,7 @@ interface HomeScreenProps {
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
   onStartPlay,
+  onOpenSoundTrain,
   onOpenLetters,
   onOpenOxfordSounds,
   onOpenParentGate,
@@ -89,16 +91,26 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           }}
         />
 
-        {/* Big Main Entry Button: Let's Play */}
-        <div className="w-full max-w-md px-2 mb-6">
+        {/* Two Main Toddler Adventures: Sound Sets & Sound Train */}
+        <div className="w-full max-w-xl px-2 mb-4 sm:mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <BigButton
             variant="yellow"
-            size="xl"
+            size="lg"
             onClick={onStartPlay}
             className="w-full animate-pulse-glow"
-            icon={<span className="text-5xl">🦁</span>}
+            icon={<span className="text-4xl sm:text-5xl">🦁</span>}
             label="Let's Play!"
-            badge="Start here!"
+            badge="Sound Sets 🌱"
+          />
+
+          <BigButton
+            variant="green"
+            size="lg"
+            onClick={onOpenSoundTrain}
+            className="w-full"
+            icon={<span className="text-4xl sm:text-5xl">🚂</span>}
+            label="Sound Train!"
+            badge="Blend Words 🔤"
           />
         </div>
 
