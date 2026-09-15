@@ -45,3 +45,15 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Floating touch ripple for toddler listen mode */
+@keyframes floatUp {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -130%) scale(1.35);
+  }
+}

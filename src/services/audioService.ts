@@ -35,6 +35,8 @@ class AudioService {
   // Speech listener callbacks for visual mouth sync (used by CharacterMilo)
   private speechStartListeners: Set<() => void> = new Set();
   private speechEndListeners: Set<() => void> = new Set();
+  private busyChangeListeners: Set<(busy: boolean) => void> = new Set();
+  private isBusy: boolean = false;
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -109,21 +111,45 @@ class AudioService {
     return this.isMuted;
   }
 
-  public onSpeechStart(callback: () => void) {
+  public onSpeechStart(callback: () => void): () => void {
     this.speechStartListeners.add(callback);
-    return () => this.speechStartListeners.delete(callback);
+    return () => {
+      this.speechStartListeners.delete(callback);
+    };
   }
 
-  public onSpeechEnd(callback: () => void) {
+  public onSpeechEnd(callback: () => void): () => void {
     this.speechEndListeners.add(callback);
-    return () => this.speechEndListeners.delete(callback);
+    return () => {
+      this.speechEndListeners.delete(callback);
+    };
+  }
+
+  public isBusyPlaying(): boolean {
+    return this.isBusy;
+  }
+
+  public onBusyChange(callback: (busy: boolean) => void): () => void {
+    this.busyChangeListeners.add(callback);
+    return () => {
+      this.busyChangeListeners.delete(callback);
+    };
+  }
+
+  public setBusy(busy: boolean) {
+    if (this.isBusy !== busy) {
+      this.isBusy = busy;
+      this.busyChangeListeners.forEach(cb => cb(busy));
+    }
   }
 
   private notifySpeechStart() {
+    this.setBusy(true);
     this.speechStartListeners.forEach(cb => cb());
   }
 
   private notifySpeechEnd() {
+    this.setBusy(false);
     this.speechEndListeners.forEach(cb => cb());
   }
 
@@ -292,26 +318,27 @@ class AudioService {
   ): Promise<void> {
     if (this.isMuted) return;
 
-    // 1. Play authentic Oxford isolated phoneme sound
-    await this.playVoice(phonemeAudioId, { interrupt: true });
+    this.setBusy(true);
+    try {
+      // 1. Play authentic Oxford isolated phoneme sound
+      await this.playVoice(phonemeAudioId, { interrupt: true });
 
-    // 2. Short breath pause for toddler comprehension
-    await new Promise((resolve) => setTimeout(resolve, 280));
+      // 2. Short breath pause for toddler comprehension
+      await new Promise((resolve) => setTimeout(resolve, 280));
 
-    // 3. Play the authentic / slow AI-generated word audio asset
-    const wordEntry = getAudioEntry(wordAudioId);
-    if (wordEntry?.url) {
-      await this.playVoice(wordAudioId, { interrupt: false });
-    } else {
-      const textToSpeak = fallbackWordText || wordEntry?.fallbackText || wordAudioId.replace(/^word\.[a-z]-?/, '');
-      await this.speak(textToSpeak, { interrupt: false, rate: 0.65 });
+      // 3. Play the authentic / slow AI-generated word audio asset
+      const wordEntry = getAudioEntry(wordAudioId);
+      if (wordEntry?.url) {
+        await this.playVoice(wordAudioId, { interrupt: false });
+      } else {
+        const textToSpeak = fallbackWordText || wordEntry?.fallbackText || wordAudioId.replace(/^word\.[a-z]-?/, '');
+        await this.speak(textToSpeak, { interrupt: false, rate: 0.65 });
+      }
+    } finally {
+      this.setBusy(false);
     }
   }
 
-  /**
-   * Sequential CVC Blending for the Sound Train:
-   * Plays each phoneme one-by-one with highlight callback, pauses, then speaks the blended word.
-   */
   /**
    * Sequential CVC Blending for the Sound Train:
    * Plays each phoneme one-by-one with highlight callback, pauses, then speaks the blended word.
@@ -324,42 +351,47 @@ class AudioService {
   ): Promise<void> {
     if (this.isMuted) return;
 
-    // 1. Play each phoneme sequentially
-    for (let i = 0; i < phonemeAudioIds.length; i++) {
-      onHighlight?.(i);
-      this.playBoing();
-      await this.playVoice(phonemeAudioIds[i], { interrupt: true });
-      await new Promise((resolve) => setTimeout(resolve, 220));
-    }
-
-    onHighlight?.(-1);
-    await new Promise((resolve) => setTimeout(resolve, 320));
-
-    // 2. Play the final blended whole word
-    // Priority A: Dedicated CVC audio asset (local /audio/cvc/ or Cloudinary)
-    const cleanWord = (fallbackWordText || wordAudioId || '').toLowerCase().replace(/^(word|cvc)\./, '');
-    if (cleanWord) {
-      const cvcUrl = getCvcWordAudioUrl(cleanWord);
-      try {
-        await this.playRemoteVoice(cvcUrl, cleanWord, { interrupt: false });
-        return;
-      } catch {
-        // Fall through to other audio entry if CVC play fails
+    this.setBusy(true);
+    try {
+      // 1. Play each phoneme sequentially
+      for (let i = 0; i < phonemeAudioIds.length; i++) {
+        onHighlight?.(i);
+        this.playBoing();
+        await this.playVoice(phonemeAudioIds[i], { interrupt: true });
+        await new Promise((resolve) => setTimeout(resolve, 220));
       }
-    }
 
-    // Priority B: Audio Manifest entry (e.g. word.p-pan)
-    if (wordAudioId) {
-      const wordEntry = getAudioEntry(wordAudioId);
-      if (wordEntry?.url) {
-        await this.playVoice(wordAudioId, { interrupt: false });
-        return;
+      onHighlight?.(-1);
+      await new Promise((resolve) => setTimeout(resolve, 320));
+
+      // 2. Play the final blended whole word
+      // Priority A: Dedicated CVC audio asset (local /audio/cvc/ or Cloudinary)
+      const cleanWord = (fallbackWordText || wordAudioId || '').toLowerCase().replace(/^(word|cvc)\./, '');
+      if (cleanWord) {
+        const cvcUrl = getCvcWordAudioUrl(cleanWord);
+        try {
+          await this.playRemoteVoice(cvcUrl, cleanWord, { interrupt: false });
+          return;
+        } catch {
+          // Fall through to other audio entry if CVC play fails
+        }
       }
-    }
 
-    // Priority C: SpeechSynthesis fallback
-    if (fallbackWordText) {
-      await this.speak(fallbackWordText, { interrupt: false, rate: 0.65 });
+      // Priority B: Audio Manifest entry (e.g. word.p-pan)
+      if (wordAudioId) {
+        const wordEntry = getAudioEntry(wordAudioId);
+        if (wordEntry?.url) {
+          await this.playVoice(wordAudioId, { interrupt: false });
+          return;
+        }
+      }
+
+      // Priority C: SpeechSynthesis fallback
+      if (fallbackWordText) {
+        await this.speak(fallbackWordText, { interrupt: false, rate: 0.65 });
+      }
+    } finally {
+      this.setBusy(false);
     }
   }
 

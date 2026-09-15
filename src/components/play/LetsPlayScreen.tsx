@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { CharacterMilo } from '../common/CharacterMilo';
 import { triggerGentleConfetti } from '../common/ParticleEffects';
+import { ListenRipple } from '../common/ListenRipple';
 import { audioService } from '../../services/audioService';
 import { progressService } from '../../services/progressService';
 import { CURRICULUM_LEVELS, getLevelById } from '../../data/curriculumData';
@@ -77,7 +78,33 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
   const [isLetterAnimating, setIsLetterAnimating] = useState(false);
   const [miloSpeech, setMiloSpeech] = useState<string | null>("Let's explore this sound!");
   const [levelUnlockAlert, setLevelUnlockAlert] = useState<number | null>(null);
+  const [isAudioBusy, setIsAudioBusy] = useState<boolean>(false);
+  const [justFinishedAudio, setJustFinishedAudio] = useState<boolean>(false);
+  const lastActionTime = useRef<number>(0);
   const hasIntroduced = useRef(false);
+
+  // Subscribe to audio busy states to manage listening aura
+  useEffect(() => {
+    const unsub = audioService.onBusyChange((busy) => {
+      setIsAudioBusy(busy);
+      if (!busy) {
+        setJustFinishedAudio(true);
+        setMiloSpeech("Your turn! Tap the card or tap Next! 🌟");
+        setTimeout(() => setJustFinishedAudio(false), 2600);
+      }
+    });
+    return unsub;
+  }, []);
+
+  // Debounce guard: absorbs rapid multi-clicks to prevent audio churn
+  const canAct = () => {
+    const now = Date.now();
+    if (isAudioBusy || now - lastActionTime.current < 600) {
+      return false;
+    }
+    lastActionTime.current = now;
+    return true;
+  };
 
   // Intro playback when object changes
   useEffect(() => {
@@ -109,9 +136,10 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
 
   // Tap Object interaction: plays sound blend, awards stars, checks unlock
   const handleTapObject = () => {
+    if (!canAct()) return;
     setIsObjectAnimating(true);
     audioService.playSoundEffect(currentObject.soundType);
-    setMiloSpeech(currentObject.spokenIntro);
+    setMiloSpeech("Listen closely! 👂🎶");
 
     const { newlyEarned, newlyUnlockedLevels } = progressService.recordObjectInteraction(
       currentObject.id,
@@ -143,6 +171,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
 
   // Tap Letter badge / phoneme pill
   const handleTapLetter = () => {
+    if (!canAct()) return;
     setIsLetterAnimating(true);
     audioService.playBoing();
     setMiloSpeech(`/${cleanPhoneme}/`);
@@ -168,6 +197,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
 
   // Next object for the letter, or cycle to next letter in the level
   const handleNext = () => {
+    if (!canAct()) return;
     audioService.playPop();
     const objs = currentLetter.objects;
     if (currentObjectIndex + 1 < objs.length) {
@@ -183,6 +213,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
 
   // Random surprise within the active level
   const handleSurprise = () => {
+    if (!canAct()) return;
     audioService.playChime();
     triggerGentleConfetti();
     const randomLetterId = activeLevel.letterIds[Math.floor(Math.random() * activeLevel.letterIds.length)];
@@ -214,6 +245,13 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
 
   return (
     <div className="h-[100dvh] max-h-[100dvh] w-full flex flex-col justify-between p-2.5 sm:p-4 max-w-4xl mx-auto relative z-10 select-none overflow-hidden">
+      {/* 0. Listening Ripple Overlay (Absorbs touch churn & protects audio playback) */}
+      <ListenRipple
+        isActive={isAudioBusy}
+        hintText="Shh... Listen closely! 👂🎶"
+        onTap={() => setMiloSpeech("Listen closely with Milo! 👂🎶")}
+      />
+
       {/* 1. Level Unlock Celebration Modal */}
       {levelUnlockAlert && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-pop-in">
@@ -342,7 +380,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
       )}
 
       {/* 3. Top Header: Clean, Chunky, Toddler-Proof (Home, Island Badge, Explorer) */}
-      <header className="flex justify-between items-center w-full gap-2 pt-1 pb-1">
+      <header className={`flex justify-between items-center w-full gap-2 pt-1 pb-1 transition-opacity duration-300 ${isAudioBusy ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
         {/* Chunky Home Button (60x60px) */}
         <button
           onClick={() => {
@@ -413,7 +451,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
       </header>
 
       {/* 4. Giant Stepping Stones Bar (Active Level's Sounds: Big, Juicy, 70px+ targets) */}
-      <div className="w-full my-1 flex justify-center shrink-0">
+      <div className={`w-full my-1 flex justify-center shrink-0 transition-opacity duration-300 ${isAudioBusy ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
         <div className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 bg-white/80 backdrop-blur-md rounded-3xl border-3 border-amber-200 shadow-sm max-w-md w-full justify-around">
           {activeLevel.letterIds.map((letterId) => {
             const letter = getLetterById(letterId);
@@ -424,6 +462,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
               <button
                 key={letterId}
                 onClick={() => {
+                  if (!canAct()) return;
                   audioService.playPop();
                   setSelectedLetterId(letterId);
                   setCurrentObjectIndex(0);
@@ -491,9 +530,12 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
           {/* Huge Touch Hero Card */}
           <button
             onClick={handleTapObject}
+            disabled={isAudioBusy}
             aria-label={`Tap ${currentObject.name}`}
             className={`squish-tap relative w-64 h-64 sm:w-76 sm:h-76 rounded-5xl border-8 shadow-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 focus:outline-none ${
-              isObjectAnimating
+              isAudioBusy
+                ? 'scale-106 ring-8 ring-amber-400 shadow-[0_0_45px_rgba(245,158,11,0.55)]'
+                : isObjectAnimating
                 ? 'scale-108 rotate-2 shadow-[0_20px_35px_rgba(0,0,0,0.2)]'
                 : 'hover:scale-103 shadow-[0_12px_24px_rgba(0,0,0,0.12)]'
             }`}
@@ -538,10 +580,11 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
       </main>
 
       {/* 6. Big, Juicy, Toddler-Proof Action Buttons (Perfect 80px-96px proportions) */}
-      <footer className="w-full flex justify-center items-center gap-2.5 sm:gap-4 pt-2 pb-3 sm:pb-4 shrink-0 px-1">
+      <footer className={`w-full flex justify-center items-center gap-2.5 sm:gap-4 pt-2 pb-3 sm:pb-4 shrink-0 px-1 transition-opacity duration-300 ${isAudioBusy ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
         {/* Symmetrical Squircle Audio Replay Button (80x80px minimum) */}
         <button
           onClick={handleTapObject}
+          disabled={isAudioBusy}
           aria-label="Play sound again"
           className="squish-tap w-20 h-20 sm:w-24 sm:h-24 aspect-square rounded-3xl bg-white text-amber-700 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex flex-col items-center justify-center p-1.5 shrink-0 cursor-pointer"
         >
@@ -552,6 +595,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
         {/* Big Chunky Surprise Me Button */}
         <button
           onClick={handleSurprise}
+          disabled={isAudioBusy}
           aria-label="Random Surprise in Level"
           className="squish-tap flex-1 h-20 sm:h-24 rounded-3xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white border-4 border-purple-400 shadow-[0_6px_0_#6D28D9] active:translate-y-1 active:shadow-[0_2px_0_#6D28D9] flex items-center justify-center gap-1.5 sm:gap-2 font-black text-lg sm:text-2xl cursor-pointer"
         >
@@ -562,8 +606,11 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
         {/* Big Juicy Next Button */}
         <button
           onClick={handleNext}
+          disabled={isAudioBusy}
           aria-label="Next Sound"
-          className="squish-tap flex-1 h-20 sm:h-24 rounded-3xl bg-bubble-yellow text-amber-950 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex items-center justify-center gap-1.5 sm:gap-2 font-black text-lg sm:text-2xl cursor-pointer"
+          className={`squish-tap flex-1 h-20 sm:h-24 rounded-3xl bg-bubble-yellow text-amber-950 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex items-center justify-center gap-1.5 sm:gap-2 font-black text-lg sm:text-2xl cursor-pointer transition-all ${
+            justFinishedAudio ? 'scale-104 ring-4 ring-amber-400 animate-bounce-gentle shadow-lg' : ''
+          }`}
         >
           <span>Next</span>
           <ArrowRight className="w-6 h-6 sm:w-8 sm:h-8 stroke-[3] shrink-0" />
