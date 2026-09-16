@@ -13,82 +13,82 @@ export const audioManifest: AudioManifest = {
   // ==========================================
   // 26 LETTERS & OXFORD BRITISH ENGLISH PHONEMES
   // ==========================================
-  'letter.a': { id: 'letter.a', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter A', version: 1, description: 'Letter name A' },
+  'letter.a': { id: 'letter.a', type: 'letter', source: 'local', url: '/audio/letters/letter_a.mp3', fallbackText: 'Letter A', version: 1, description: 'Letter name A' },
   'phoneme.a': { id: 'phoneme.a', type: 'phoneme', source: 'local', url: '/audio/phoneme_a.mp3', fallbackText: '/æ/', version: 1, description: 'Oxford British English short A sound /æ/' },
 
-  'letter.b': { id: 'letter.b', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter B', version: 1, description: 'Letter name B' },
+  'letter.b': { id: 'letter.b', type: 'letter', source: 'local', url: '/audio/letters/letter_b.mp3', fallbackText: 'Letter B', version: 1, description: 'Letter name B' },
   'phoneme.b': { id: 'phoneme.b', type: 'phoneme', source: 'local', url: '/audio/phoneme_b.mp3', fallbackText: '/b/', version: 1, description: 'Oxford British English B sound /b/' },
 
-  'letter.c': { id: 'letter.c', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter C', version: 1, description: 'Letter name C' },
+  'letter.c': { id: 'letter.c', type: 'letter', source: 'local', url: '/audio/letters/letter_c.mp3', fallbackText: 'Letter C', version: 1, description: 'Letter name C' },
   'phoneme.c': { id: 'phoneme.c', type: 'phoneme', source: 'local', url: '/audio/phoneme_c.mp3', fallbackText: '/k/', version: 1, description: 'Oxford British English hard C sound /k/' },
 
-  'letter.d': { id: 'letter.d', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter D', version: 1, description: 'Letter name D' },
+  'letter.d': { id: 'letter.d', type: 'letter', source: 'local', url: '/audio/letters/letter_d.mp3', fallbackText: 'Letter D', version: 1, description: 'Letter name D' },
   'phoneme.d': { id: 'phoneme.d', type: 'phoneme', source: 'local', url: '/audio/phoneme_d.mp3', fallbackText: '/d/', version: 1, description: 'Oxford British English D sound /d/' },
 
-  'letter.e': { id: 'letter.e', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter E', version: 1, description: 'Letter name E' },
+  'letter.e': { id: 'letter.e', type: 'letter', source: 'local', url: '/audio/letters/letter_e.mp3', fallbackText: 'Letter E', version: 1, description: 'Letter name E' },
   'phoneme.e': { id: 'phoneme.e', type: 'phoneme', source: 'local', url: '/audio/phoneme_e.mp3', fallbackText: '/e/', version: 1, description: 'Oxford British English short E sound /e/' },
 
-  'letter.f': { id: 'letter.f', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter F', version: 1, description: 'Letter name F' },
+  'letter.f': { id: 'letter.f', type: 'letter', source: 'local', url: '/audio/letters/letter_f.mp3', fallbackText: 'Letter F', version: 1, description: 'Letter name F' },
   'phoneme.f': { id: 'phoneme.f', type: 'phoneme', source: 'local', url: '/audio/phoneme_f.mp3', fallbackText: '/f/', version: 1, description: 'Oxford British English F sound /f/' },
 
-  'letter.g': { id: 'letter.g', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter G', version: 1, description: 'Letter name G' },
+  'letter.g': { id: 'letter.g', type: 'letter', source: 'local', url: '/audio/letters/letter_g.mp3', fallbackText: 'Letter G', version: 1, description: 'Letter name G' },
   'phoneme.g': { id: 'phoneme.g', type: 'phoneme', source: 'local', url: '/audio/phoneme_g.mp3', fallbackText: '/g/', version: 1, description: 'Oxford British English hard G sound /g/' },
 
-  'letter.h': { id: 'letter.h', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter H', version: 1, description: 'Letter name H' },
+  'letter.h': { id: 'letter.h', type: 'letter', source: 'local', url: '/audio/letters/letter_h.mp3', fallbackText: 'Letter H', version: 1, description: 'Letter name H' },
   'phoneme.h': { id: 'phoneme.h', type: 'phoneme', source: 'local', url: '/audio/phoneme_h.mp3', fallbackText: '/h/', version: 1, description: 'Oxford British English H sound /h/' },
 
-  'letter.i': { id: 'letter.i', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter I', version: 1, description: 'Letter name I' },
+  'letter.i': { id: 'letter.i', type: 'letter', source: 'local', url: '/audio/letters/letter_i.mp3', fallbackText: 'Letter I', version: 1, description: 'Letter name I' },
   'phoneme.i': { id: 'phoneme.i', type: 'phoneme', source: 'local', url: '/audio/phoneme_i.mp3', fallbackText: '/ɪ/', version: 1, description: 'Oxford British English short I sound /ɪ/' },
 
-  'letter.j': { id: 'letter.j', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter J', version: 1, description: 'Letter name J' },
+  'letter.j': { id: 'letter.j', type: 'letter', source: 'local', url: '/audio/letters/letter_j.mp3', fallbackText: 'Letter J', version: 1, description: 'Letter name J' },
   'phoneme.j': { id: 'phoneme.j', type: 'phoneme', source: 'local', url: '/audio/phoneme_j.mp3', fallbackText: '/dʒ/', version: 1, description: 'Oxford British English J sound /dʒ/' },
 
-  'letter.k': { id: 'letter.k', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter K', version: 1, description: 'Letter name K' },
+  'letter.k': { id: 'letter.k', type: 'letter', source: 'local', url: '/audio/letters/letter_k.mp3', fallbackText: 'Letter K', version: 1, description: 'Letter name K' },
   'phoneme.k': { id: 'phoneme.k', type: 'phoneme', source: 'local', url: '/audio/phoneme_k.mp3', fallbackText: '/k/', version: 1, description: 'Oxford British English K sound /k/' },
 
-  'letter.l': { id: 'letter.l', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter L', version: 1, description: 'Letter name L' },
+  'letter.l': { id: 'letter.l', type: 'letter', source: 'local', url: '/audio/letters/letter_l.mp3', fallbackText: 'Letter L', version: 1, description: 'Letter name L' },
   'phoneme.l': { id: 'phoneme.l', type: 'phoneme', source: 'local', url: '/audio/phoneme_l.mp3', fallbackText: '/l/', version: 1, description: 'Oxford British English L sound /l/' },
 
-  'letter.m': { id: 'letter.m', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter M', version: 1, description: 'Letter name M' },
+  'letter.m': { id: 'letter.m', type: 'letter', source: 'local', url: '/audio/letters/letter_m.mp3', fallbackText: 'Letter M', version: 1, description: 'Letter name M' },
   'phoneme.m': { id: 'phoneme.m', type: 'phoneme', source: 'local', url: '/audio/phoneme_m.mp3', fallbackText: '/m/', version: 1, description: 'Oxford British English M sound /m/' },
 
-  'letter.n': { id: 'letter.n', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter N', version: 1, description: 'Letter name N' },
+  'letter.n': { id: 'letter.n', type: 'letter', source: 'local', url: '/audio/letters/letter_n.mp3', fallbackText: 'Letter N', version: 1, description: 'Letter name N' },
   'phoneme.n': { id: 'phoneme.n', type: 'phoneme', source: 'local', url: '/audio/phoneme_n.mp3', fallbackText: '/n/', version: 1, description: 'Oxford British English N sound /n/' },
 
-  'letter.o': { id: 'letter.o', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter O', version: 1, description: 'Letter name O' },
+  'letter.o': { id: 'letter.o', type: 'letter', source: 'local', url: '/audio/letters/letter_o.mp3', fallbackText: 'Letter O', version: 1, description: 'Letter name O' },
   'phoneme.o': { id: 'phoneme.o', type: 'phoneme', source: 'local', url: '/audio/phoneme_o.mp3', fallbackText: '/ɒ/', version: 1, description: 'Oxford British English short O sound /ɒ/' },
 
-  'letter.p': { id: 'letter.p', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter P', version: 1, description: 'Letter name P' },
+  'letter.p': { id: 'letter.p', type: 'letter', source: 'local', url: '/audio/letters/letter_p.mp3', fallbackText: 'Letter P', version: 1, description: 'Letter name P' },
   'phoneme.p': { id: 'phoneme.p', type: 'phoneme', source: 'local', url: '/audio/phoneme_p.mp3', fallbackText: '/p/', version: 1, description: 'Oxford British English P sound /p/' },
 
-  'letter.q': { id: 'letter.q', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter Q', version: 1, description: 'Letter name Q' },
+  'letter.q': { id: 'letter.q', type: 'letter', source: 'local', url: '/audio/letters/letter_q.mp3', fallbackText: 'Letter Q', version: 1, description: 'Letter name Q' },
   'phoneme.q': { id: 'phoneme.q', type: 'phoneme', source: 'local', url: '/audio/phoneme_q.mp3', fallbackText: '/kw/', version: 1, description: 'Oxford British English Q sound /k/' },
 
-  'letter.r': { id: 'letter.r', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter R', version: 1, description: 'Letter name R' },
+  'letter.r': { id: 'letter.r', type: 'letter', source: 'local', url: '/audio/letters/letter_r.mp3', fallbackText: 'Letter R', version: 1, description: 'Letter name R' },
   'phoneme.r': { id: 'phoneme.r', type: 'phoneme', source: 'local', url: '/audio/phoneme_r.mp3', fallbackText: '/r/', version: 1, description: 'Oxford British English R sound /r/' },
 
-  'letter.s': { id: 'letter.s', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter S', version: 1, description: 'Letter name S' },
+  'letter.s': { id: 'letter.s', type: 'letter', source: 'local', url: '/audio/letters/letter_s.mp3', fallbackText: 'Letter S', version: 1, description: 'Letter name S' },
   'phoneme.s': { id: 'phoneme.s', type: 'phoneme', source: 'local', url: '/audio/phoneme_s.mp3', fallbackText: '/s/', version: 1, description: 'Oxford British English S sound /s/' },
 
-  'letter.t': { id: 'letter.t', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter T', version: 1, description: 'Letter name T' },
+  'letter.t': { id: 'letter.t', type: 'letter', source: 'local', url: '/audio/letters/letter_t.mp3', fallbackText: 'Letter T', version: 1, description: 'Letter name T' },
   'phoneme.t': { id: 'phoneme.t', type: 'phoneme', source: 'local', url: '/audio/phoneme_t.mp3', fallbackText: '/t/', version: 1, description: 'Oxford British English T sound /t/' },
 
-  'letter.u': { id: 'letter.u', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter U', version: 1, description: 'Letter name U' },
+  'letter.u': { id: 'letter.u', type: 'letter', source: 'local', url: '/audio/letters/letter_u.mp3', fallbackText: 'Letter U', version: 1, description: 'Letter name U' },
   'phoneme.u': { id: 'phoneme.u', type: 'phoneme', source: 'local', url: '/audio/phoneme_u.mp3', fallbackText: '/ʌ/', version: 1, description: 'Oxford British English short U sound /ʌ/' },
 
-  'letter.v': { id: 'letter.v', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter V', version: 1, description: 'Letter name V' },
+  'letter.v': { id: 'letter.v', type: 'letter', source: 'local', url: '/audio/letters/letter_v.mp3', fallbackText: 'Letter V', version: 1, description: 'Letter name V' },
   'phoneme.v': { id: 'phoneme.v', type: 'phoneme', source: 'local', url: '/audio/phoneme_v.mp3', fallbackText: '/v/', version: 1, description: 'Oxford British English V sound /v/' },
 
-  'letter.w': { id: 'letter.w', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter W', version: 1, description: 'Letter name W' },
+  'letter.w': { id: 'letter.w', type: 'letter', source: 'local', url: '/audio/letters/letter_w.mp3', fallbackText: 'Letter W', version: 1, description: 'Letter name W' },
   'phoneme.w': { id: 'phoneme.w', type: 'phoneme', source: 'local', url: '/audio/phoneme_w.mp3', fallbackText: '/w/', version: 1, description: 'Oxford British English W sound /w/' },
 
-  'letter.x': { id: 'letter.x', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter X', version: 1, description: 'Letter name X' },
+  'letter.x': { id: 'letter.x', type: 'letter', source: 'local', url: '/audio/letters/letter_x.mp3', fallbackText: 'Letter X', version: 1, description: 'Letter name X' },
   'phoneme.x': { id: 'phoneme.x', type: 'phoneme', source: 'local', url: '/audio/phoneme_x.mp3', fallbackText: '/ks/', version: 1, description: 'Oxford British English X sound /ks/' },
 
-  'letter.y': { id: 'letter.y', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter Y', version: 1, description: 'Letter name Y' },
+  'letter.y': { id: 'letter.y', type: 'letter', source: 'local', url: '/audio/letters/letter_y.mp3', fallbackText: 'Letter Y', version: 1, description: 'Letter name Y' },
   'phoneme.y': { id: 'phoneme.y', type: 'phoneme', source: 'local', url: '/audio/phoneme_y.mp3', fallbackText: '/j/', version: 1, description: 'Oxford British English Y sound /j/' },
 
-  'letter.z': { id: 'letter.z', type: 'letter', source: 'speech-synthesis', fallbackText: 'Letter Z', version: 1, description: 'Letter name Z' },
+  'letter.z': { id: 'letter.z', type: 'letter', source: 'local', url: '/audio/letters/letter_z.mp3', fallbackText: 'Letter Z', version: 1, description: 'Letter name Z' },
   'phoneme.z': { id: 'phoneme.z', type: 'phoneme', source: 'local', url: '/audio/phoneme_z.mp3', fallbackText: '/z/', version: 1, description: 'Oxford British English Z sound /z/' },
 
   // ==========================================
@@ -319,28 +319,32 @@ export const audioManifest: AudioManifest = {
   'prompt.lets-play': {
     id: 'prompt.lets-play',
     type: 'prompt',
-    source: 'speech-synthesis',
+    source: 'local',
+    url: '/audio/prompts/prompt.lets-play.mp3',
     fallbackText: "Hi! Let's play!",
     version: 1,
   },
   'prompt.find-sounds': {
     id: 'prompt.find-sounds',
     type: 'prompt',
-    source: 'speech-synthesis',
+    source: 'local',
+    url: '/audio/prompts/prompt.find-sounds.mp3',
     fallbackText: "Hi! Let's find some sounds!",
     version: 1,
   },
   'prompt.touch-anything': {
     id: 'prompt.touch-anything',
     type: 'prompt',
-    source: 'speech-synthesis',
+    source: 'local',
+    url: '/audio/prompts/prompt.touch-anything.mp3',
     fallbackText: 'Touch anything!',
     version: 1,
   },
   'prompt.have-fun': {
     id: 'prompt.have-fun',
     type: 'prompt',
-    source: 'speech-synthesis',
+    source: 'local',
+    url: '/audio/prompts/prompt.have-fun.mp3',
     fallbackText: "Yay! Let's have fun!",
     version: 1,
   },
@@ -351,49 +355,56 @@ export const audioManifest: AudioManifest = {
   'praise.yay': {
     id: 'praise.yay',
     type: 'praise',
-    source: 'speech-synthesis',
+    source: 'local',
+    url: '/audio/praise/praise.yay.mp3',
     fallbackText: 'Yay!',
     version: 1,
   },
   'praise.super': {
     id: 'praise.super',
     type: 'praise',
-    source: 'speech-synthesis',
+    source: 'local',
+    url: '/audio/praise/praise.super.mp3',
     fallbackText: 'Super!',
     version: 1,
   },
   'praise.hooray': {
     id: 'praise.hooray',
     type: 'praise',
-    source: 'speech-synthesis',
+    source: 'local',
+    url: '/audio/praise/praise.hooray.mp3',
     fallbackText: 'Hooray!',
     version: 1,
   },
   'praise.wonderful': {
     id: 'praise.wonderful',
     type: 'praise',
-    source: 'speech-synthesis',
+    source: 'local',
+    url: '/audio/praise/praise.wonderful.mp3',
     fallbackText: 'Wonderful!',
     version: 1,
   },
   'praise.look-at-that': {
     id: 'praise.look-at-that',
     type: 'praise',
-    source: 'speech-synthesis',
+    source: 'local',
+    url: '/audio/praise/praise.look-at-that.mp3',
     fallbackText: 'Look at that!',
     version: 1,
   },
   'praise.great-tapping': {
     id: 'praise.great-tapping',
     type: 'praise',
-    source: 'speech-synthesis',
+    source: 'local',
+    url: '/audio/praise/praise.great-tapping.mp3',
     fallbackText: 'Great tapping!',
     version: 1,
   },
   'praise.random': {
     id: 'praise.random',
     type: 'praise',
-    source: 'speech-synthesis',
+    source: 'local',
+    url: '/audio/praise/praise.yay.mp3',
     fallbackText: 'Yay!',
     version: 1,
   },
@@ -409,15 +420,31 @@ const praiseKeys = [
 ];
 
 export const getAudioEntry = (audioId: string): AudioEntry | undefined => {
+  // Oxford authentic human audio takes precedence for phonemes
+  if (audioId.startsWith('phoneme.')) {
+    const letter = audioId.replace('phoneme.', '').toLowerCase();
+    return {
+      id: audioId,
+      type: 'phoneme',
+      source: 'local',
+      url: `/audio/phoneme_${letter}.mp3`,
+      fallbackText: `/${letter}/`,
+      version: 1,
+      description: `Oxford British English phoneme /${letter}/`,
+    };
+  }
+
   // All 84 curriculum words are bundled as local static assets in public/audio/words/
+  // with Cloudinary CDN URLs in generatedAudioManifest
   if (audioId.startsWith('word.')) {
     const base = audioManifest[audioId];
+    const generated = generatedAudioManifest[audioId];
     return {
       id: audioId,
       type: 'word',
       source: 'local',
-      url: `/audio/words/${audioId}.mp3`,
-      fallbackText: base?.fallbackText || audioId.replace(/^word\.[a-z]-?/, ''),
+      url: generated?.localUrl || `/audio/words/${audioId}.mp3`,
+      fallbackText: base?.fallbackText || generated?.text || audioId.replace(/^word\.[a-z]-?/, ''),
       version: 1,
       description: base?.description || 'Curriculum word audio',
     };
@@ -428,12 +455,10 @@ export const getAudioEntry = (audioId: string): AudioEntry | undefined => {
 
   const generated = generatedAudioManifest[audioId];
   if (generated?.url) {
-    // Phase 2 merge: Cloudinary URL + source override the base entry transparently.
-    // fallbackText stays intact for error-recovery fallback.
     return {
       ...base,
-      url: generated.url,
-      source: 'cloudinary',
+      url: base.url || generated.url,
+      source: 'local',
     };
   }
 

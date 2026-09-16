@@ -1,541 +1,1212 @@
 /**
  * GENERATED FILE — do not edit by hand.
+ * Produced by: npx tsx scripts/optimize-and-sync-audio.ts
  *
- * This file is produced by: npm run generate:audio
- *
- * It contains the Cloudinary URLs and generation metadata for all
- * pre-generated TTS voice assets. The AudioManager merges this with
- * the base audioManifest so that generated audio takes precedence
- * over SpeechSynthesis fallback.
- *
- * Commit this file — it is source code, not a secret.
- * Do NOT commit .env — it contains secrets.
- *
- * Last generated: 2026-09-14T18:33:10.358Z
- * Model: gpt-4o-mini-tts | Voice: coral | Instruction version: 1
+ * Cloudinary URLs and metadata for all AI-recorded assets matching Oxford tone & pace.
+ * Silence trimmed with ffmpeg.
  */
 
 import type { GeneratedAudioEntry } from './generatedAudioManifestTypes';
 
-/**
- * Generated audio entries keyed by semantic audio ID.
- * Each entry contains the Cloudinary URL and generation metadata.
- */
 export const generatedAudioManifest: Record<string, GeneratedAudioEntry> = {
-  "word.monkey": {
-      "id": "word.monkey",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410612/phonics/audio/v1/word/monkey.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/word/monkey",
-      "text": "Monkey",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "5ac2c1b8a57a1946cea76a1b4ae362d14561a6e8f400737361b95d207feb0c9c",
-      "generatedAt": "2026-09-14T18:30:12.981Z",
-      "format": "mp3"
+  "letter.a": {
+    "id": "letter.a",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535501/phonics/audio/v1/letter/a.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/a",
+    "localUrl": "/audio/letters/letter_a.mp3",
+    "text": "Letter A",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "letter.b": {
+    "id": "letter.b",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535503/phonics/audio/v1/letter/b.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/b",
+    "localUrl": "/audio/letters/letter_b.mp3",
+    "text": "Letter B",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "letter.c": {
+    "id": "letter.c",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535504/phonics/audio/v1/letter/c.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/c",
+    "localUrl": "/audio/letters/letter_c.mp3",
+    "text": "Letter C",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "letter.d": {
+    "id": "letter.d",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535505/phonics/audio/v1/letter/d.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/d",
+    "localUrl": "/audio/letters/letter_d.mp3",
+    "text": "Letter D",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "letter.e": {
+    "id": "letter.e",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535507/phonics/audio/v1/letter/e.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/e",
+    "localUrl": "/audio/letters/letter_e.mp3",
+    "text": "Letter E",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "letter.f": {
+    "id": "letter.f",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535508/phonics/audio/v1/letter/f.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/f",
+    "localUrl": "/audio/letters/letter_f.mp3",
+    "text": "Letter F",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "letter.g": {
+    "id": "letter.g",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535509/phonics/audio/v1/letter/g.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/g",
+    "localUrl": "/audio/letters/letter_g.mp3",
+    "text": "Letter G",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "letter.h": {
+    "id": "letter.h",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535510/phonics/audio/v1/letter/h.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/h",
+    "localUrl": "/audio/letters/letter_h.mp3",
+    "text": "Letter H",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "letter.i": {
+    "id": "letter.i",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535512/phonics/audio/v1/letter/i.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/i",
+    "localUrl": "/audio/letters/letter_i.mp3",
+    "text": "Letter I",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "letter.j": {
+    "id": "letter.j",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535513/phonics/audio/v1/letter/j.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/j",
+    "localUrl": "/audio/letters/letter_j.mp3",
+    "text": "Letter J",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "letter.k": {
+    "id": "letter.k",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535514/phonics/audio/v1/letter/k.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/k",
+    "localUrl": "/audio/letters/letter_k.mp3",
+    "text": "Letter K",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "letter.l": {
+    "id": "letter.l",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535515/phonics/audio/v1/letter/l.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/l",
+    "localUrl": "/audio/letters/letter_l.mp3",
+    "text": "Letter L",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
   },
   "letter.m": {
-      "id": "letter.m",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410635/phonics/audio/v1/letter/m.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/letter/m",
-      "text": "Letter M",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "3a2e3d0c3e7f7f80f28d14d3df033c0d7a7b6aa609113cf9a39be0e5d0a8e0e8",
-      "generatedAt": "2026-09-14T18:30:36.338Z",
-      "format": "mp3"
+    "id": "letter.m",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535517/phonics/audio/v1/letter/m.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/m",
+    "localUrl": "/audio/letters/letter_m.mp3",
+    "text": "Letter M",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "letter.n": {
+    "id": "letter.n",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535518/phonics/audio/v1/letter/n.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/n",
+    "localUrl": "/audio/letters/letter_n.mp3",
+    "text": "Letter N",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "letter.o": {
+    "id": "letter.o",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535519/phonics/audio/v1/letter/o.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/o",
+    "localUrl": "/audio/letters/letter_o.mp3",
+    "text": "Letter O",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "letter.p": {
+    "id": "letter.p",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535521/phonics/audio/v1/letter/p.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/p",
+    "localUrl": "/audio/letters/letter_p.mp3",
+    "text": "Letter P",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "letter.q": {
+    "id": "letter.q",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535522/phonics/audio/v1/letter/q.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/q",
+    "localUrl": "/audio/letters/letter_q.mp3",
+    "text": "Letter Q",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "letter.r": {
+    "id": "letter.r",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535523/phonics/audio/v1/letter/r.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/r",
+    "localUrl": "/audio/letters/letter_r.mp3",
+    "text": "Letter R",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
   },
   "letter.s": {
-      "id": "letter.s",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410639/phonics/audio/v1/letter/s.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/letter/s",
-      "text": "Letter S",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "33363aaec6fad46c8d882d44a55f7be3c61ee5c070b12627ec5574aa41b7776f",
-      "generatedAt": "2026-09-14T18:30:40.353Z",
-      "format": "mp3"
+    "id": "letter.s",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535525/phonics/audio/v1/letter/s.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/s",
+    "localUrl": "/audio/letters/letter_s.mp3",
+    "text": "Letter S",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
   },
-  "letter.a": {
-      "id": "letter.a",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410642/phonics/audio/v1/letter/a.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/letter/a",
-      "text": "Letter A",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "58853ed0ec7e662b698b4ebeced847effbadae7799bc914d0532cb3b50291fa7",
-      "generatedAt": "2026-09-14T18:30:42.831Z",
-      "format": "mp3"
+  "letter.t": {
+    "id": "letter.t",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535527/phonics/audio/v1/letter/t.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/t",
+    "localUrl": "/audio/letters/letter_t.mp3",
+    "text": "Letter T",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
   },
-  "phrase.m-monkey": {
-      "id": "phrase.m-monkey",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410645/phonics/audio/v1/phrase/m-monkey.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/phrase/m-monkey",
-      "text": "Mmmm... monkey!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "931972887f7b302c3a59dc0b79b79cf7f3894b115c96a9abed65022019a0233c",
-      "generatedAt": "2026-09-14T18:30:46.615Z",
-      "format": "mp3"
+  "letter.u": {
+    "id": "letter.u",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535528/phonics/audio/v1/letter/u.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/u",
+    "localUrl": "/audio/letters/letter_u.mp3",
+    "text": "Letter U",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
   },
-  "word.moon": {
-      "id": "word.moon",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410648/phonics/audio/v1/word/moon.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/word/moon",
-      "text": "Moon",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "b2199b3d11c25924d70b0f9c41f9e7fe02f4546640fe63dde21c41122a9ea48a",
-      "generatedAt": "2026-09-14T18:30:50.430Z",
-      "format": "mp3"
+  "letter.v": {
+    "id": "letter.v",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535529/phonics/audio/v1/letter/v.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/v",
+    "localUrl": "/audio/letters/letter_v.mp3",
+    "text": "Letter V",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
   },
-  "phrase.m-moon": {
-      "id": "phrase.m-moon",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410652/phonics/audio/v1/phrase/m-moon.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/phrase/m-moon",
-      "text": "Mmmm... moon!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "a5bb44cae4825f091f5a00e7b78dd3accf4380ec545624166c2c74194e9126ed",
-      "generatedAt": "2026-09-14T18:30:54.668Z",
-      "format": "mp3"
+  "letter.w": {
+    "id": "letter.w",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535531/phonics/audio/v1/letter/w.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/w",
+    "localUrl": "/audio/letters/letter_w.mp3",
+    "text": "Letter W",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
   },
-  "word.milk": {
-      "id": "word.milk",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410658/phonics/audio/v1/word/milk.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/word/milk",
-      "text": "Milk",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "3d6bb69a6f41c4e98a17e58701c2812bc5ed2af9f624fa23d7e8e37332c8f4a5",
-      "generatedAt": "2026-09-14T18:30:59.733Z",
-      "format": "mp3"
+  "letter.x": {
+    "id": "letter.x",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535532/phonics/audio/v1/letter/x.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/x",
+    "localUrl": "/audio/letters/letter_x.mp3",
+    "text": "Letter X",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
   },
-  "phrase.m-milk": {
-      "id": "phrase.m-milk",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410662/phonics/audio/v1/phrase/m-milk.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/phrase/m-milk",
-      "text": "Mmmm... milk!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "b09c8ad4f46542d0c0b81b72eaa50fb587697d8ed8d6e4db7d8ec6fabf0f5bc3",
-      "generatedAt": "2026-09-14T18:31:03.119Z",
-      "format": "mp3"
+  "letter.y": {
+    "id": "letter.y",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535533/phonics/audio/v1/letter/y.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/y",
+    "localUrl": "/audio/letters/letter_y.mp3",
+    "text": "Letter Y",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
   },
-  "word.mouse": {
-      "id": "word.mouse",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410665/phonics/audio/v1/word/mouse.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/word/mouse",
-      "text": "Mouse",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "cd6802d92c331c03a1671e9155392b003d159d92d33acf8b62818697ac93a7e2",
-      "generatedAt": "2026-09-14T18:31:06.094Z",
-      "format": "mp3"
-  },
-  "phrase.m-mouse": {
-      "id": "phrase.m-mouse",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410668/phonics/audio/v1/phrase/m-mouse.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/phrase/m-mouse",
-      "text": "Mmmm... mouse!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "d27cd278aded040fc3fb1d4228bffc138c74200e96e335df4b462d8aa0954ff2",
-      "generatedAt": "2026-09-14T18:31:09.063Z",
-      "format": "mp3"
-  },
-  "word.mango": {
-      "id": "word.mango",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410671/phonics/audio/v1/word/mango.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/word/mango",
-      "text": "Mango",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "19278cba3f96435ab88aeb2e2e8b0d1fdb20de669f3e424fde10ab6a3c1f3e68",
-      "generatedAt": "2026-09-14T18:31:12.129Z",
-      "format": "mp3"
-  },
-  "phrase.m-mango": {
-      "id": "phrase.m-mango",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410674/phonics/audio/v1/phrase/m-mango.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/phrase/m-mango",
-      "text": "Mmmm... mango!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "37150ea1e3554663cec9ab4363625ca7be8a857d4553deb961ae09cda3c347a2",
-      "generatedAt": "2026-09-14T18:31:15.167Z",
-      "format": "mp3"
-  },
-  "word.sun": {
-      "id": "word.sun",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410678/phonics/audio/v1/word/sun.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/word/sun",
-      "text": "Sun",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "c5cecd9a72bddcc5fcce4b288e0b668cac5921e9f7a79bb4cf310fce4f392375",
-      "generatedAt": "2026-09-14T18:31:19.359Z",
-      "format": "mp3"
-  },
-  "phrase.s-sun": {
-      "id": "phrase.s-sun",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410681/phonics/audio/v1/phrase/s-sun.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/phrase/s-sun",
-      "text": "Sssss... sun!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "82574e03226ab6fd575f50a98d2fea5903dec5dae3f2e728415c200246fbb279",
-      "generatedAt": "2026-09-14T18:31:22.246Z",
-      "format": "mp3"
-  },
-  "word.star": {
-      "id": "word.star",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410684/phonics/audio/v1/word/star.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/word/star",
-      "text": "Star",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "9cfe9bcb6793719a8b9e92eb7a09623ff09841ad4c1e85cb25ba81375898a1ee",
-      "generatedAt": "2026-09-14T18:31:26.185Z",
-      "format": "mp3"
-  },
-  "phrase.s-star": {
-      "id": "phrase.s-star",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410689/phonics/audio/v1/phrase/s-star.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/phrase/s-star",
-      "text": "Sssss... star!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "589b772ac27bb10ebf801a16a611bd8ae98d9857c1b13766a87ec7a4914813f2",
-      "generatedAt": "2026-09-14T18:31:31.002Z",
-      "format": "mp3"
-  },
-  "word.snake": {
-      "id": "word.snake",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410693/phonics/audio/v1/word/snake.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/word/snake",
-      "text": "Snake",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "bb111a5885c67533b0c4a7ccd882b75e3c24f46650cb796b43958100ded99f26",
-      "generatedAt": "2026-09-14T18:31:34.725Z",
-      "format": "mp3"
-  },
-  "phrase.s-snake": {
-      "id": "phrase.s-snake",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410697/phonics/audio/v1/phrase/s-snake.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/phrase/s-snake",
-      "text": "Sssss... snake!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "e614467047cd08c46d26f8054fc8bb69d8fecb52e02c4a6d8e39312af387346f",
-      "generatedAt": "2026-09-14T18:31:37.888Z",
-      "format": "mp3"
-  },
-  "word.sheep": {
-      "id": "word.sheep",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410710/phonics/audio/v1/word/sheep.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/word/sheep",
-      "text": "Sheep",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "45a94f9a2ff736c1ba2ead5c3b01ebd4e990fc77a9df0d5421ee71249963c98d",
-      "generatedAt": "2026-09-14T18:31:50.868Z",
-      "format": "mp3"
-  },
-  "phrase.s-sheep": {
-      "id": "phrase.s-sheep",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410713/phonics/audio/v1/phrase/s-sheep.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/phrase/s-sheep",
-      "text": "Sssss... sheep!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "35874067300b9286797214f45d7b5466086b63585d19a7ca223f0cb5fdd9f85f",
-      "generatedAt": "2026-09-14T18:31:54.605Z",
-      "format": "mp3"
-  },
-  "word.sock": {
-      "id": "word.sock",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410716/phonics/audio/v1/word/sock.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/word/sock",
-      "text": "Sock",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "c10b199a0d7a10e4491ed34cc4acec8837aa1e4be1abca9dd634ce0402931899",
-      "generatedAt": "2026-09-14T18:31:57.323Z",
-      "format": "mp3"
-  },
-  "phrase.s-sock": {
-      "id": "phrase.s-sock",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410719/phonics/audio/v1/phrase/s-sock.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/phrase/s-sock",
-      "text": "Sssss... sock!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "3dfa27b031e526f4963a724cb261ad660f876aef2af1b9a7c7aeba54908c28aa",
-      "generatedAt": "2026-09-14T18:32:00.998Z",
-      "format": "mp3"
-  },
-  "word.apple": {
-      "id": "word.apple",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410723/phonics/audio/v1/word/apple.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/word/apple",
-      "text": "Apple",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "10c9fdca9b45509eea033d99ae002b6e3d401288a34af1aea38ef6c0770ebc5b",
-      "generatedAt": "2026-09-14T18:32:05.506Z",
-      "format": "mp3"
-  },
-  "phrase.a-apple": {
-      "id": "phrase.a-apple",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410727/phonics/audio/v1/phrase/a-apple.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/phrase/a-apple",
-      "text": "Ahhh... apple!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "92afd3cdd1a0fc20cd2e834d34527694a014f4e573202b13ba851f2d101fbfb7",
-      "generatedAt": "2026-09-14T18:32:08.172Z",
-      "format": "mp3"
-  },
-  "word.ant": {
-      "id": "word.ant",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410731/phonics/audio/v1/word/ant.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/word/ant",
-      "text": "Ant",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "f0331f6ebd51e660a80d4f6d1e6a3d2c5bfa8134166984e732351605c3f61e0f",
-      "generatedAt": "2026-09-14T18:32:12.403Z",
-      "format": "mp3"
-  },
-  "phrase.a-ant": {
-      "id": "phrase.a-ant",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410734/phonics/audio/v1/phrase/a-ant.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/phrase/a-ant",
-      "text": "Ahhh... ant!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "d3590f2e78b955e65fae1ecceb44411d3d541ec64ce14a3c1c113ac2261e75e8",
-      "generatedAt": "2026-09-14T18:32:14.972Z",
-      "format": "mp3"
-  },
-  "word.alligator": {
-      "id": "word.alligator",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410736/phonics/audio/v1/word/alligator.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/word/alligator",
-      "text": "Alligator",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "0197845dc23e7abe2138259a0c1556290741e0095771fc42a8b734d45c7a1e0a",
-      "generatedAt": "2026-09-14T18:32:17.772Z",
-      "format": "mp3"
-  },
-  "phrase.a-alligator": {
-      "id": "phrase.a-alligator",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410739/phonics/audio/v1/phrase/a-alligator.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/phrase/a-alligator",
-      "text": "Ahhh... alligator!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "11cec23b1c50274c1bdf304b9dbd2229910889e4e1fd648e1ab736190c11c2e2",
-      "generatedAt": "2026-09-14T18:32:20.645Z",
-      "format": "mp3"
-  },
-  "word.astronaut": {
-      "id": "word.astronaut",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410742/phonics/audio/v1/word/astronaut.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/word/astronaut",
-      "text": "Astronaut",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "323f70d3591d6d4cf83968683e7b382e13377a4e6c862a372f1391295d3b67a9",
-      "generatedAt": "2026-09-14T18:32:23.617Z",
-      "format": "mp3"
-  },
-  "phrase.a-astronaut": {
-      "id": "phrase.a-astronaut",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410746/phonics/audio/v1/phrase/a-astronaut.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/phrase/a-astronaut",
-      "text": "Ahhh... astronaut!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "5747a0ba7cf7d8f4e15e187da95374d6705247aee73e698a502960ae529e7da0",
-      "generatedAt": "2026-09-14T18:32:26.673Z",
-      "format": "mp3"
-  },
-  "word.arrow": {
-      "id": "word.arrow",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410750/phonics/audio/v1/word/arrow.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/word/arrow",
-      "text": "Arrow",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "c35074ac1692726c0e53fd1bc4e0dfe47cd23f3baac5d61cf9dc791066248b97",
-      "generatedAt": "2026-09-14T18:32:31.516Z",
-      "format": "mp3"
-  },
-  "phrase.a-arrow": {
-      "id": "phrase.a-arrow",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410753/phonics/audio/v1/phrase/a-arrow.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/phrase/a-arrow",
-      "text": "Ahhh... arrow!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "209513d949aa32e59d55b668d7df4708c0978e2550f39c6e33d557b8bc44fb1b",
-      "generatedAt": "2026-09-14T18:32:34.369Z",
-      "format": "mp3"
+  "letter.z": {
+    "id": "letter.z",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535534/phonics/audio/v1/letter/z.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/letter/z",
+    "localUrl": "/audio/letters/letter_z.mp3",
+    "text": "Letter Z",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
   },
   "prompt.lets-play": {
-      "id": "prompt.lets-play",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410756/phonics/audio/v1/prompt/lets-play.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/prompt/lets-play",
-      "text": "Hi! Let's play!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "e2c8a71eb9a86ae640b1b0380b4c8f7725988a4e472bf34970be2046b6647b3b",
-      "generatedAt": "2026-09-14T18:32:37.180Z",
-      "format": "mp3"
+    "id": "prompt.lets-play",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535535/phonics/audio/v1/prompt/lets-play.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/prompt/lets-play",
+    "localUrl": "/audio/prompts/prompt.lets-play.mp3",
+    "text": "Hi! Let's play!",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
   },
   "prompt.find-sounds": {
-      "id": "prompt.find-sounds",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410761/phonics/audio/v1/prompt/find-sounds.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/prompt/find-sounds",
-      "text": "Hi! Let's find some sounds!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "23532c523d791bd1cdc3e4715751fa97ae57830fc0c0b57bc36dafe97050b931",
-      "generatedAt": "2026-09-14T18:32:42.084Z",
-      "format": "mp3"
+    "id": "prompt.find-sounds",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535537/phonics/audio/v1/prompt/find-sounds.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/prompt/find-sounds",
+    "localUrl": "/audio/prompts/prompt.find-sounds.mp3",
+    "text": "Hi! Let's find some sounds!",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
   },
   "prompt.touch-anything": {
-      "id": "prompt.touch-anything",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410765/phonics/audio/v1/prompt/touch-anything.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/prompt/touch-anything",
-      "text": "Touch anything!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "740ee0f1e51280aa1f3b8ada3b7439da670dd9c9e53cf549b56755c256a74b39",
-      "generatedAt": "2026-09-14T18:32:46.091Z",
-      "format": "mp3"
+    "id": "prompt.touch-anything",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535538/phonics/audio/v1/prompt/touch-anything.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/prompt/touch-anything",
+    "localUrl": "/audio/prompts/prompt.touch-anything.mp3",
+    "text": "Touch anything!",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
   },
   "prompt.have-fun": {
-      "id": "prompt.have-fun",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410768/phonics/audio/v1/prompt/have-fun.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/prompt/have-fun",
-      "text": "Yay! Let's have fun!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "78495fb7d24e66c17b10b46054585d7ae0e7ae3b484419f3d5c23d0e02d06060",
-      "generatedAt": "2026-09-14T18:32:49.313Z",
-      "format": "mp3"
+    "id": "prompt.have-fun",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535540/phonics/audio/v1/prompt/have-fun.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/prompt/have-fun",
+    "localUrl": "/audio/prompts/prompt.have-fun.mp3",
+    "text": "Yay! Let's have fun!",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
   },
   "praise.yay": {
-      "id": "praise.yay",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410771/phonics/audio/v1/praise/yay.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/praise/yay",
-      "text": "Yay!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "3e11a5648c0fb8a78c556f8b2d53d53cef3ba68d8cdccfc565e6a0647b898e13",
-      "generatedAt": "2026-09-14T18:32:53.551Z",
-      "format": "mp3"
+    "id": "praise.yay",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535541/phonics/audio/v1/praise/yay.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/praise/yay",
+    "localUrl": "/audio/praise/praise.yay.mp3",
+    "text": "Yay!",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
   },
   "praise.super": {
-      "id": "praise.super",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410775/phonics/audio/v1/praise/super.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/praise/super",
-      "text": "Super!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "1b97974102c42d9709dc1a2d9b33457ded878390ee6948438fab328e0bbc4ebe",
-      "generatedAt": "2026-09-14T18:32:56.475Z",
-      "format": "mp3"
+    "id": "praise.super",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535542/phonics/audio/v1/praise/super.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/praise/super",
+    "localUrl": "/audio/praise/praise.super.mp3",
+    "text": "Super!",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
   },
   "praise.hooray": {
-      "id": "praise.hooray",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410780/phonics/audio/v1/praise/hooray.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/praise/hooray",
-      "text": "Hooray!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "3a7b41d8e0b3f2a04fc8b19cc3e8155fdfbaff512368af72567d682e46532fb3",
-      "generatedAt": "2026-09-14T18:33:01.360Z",
-      "format": "mp3"
+    "id": "praise.hooray",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535544/phonics/audio/v1/praise/hooray.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/praise/hooray",
+    "localUrl": "/audio/praise/praise.hooray.mp3",
+    "text": "Hooray!",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
   },
   "praise.wonderful": {
-      "id": "praise.wonderful",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410783/phonics/audio/v1/praise/wonderful.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/praise/wonderful",
-      "text": "Wonderful!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "2b68bc75ceaea6925fb17ccf73006ce9ee787563abd10dfb71aaf685dc09f449",
-      "generatedAt": "2026-09-14T18:33:04.394Z",
-      "format": "mp3"
+    "id": "praise.wonderful",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535545/phonics/audio/v1/praise/wonderful.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/praise/wonderful",
+    "localUrl": "/audio/praise/praise.wonderful.mp3",
+    "text": "Wonderful!",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
   },
   "praise.look-at-that": {
-      "id": "praise.look-at-that",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410786/phonics/audio/v1/praise/look-at-that.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/praise/look-at-that",
-      "text": "Look at that!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "0dac076c870548a59727a7260ff053986b797ca2fe71693bffb8028cf6559e74",
-      "generatedAt": "2026-09-14T18:33:07.952Z",
-      "format": "mp3"
+    "id": "praise.look-at-that",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535547/phonics/audio/v1/praise/look-at-that.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/praise/look-at-that",
+    "localUrl": "/audio/praise/praise.look-at-that.mp3",
+    "text": "Look at that!",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
   },
   "praise.great-tapping": {
-      "id": "praise.great-tapping",
-      "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789410789/phonics/audio/v1/praise/great-tapping.mp3",
-      "cloudinaryPublicId": "phonics/audio/v1/praise/great-tapping",
-      "text": "Great tapping!",
-      "model": "gpt-4o-mini-tts",
-      "voice": "coral",
-      "instructionVersion": 1,
-      "fingerprint": "70741809e250c63ecbc615cce3faa4db7fee8513f9b665fa8cd1fc1df2eed7c8",
-      "generatedAt": "2026-09-14T18:33:10.357Z",
-      "format": "mp3"
+    "id": "praise.great-tapping",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535548/phonics/audio/v1/praise/great-tapping.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/praise/great-tapping",
+    "localUrl": "/audio/praise/praise.great-tapping.mp3",
+    "text": "Great tapping!",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
   },
+  "word.alligator": {
+    "id": "word.alligator",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535550/phonics/audio/v1/word/alligator.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/alligator",
+    "localUrl": "/audio/words/word.alligator.mp3",
+    "text": "alligator",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.ant": {
+    "id": "word.ant",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535551/phonics/audio/v1/word/ant.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/ant",
+    "localUrl": "/audio/words/word.ant.mp3",
+    "text": "ant",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.apple": {
+    "id": "word.apple",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535552/phonics/audio/v1/word/apple.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/apple",
+    "localUrl": "/audio/words/word.apple.mp3",
+    "text": "apple",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.arrow": {
+    "id": "word.arrow",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535553/phonics/audio/v1/word/arrow.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/arrow",
+    "localUrl": "/audio/words/word.arrow.mp3",
+    "text": "arrow",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.astronaut": {
+    "id": "word.astronaut",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535555/phonics/audio/v1/word/astronaut.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/astronaut",
+    "localUrl": "/audio/words/word.astronaut.mp3",
+    "text": "astronaut",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.b-bag": {
+    "id": "word.b-bag",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535556/phonics/audio/v1/word/bag.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/bag",
+    "localUrl": "/audio/words/word.b-bag.mp3",
+    "text": "bag",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.b-ball": {
+    "id": "word.b-ball",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535557/phonics/audio/v1/word/ball.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/ball",
+    "localUrl": "/audio/words/word.b-ball.mp3",
+    "text": "ball",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.b-bear": {
+    "id": "word.b-bear",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535558/phonics/audio/v1/word/bear.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/bear",
+    "localUrl": "/audio/words/word.b-bear.mp3",
+    "text": "bear",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.c-car": {
+    "id": "word.c-car",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535560/phonics/audio/v1/word/car.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/car",
+    "localUrl": "/audio/words/word.c-car.mp3",
+    "text": "car",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.c-cat": {
+    "id": "word.c-cat",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535561/phonics/audio/v1/word/cat.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/cat",
+    "localUrl": "/audio/words/word.c-cat.mp3",
+    "text": "cat",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.c-cup": {
+    "id": "word.c-cup",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535562/phonics/audio/v1/word/cup.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/cup",
+    "localUrl": "/audio/words/word.c-cup.mp3",
+    "text": "cup",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.d-dog": {
+    "id": "word.d-dog",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535563/phonics/audio/v1/word/dog.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/dog",
+    "localUrl": "/audio/words/word.d-dog.mp3",
+    "text": "dog",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.d-drum": {
+    "id": "word.d-drum",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535564/phonics/audio/v1/word/drum.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/drum",
+    "localUrl": "/audio/words/word.d-drum.mp3",
+    "text": "drum",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.d-duck": {
+    "id": "word.d-duck",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535566/phonics/audio/v1/word/duck.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/duck",
+    "localUrl": "/audio/words/word.d-duck.mp3",
+    "text": "duck",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.e-egg": {
+    "id": "word.e-egg",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535567/phonics/audio/v1/word/egg.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/egg",
+    "localUrl": "/audio/words/word.e-egg.mp3",
+    "text": "egg",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.e-elephant": {
+    "id": "word.e-elephant",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535568/phonics/audio/v1/word/elephant.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/elephant",
+    "localUrl": "/audio/words/word.e-elephant.mp3",
+    "text": "elephant",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.e-envelope": {
+    "id": "word.e-envelope",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535569/phonics/audio/v1/word/envelope.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/envelope",
+    "localUrl": "/audio/words/word.e-envelope.mp3",
+    "text": "envelope",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.f-fish": {
+    "id": "word.f-fish",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535571/phonics/audio/v1/word/fish.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/fish",
+    "localUrl": "/audio/words/word.f-fish.mp3",
+    "text": "fish",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.f-fox": {
+    "id": "word.f-fox",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535572/phonics/audio/v1/word/fox.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/fox",
+    "localUrl": "/audio/words/word.f-fox.mp3",
+    "text": "fox",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.f-frog": {
+    "id": "word.f-frog",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535573/phonics/audio/v1/word/frog.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/frog",
+    "localUrl": "/audio/words/word.f-frog.mp3",
+    "text": "frog",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.g-girl": {
+    "id": "word.g-girl",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535574/phonics/audio/v1/word/girl.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/girl",
+    "localUrl": "/audio/words/word.g-girl.mp3",
+    "text": "girl",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.g-goat": {
+    "id": "word.g-goat",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535575/phonics/audio/v1/word/goat.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/goat",
+    "localUrl": "/audio/words/word.g-goat.mp3",
+    "text": "goat",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.g-guitar": {
+    "id": "word.g-guitar",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535576/phonics/audio/v1/word/guitar.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/guitar",
+    "localUrl": "/audio/words/word.g-guitar.mp3",
+    "text": "guitar",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.h-hat": {
+    "id": "word.h-hat",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535577/phonics/audio/v1/word/hat.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/hat",
+    "localUrl": "/audio/words/word.h-hat.mp3",
+    "text": "hat",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.h-heart": {
+    "id": "word.h-heart",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535579/phonics/audio/v1/word/heart.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/heart",
+    "localUrl": "/audio/words/word.h-heart.mp3",
+    "text": "heart",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.h-house": {
+    "id": "word.h-house",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535580/phonics/audio/v1/word/house.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/house",
+    "localUrl": "/audio/words/word.h-house.mp3",
+    "text": "house",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.i-igloo": {
+    "id": "word.i-igloo",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535581/phonics/audio/v1/word/igloo.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/igloo",
+    "localUrl": "/audio/words/word.i-igloo.mp3",
+    "text": "igloo",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.i-iguana": {
+    "id": "word.i-iguana",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535582/phonics/audio/v1/word/iguana.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/iguana",
+    "localUrl": "/audio/words/word.i-iguana.mp3",
+    "text": "iguana",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.i-insect": {
+    "id": "word.i-insect",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535584/phonics/audio/v1/word/insect.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/insect",
+    "localUrl": "/audio/words/word.i-insect.mp3",
+    "text": "insect",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.j-jam": {
+    "id": "word.j-jam",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535585/phonics/audio/v1/word/jam.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/jam",
+    "localUrl": "/audio/words/word.j-jam.mp3",
+    "text": "jam",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.j-jazz": {
+    "id": "word.j-jazz",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535586/phonics/audio/v1/word/jazz.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/jazz",
+    "localUrl": "/audio/words/word.j-jazz.mp3",
+    "text": "jazz",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.j-jet": {
+    "id": "word.j-jet",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535587/phonics/audio/v1/word/jet.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/jet",
+    "localUrl": "/audio/words/word.j-jet.mp3",
+    "text": "jet",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.k-kangaroo": {
+    "id": "word.k-kangaroo",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535588/phonics/audio/v1/word/kangaroo.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/kangaroo",
+    "localUrl": "/audio/words/word.k-kangaroo.mp3",
+    "text": "kangaroo",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.k-key": {
+    "id": "word.k-key",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535589/phonics/audio/v1/word/key.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/key",
+    "localUrl": "/audio/words/word.k-key.mp3",
+    "text": "key",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.k-kite": {
+    "id": "word.k-kite",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535591/phonics/audio/v1/word/kite.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/kite",
+    "localUrl": "/audio/words/word.k-kite.mp3",
+    "text": "kite",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.l-leaf": {
+    "id": "word.l-leaf",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535592/phonics/audio/v1/word/leaf.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/leaf",
+    "localUrl": "/audio/words/word.l-leaf.mp3",
+    "text": "leaf",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.l-leg": {
+    "id": "word.l-leg",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535593/phonics/audio/v1/word/leg.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/leg",
+    "localUrl": "/audio/words/word.l-leg.mp3",
+    "text": "leg",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.l-lion": {
+    "id": "word.l-lion",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535594/phonics/audio/v1/word/lion.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/lion",
+    "localUrl": "/audio/words/word.l-lion.mp3",
+    "text": "lion",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.mango": {
+    "id": "word.mango",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535596/phonics/audio/v1/word/mango.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/mango",
+    "localUrl": "/audio/words/word.mango.mp3",
+    "text": "mango",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.milk": {
+    "id": "word.milk",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535597/phonics/audio/v1/word/milk.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/milk",
+    "localUrl": "/audio/words/word.milk.mp3",
+    "text": "milk",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.monkey": {
+    "id": "word.monkey",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535598/phonics/audio/v1/word/monkey.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/monkey",
+    "localUrl": "/audio/words/word.monkey.mp3",
+    "text": "monkey",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.moon": {
+    "id": "word.moon",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535600/phonics/audio/v1/word/moon.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/moon",
+    "localUrl": "/audio/words/word.moon.mp3",
+    "text": "moon",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.mouse": {
+    "id": "word.mouse",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535601/phonics/audio/v1/word/mouse.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/mouse",
+    "localUrl": "/audio/words/word.mouse.mp3",
+    "text": "mouse",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.n-nest": {
+    "id": "word.n-nest",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535602/phonics/audio/v1/word/nest.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/nest",
+    "localUrl": "/audio/words/word.n-nest.mp3",
+    "text": "nest",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.n-nose": {
+    "id": "word.n-nose",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535603/phonics/audio/v1/word/nose.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/nose",
+    "localUrl": "/audio/words/word.n-nose.mp3",
+    "text": "nose",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.n-nut": {
+    "id": "word.n-nut",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535605/phonics/audio/v1/word/nut.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/nut",
+    "localUrl": "/audio/words/word.n-nut.mp3",
+    "text": "nut",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.o-octopus": {
+    "id": "word.o-octopus",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535606/phonics/audio/v1/word/octopus.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/octopus",
+    "localUrl": "/audio/words/word.o-octopus.mp3",
+    "text": "octopus",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.o-orange": {
+    "id": "word.o-orange",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535607/phonics/audio/v1/word/orange.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/orange",
+    "localUrl": "/audio/words/word.o-orange.mp3",
+    "text": "orange",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.o-owl": {
+    "id": "word.o-owl",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535608/phonics/audio/v1/word/owl.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/owl",
+    "localUrl": "/audio/words/word.o-owl.mp3",
+    "text": "owl",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.p-pan": {
+    "id": "word.p-pan",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535609/phonics/audio/v1/word/pan.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/pan",
+    "localUrl": "/audio/words/word.p-pan.mp3",
+    "text": "pan",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.p-pen": {
+    "id": "word.p-pen",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535610/phonics/audio/v1/word/pen.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/pen",
+    "localUrl": "/audio/words/word.p-pen.mp3",
+    "text": "pen",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.p-pig": {
+    "id": "word.p-pig",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535611/phonics/audio/v1/word/pig.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/pig",
+    "localUrl": "/audio/words/word.p-pig.mp3",
+    "text": "pig",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.q-quack": {
+    "id": "word.q-quack",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535613/phonics/audio/v1/word/quack.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/quack",
+    "localUrl": "/audio/words/word.q-quack.mp3",
+    "text": "quack",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.q-queen": {
+    "id": "word.q-queen",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535614/phonics/audio/v1/word/queen.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/queen",
+    "localUrl": "/audio/words/word.q-queen.mp3",
+    "text": "queen",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.q-quilt": {
+    "id": "word.q-quilt",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535615/phonics/audio/v1/word/quilt.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/quilt",
+    "localUrl": "/audio/words/word.q-quilt.mp3",
+    "text": "quilt",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.r-rabbit": {
+    "id": "word.r-rabbit",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535616/phonics/audio/v1/word/rabbit.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/rabbit",
+    "localUrl": "/audio/words/word.r-rabbit.mp3",
+    "text": "rabbit",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.r-red": {
+    "id": "word.r-red",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535617/phonics/audio/v1/word/red.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/red",
+    "localUrl": "/audio/words/word.r-red.mp3",
+    "text": "red",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.r-robot": {
+    "id": "word.r-robot",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535620/phonics/audio/v1/word/robot.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/robot",
+    "localUrl": "/audio/words/word.r-robot.mp3",
+    "text": "robot",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.sheep": {
+    "id": "word.sheep",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535621/phonics/audio/v1/word/sheep.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/sheep",
+    "localUrl": "/audio/words/word.sheep.mp3",
+    "text": "sheep",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.snake": {
+    "id": "word.snake",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535623/phonics/audio/v1/word/snake.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/snake",
+    "localUrl": "/audio/words/word.snake.mp3",
+    "text": "snake",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.sock": {
+    "id": "word.sock",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535624/phonics/audio/v1/word/sock.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/sock",
+    "localUrl": "/audio/words/word.sock.mp3",
+    "text": "sock",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.star": {
+    "id": "word.star",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535626/phonics/audio/v1/word/star.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/star",
+    "localUrl": "/audio/words/word.star.mp3",
+    "text": "star",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.sun": {
+    "id": "word.sun",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535627/phonics/audio/v1/word/sun.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/sun",
+    "localUrl": "/audio/words/word.sun.mp3",
+    "text": "sun",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.t-tie": {
+    "id": "word.t-tie",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535628/phonics/audio/v1/word/tie.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/tie",
+    "localUrl": "/audio/words/word.t-tie.mp3",
+    "text": "tie",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.t-tiger": {
+    "id": "word.t-tiger",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535629/phonics/audio/v1/word/tiger.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/tiger",
+    "localUrl": "/audio/words/word.t-tiger.mp3",
+    "text": "tiger",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.t-train": {
+    "id": "word.t-train",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535631/phonics/audio/v1/word/train.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/train",
+    "localUrl": "/audio/words/word.t-train.mp3",
+    "text": "train",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.u-umbrella": {
+    "id": "word.u-umbrella",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535632/phonics/audio/v1/word/umbrella.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/umbrella",
+    "localUrl": "/audio/words/word.u-umbrella.mp3",
+    "text": "umbrella",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.u-under": {
+    "id": "word.u-under",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535633/phonics/audio/v1/word/under.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/under",
+    "localUrl": "/audio/words/word.u-under.mp3",
+    "text": "under",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.u-up": {
+    "id": "word.u-up",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535634/phonics/audio/v1/word/up.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/up",
+    "localUrl": "/audio/words/word.u-up.mp3",
+    "text": "up",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.v-van": {
+    "id": "word.v-van",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535636/phonics/audio/v1/word/van.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/van",
+    "localUrl": "/audio/words/word.v-van.mp3",
+    "text": "van",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.v-vase": {
+    "id": "word.v-vase",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535637/phonics/audio/v1/word/vase.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/vase",
+    "localUrl": "/audio/words/word.v-vase.mp3",
+    "text": "vase",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.v-violin": {
+    "id": "word.v-violin",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535638/phonics/audio/v1/word/violin.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/violin",
+    "localUrl": "/audio/words/word.v-violin.mp3",
+    "text": "violin",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.w-watch": {
+    "id": "word.w-watch",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535639/phonics/audio/v1/word/watch.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/watch",
+    "localUrl": "/audio/words/word.w-watch.mp3",
+    "text": "watch",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.w-wet": {
+    "id": "word.w-wet",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535641/phonics/audio/v1/word/wet.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/wet",
+    "localUrl": "/audio/words/word.w-wet.mp3",
+    "text": "wet",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.w-worm": {
+    "id": "word.w-worm",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535642/phonics/audio/v1/word/worm.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/worm",
+    "localUrl": "/audio/words/word.w-worm.mp3",
+    "text": "worm",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.x-box": {
+    "id": "word.x-box",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535643/phonics/audio/v1/word/box.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/box",
+    "localUrl": "/audio/words/word.x-box.mp3",
+    "text": "box",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.x-fox": {
+    "id": "word.x-fox",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535644/phonics/audio/v1/word/fox.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/fox",
+    "localUrl": "/audio/words/word.x-fox.mp3",
+    "text": "fox",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.x-six": {
+    "id": "word.x-six",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535646/phonics/audio/v1/word/six.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/six",
+    "localUrl": "/audio/words/word.x-six.mp3",
+    "text": "six",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.y-yellow": {
+    "id": "word.y-yellow",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535647/phonics/audio/v1/word/yellow.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/yellow",
+    "localUrl": "/audio/words/word.y-yellow.mp3",
+    "text": "yellow",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.y-yes": {
+    "id": "word.y-yes",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535648/phonics/audio/v1/word/yes.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/yes",
+    "localUrl": "/audio/words/word.y-yes.mp3",
+    "text": "yes",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.y-yoyo": {
+    "id": "word.y-yoyo",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535649/phonics/audio/v1/word/yoyo.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/yoyo",
+    "localUrl": "/audio/words/word.y-yoyo.mp3",
+    "text": "yoyo",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.z-zebra": {
+    "id": "word.z-zebra",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535650/phonics/audio/v1/word/zebra.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/zebra",
+    "localUrl": "/audio/words/word.z-zebra.mp3",
+    "text": "zebra",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.z-zipper": {
+    "id": "word.z-zipper",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535652/phonics/audio/v1/word/zipper.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/zipper",
+    "localUrl": "/audio/words/word.z-zipper.mp3",
+    "text": "zipper",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  },
+  "word.z-zoo": {
+    "id": "word.z-zoo",
+    "url": "https://res.cloudinary.com/duimdqjg8/video/upload/v1789535653/phonics/audio/v1/word/zoo.mp3",
+    "cloudinaryPublicId": "phonics/audio/v1/word/zoo",
+    "localUrl": "/audio/words/word.z-zoo.mp3",
+    "text": "zoo",
+    "model": "gpt-4o-mini-tts",
+    "voice": "coral",
+    "format": "mp3"
+  }
 };

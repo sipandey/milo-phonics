@@ -12,12 +12,10 @@ export interface PlayVoiceOptions {
 class AudioService {
   private audioCtx: AudioContext | null = null;
   private sfxGain: GainNode | null = null;
-  private synth: SpeechSynthesis | null = null;
-  private voices: SpeechSynthesisVoice[] = [];
   private isMuted: boolean = false;
   private settings: AudioSettings = {
-    voiceSpeed: 0.68,     // Slower toddler pacing: calm, slow, articulate
-    voicePitch: 1.08,     // Warm, friendly, slightly elevated
+    voiceSpeed: 0.75,     // Calm, unhurried British toddler pacing matching Oxford
+    voicePitch: 1.0,      // Natural pitch
     sfxVolume: 0.9,
     speechVolume: 1.0,
     selectedVoiceName: null,
@@ -27,11 +25,6 @@ class AudioService {
   private currentAudioElement: HTMLAudioElement | null = null;
   private audioCache: Map<string, HTMLAudioElement> = new Map();
 
-  // Active SpeechSynthesisUtterance references held in memory to prevent Chrome V8 GC
-  private activeUtterances: Set<SpeechSynthesisUtterance> = new Set();
-  // Timer ID for scheduled delayed speak calls
-  private pendingSpeakTimer: ReturnType<typeof setTimeout> | null = null;
-
   // Speech listener callbacks for visual mouth sync (used by CharacterMilo)
   private speechStartListeners: Set<() => void> = new Set();
   private speechEndListeners: Set<() => void> = new Set();
@@ -39,22 +32,8 @@ class AudioService {
   private isBusy: boolean = false;
 
   constructor() {
-    if (typeof window !== 'undefined') {
-      // Retain active utterances on window as GC root
-      (window as unknown as { __activeUtterances?: Set<SpeechSynthesisUtterance> }).__activeUtterances = this.activeUtterances;
-
-      // Lazy init for SpeechSynthesis
-      if ('speechSynthesis' in window) {
-        this.synth = window.speechSynthesis;
-        this.loadVoices();
-        if (typeof this.synth.addEventListener === 'function') {
-          this.synth.addEventListener('voiceschanged', () => this.loadVoices());
-        }
-        if (this.synth.onvoiceschanged !== undefined) {
-          this.synth.onvoiceschanged = () => this.loadVoices();
-        }
-      }
-    }
+    // 100% Pre-recorded AI & Oxford audio pipeline.
+    // Browser native SpeechSynthesis is strictly disabled per project architecture.
   }
 
   /**
@@ -74,16 +53,9 @@ class AudioService {
     return this.audioCtx;
   }
 
-  private loadVoices() {
-    if (!this.synth) return;
-    this.voices = this.synth.getVoices();
-  }
-
   public getAvailableVoices(): SpeechSynthesisVoice[] {
-    if (this.voices.length === 0 && this.synth) {
-      this.voices = this.synth.getVoices();
-    }
-    return this.voices.filter(v => v.lang.startsWith('en'));
+    // Deprecated: SpeechSynthesis is disabled per project architecture
+    return [];
   }
 
   public getSettings(): AudioSettings {
@@ -161,8 +133,8 @@ class AudioService {
    * Play voice audio via semantic audio ID (e.g. "word.monkey", "phoneme.m")
    *
    * 1. Looks up entry in central audioManifest.
-   * 2. If remote URL exists: plays remote audio with preloading & error fallback.
-   * 3. If no remote URL: falls back seamlessly to calibrated browser SpeechSynthesis.
+   * 2. Oxford authentic audio takes precedence for phonemes and authentic recordings.
+   * 3. Pre-recorded AI audio (Coral British RP matching Oxford tone & pace) with Cloudinary CDN backing for all others.
    * 4. Triggers speech lifecycle listeners so visual animations (Milo mouth) sync perfectly.
    */
   public async playVoice(audioId: string, options?: PlayVoiceOptions): Promise<void> {
@@ -176,10 +148,7 @@ class AudioService {
       if (audioId.startsWith('word.')) {
         return this.playRemoteVoice(`/audio/words/${audioId}.mp3`, audioId.replace(/^word\.[a-z]-?/, ''), options);
       }
-      // Graceful fallback: if unknown ID, attempt to speak as plain text if it looks like words
-      if (audioId.includes(' ') || audioId.length > 20) {
-        return this.speak(audioId, options);
-      }
+      console.warn(`[AudioService] Audio asset not found for "${audioId}". Browser speech-synthesis is strictly disabled.`);
       return;
     }
 
@@ -188,25 +157,15 @@ class AudioService {
       this.stopRemoteAudio();
     }
 
-    // Future remote Cloudinary / pre-generated audio playback
     if (entry.url) {
-      if (shouldInterrupt && this.synth) {
-        if (this.synth.speaking || this.synth.pending) {
-          this.synth.cancel();
-        }
-      }
       return this.playRemoteVoice(entry.url, entry.fallbackText, options);
     }
-
-    // Phase 1 fallback: use SpeechSynthesis with manifest's fallbackText
-    // Let speak() manage utterance queuing and cancellation cleanly
-    return this.speak(entry.fallbackText, options);
   }
 
   /**
-   * Play remote audio URL with fallback to speech synthesis on error
+   * Play pre-recorded audio URL (100% pre-recorded Oxford or AI Cloudinary asset)
    */
-  private playRemoteVoice(url: string, fallbackText: string, options?: PlayVoiceOptions): Promise<void> {
+  private playRemoteVoice(url: string, fallbackText?: string, options?: PlayVoiceOptions): Promise<void> {
     return new Promise((resolve) => {
       const execute = () => {
         try {
@@ -235,18 +194,16 @@ class AudioService {
             resolve();
           };
 
-          const onError = () => {
+          const onError = (err?: Event) => {
             audio.removeEventListener('play', onStart);
             audio.removeEventListener('ended', onFinish);
             audio.removeEventListener('error', onError);
-            // If another audio has already superseded this one, do not trigger fallback
-            if (this.currentAudioElement !== audio && this.currentAudioElement !== null) {
-              resolve();
-              return;
+            if (this.currentAudioElement === audio) {
+              this.currentAudioElement = null;
+              this.notifySpeechEnd();
             }
-            this.currentAudioElement = null;
-            // Graceful fallback to speech synthesis if network/media error occurs
-            this.speak(fallbackText, { interrupt: false }).then(resolve);
+            console.warn(`[AudioService] Failed to play audio asset: ${url} (${fallbackText || 'voice'})`, err);
+            resolve();
           };
 
           audio.addEventListener('play', onStart, { once: true });
@@ -256,7 +213,6 @@ class AudioService {
           const playPromise = audio.play();
           if (playPromise !== undefined) {
             playPromise.catch((err: unknown) => {
-              // Ignore intentional aborts (e.g. toddler rapidly tapped another item or stopped audio)
               if (err instanceof DOMException && err.name === 'AbortError') {
                 audio.removeEventListener('play', onStart);
                 audio.removeEventListener('ended', onFinish);
@@ -264,20 +220,12 @@ class AudioService {
                 resolve();
                 return;
               }
-              // If this audio element was already superseded by another, do not trigger fallback
-              if (this.currentAudioElement !== audio && this.currentAudioElement !== null) {
-                audio.removeEventListener('play', onStart);
-                audio.removeEventListener('ended', onFinish);
-                audio.removeEventListener('error', onError);
-                resolve();
-                return;
-              }
-              // Handled via autoplay block or real media error
               onError();
             });
           }
-        } catch {
-          this.speak(fallbackText, { interrupt: false }).then(resolve);
+        } catch (err) {
+          console.warn(`[AudioService] Error initializing audio: ${url} (${fallbackText || 'voice'})`, err);
+          resolve();
         }
       };
 
@@ -308,7 +256,7 @@ class AudioService {
 
   /**
    * Play pedagogical blend: authentic Oxford isolated phoneme sound,
-   * followed by a calm toddler breath pause, then the word spoken slowly in British English.
+   * followed by a calm toddler breath pause, then the word spoken in British English.
    * e.g. /m/... Monkey!
    */
   public async playPhonemeWordBlend(
@@ -324,15 +272,16 @@ class AudioService {
       await this.playVoice(phonemeAudioId, { interrupt: true });
 
       // 2. Short breath pause for toddler comprehension
-      await new Promise((resolve) => setTimeout(resolve, 280));
+      await new Promise((resolve) => setTimeout(resolve, 200));
 
       // 3. Play the authentic / slow AI-generated word audio asset
       const wordEntry = getAudioEntry(wordAudioId);
       if (wordEntry?.url) {
         await this.playVoice(wordAudioId, { interrupt: false });
       } else {
-        const textToSpeak = fallbackWordText || wordEntry?.fallbackText || wordAudioId.replace(/^word\.[a-z]-?/, '');
-        await this.speak(textToSpeak, { interrupt: false, rate: 0.65 });
+        const cleanWord = (fallbackWordText || wordAudioId).replace(/^word\.[a-z]-?/, '');
+        const cvcUrl = getCvcWordAudioUrl(cleanWord);
+        await this.playRemoteVoice(cvcUrl, cleanWord, { interrupt: false });
       }
     } finally {
       this.setBusy(false);
@@ -342,6 +291,7 @@ class AudioService {
   /**
    * Sequential CVC Blending for the Sound Train:
    * Plays each phoneme one-by-one with highlight callback, pauses, then speaks the blended word.
+   * Uses authentic Oxford phonemes and trimmed AI CVC words with zero browser speech-synthesis.
    */
   public async playSequentialBlend(
     phonemeAudioIds: string[],
@@ -353,19 +303,18 @@ class AudioService {
 
     this.setBusy(true);
     try {
-      // 1. Play each phoneme sequentially
+      // 1. Play each phoneme sequentially with crisp 100ms pacing
       for (let i = 0; i < phonemeAudioIds.length; i++) {
         onHighlight?.(i);
         this.playBoing();
         await this.playVoice(phonemeAudioIds[i], { interrupt: true });
-        await new Promise((resolve) => setTimeout(resolve, 220));
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
 
       onHighlight?.(-1);
-      await new Promise((resolve) => setTimeout(resolve, 320));
+      await new Promise((resolve) => setTimeout(resolve, 150));
 
       // 2. Play the final blended whole word
-      // Priority A: Dedicated CVC audio asset (local /audio/cvc/ or Cloudinary)
       const cleanWord = (fallbackWordText || wordAudioId || '').toLowerCase().replace(/^(word|cvc)\./, '');
       if (cleanWord) {
         const cvcUrl = getCvcWordAudioUrl(cleanWord);
@@ -373,22 +322,17 @@ class AudioService {
           await this.playRemoteVoice(cvcUrl, cleanWord, { interrupt: false });
           return;
         } catch {
-          // Fall through to other audio entry if CVC play fails
+          // Fall through
         }
       }
 
-      // Priority B: Audio Manifest entry (e.g. word.p-pan)
+      // Audio Manifest entry (e.g. word.p-pan)
       if (wordAudioId) {
         const wordEntry = getAudioEntry(wordAudioId);
         if (wordEntry?.url) {
           await this.playVoice(wordAudioId, { interrupt: false });
           return;
         }
-      }
-
-      // Priority C: SpeechSynthesis fallback
-      if (fallbackWordText) {
-        await this.speak(fallbackWordText, { interrupt: false, rate: 0.65 });
       }
     } finally {
       this.setBusy(false);
@@ -437,23 +381,10 @@ class AudioService {
   }
 
   /**
-   * Stop any currently playing voice audio (both remote and synthesized)
+   * Stop any currently playing voice audio
    */
   public stopVoice() {
-    if (this.pendingSpeakTimer !== null) {
-      clearTimeout(this.pendingSpeakTimer);
-      this.pendingSpeakTimer = null;
-    }
-
     this.stopRemoteAudio();
-
-    if (this.synth) {
-      if (this.synth.speaking || this.synth.pending) {
-        this.synth.cancel();
-      }
-    }
-
-    this.activeUtterances.clear();
     this.notifySpeechEnd();
   }
 
@@ -486,192 +417,52 @@ class AudioService {
   /**
    * High quality speech synthesizer tuned for toddlers with British English default
    */
-  public speak(
+  /**
+   * Spoken audio helper: Per project architecture, browser native SpeechSynthesis is
+   * completely disabled. This attempts to match text against pre-recorded AI / Oxford
+   * audio entries or CVC words. Never invokes window.speechSynthesis.
+   */
+  public async speak(
     text: string,
     options?: { interrupt?: boolean; delayMs?: number; rate?: number; lang?: string }
   ): Promise<void> {
-    return new Promise((resolve) => {
-      if (this.isMuted || !this.synth) {
-        resolve();
-        return;
-      }
+    if (this.isMuted) return;
+    const clean = text.toLowerCase().trim();
 
-      const shouldInterrupt = options?.interrupt ?? true;
+    // 1. Check CVC word
+    const cvcUrl = getCvcWordAudioUrl(clean);
+    if (cvcUrl) {
+      return this.playRemoteVoice(cvcUrl, text, options);
+    }
 
-      // Cancel any pending queued speak timer from a previous call
-      if (this.pendingSpeakTimer !== null) {
-        clearTimeout(this.pendingSpeakTimer);
-        this.pendingSpeakTimer = null;
-      }
+    // 2. Check curriculum word ID format
+    const wordEntry = getAudioEntry(`word.${clean}`);
+    if (wordEntry?.url) {
+      return this.playRemoteVoice(wordEntry.url, text, options);
+    }
 
-      // If interrupting, stop previous speech and allow Chrome audio thread to flush IPC
-      let postCancelDelay = 0;
-      if (shouldInterrupt) {
-        if (this.synth.speaking || this.synth.pending) {
-          this.synth.cancel();
-          postCancelDelay = 35; // 35ms micro-delay prevents Chrome IPC cancel race
-        }
-        this.notifySpeechEnd();
-      }
-
-      // Resume if Chrome was trapped in paused state
-      if (this.synth.paused) {
-        this.synth.resume();
-      }
-
-      const userDelay = options?.delayMs ?? 0;
-      const effectiveDelay = Math.max(userDelay, postCancelDelay);
-
-      const executeSpeak = () => {
-        this.pendingSpeakTimer = null;
-
-        if (!this.synth || this.isMuted) {
-          resolve();
-          return;
-        }
-
-        // Unpause Chrome if synthesis engine stalled
-        if (this.synth.paused) {
-          this.synth.resume();
-        }
-
-        const targetLang = options?.lang || 'en-GB';
-        const targetRate = options?.rate ?? this.settings.voiceSpeed;
-
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = targetLang;
-        utterance.rate = targetRate;
-        utterance.pitch = this.settings.voicePitch;
-        utterance.volume = this.settings.speechVolume;
-
-        // Choose best natural British English voice
-        const enVoices = this.getAvailableVoices();
-        let chosenVoice: SpeechSynthesisVoice | undefined;
-
-        if (this.settings.selectedVoiceName) {
-          chosenVoice = enVoices.find(v => v.name === this.settings.selectedVoiceName);
-        }
-
-        if (!chosenVoice) {
-          // Priority 1: High quality British English voices
-          const preferredBritishNames = [
-            'Daniel',
-            'Serena',
-            'Oliver',
-            'Kate',
-            'George',
-            'Fiona',
-            'Arthur',
-            'Martha',
-            'Google UK English Female',
-            'Google UK English Male',
-            'Libby',
-            'Ryan',
-            'Sonia',
-          ];
-          for (const name of preferredBritishNames) {
-            chosenVoice = enVoices.find(v => v.name.toLowerCase().includes(name.toLowerCase()));
-            if (chosenVoice) break;
-          }
-        }
-
-        if (!chosenVoice) {
-          // Priority 2: Any en-GB voice
-          chosenVoice = enVoices.find(v =>
-            v.lang.replace('_', '-').toLowerCase().startsWith('en-gb') ||
-            v.name.toLowerCase().includes('british') ||
-            v.name.toLowerCase().includes('united kingdom')
-          );
-        }
-
-        if (!chosenVoice) {
-          // Priority 3: Natural / warm English voices
-          const generalPreferred = ['Samantha', 'Karen', 'Victoria', 'Moira', 'Google US English', 'Natural'];
-          for (const name of generalPreferred) {
-            chosenVoice = enVoices.find(v => v.name.includes(name));
-            if (chosenVoice) break;
-          }
-        }
-
-        if (!chosenVoice && enVoices.length > 0) {
-          chosenVoice = enVoices[0];
-        }
-
-        if (chosenVoice) {
-          utterance.voice = chosenVoice;
-          utterance.lang = chosenVoice.lang || targetLang;
-        } else if (enVoices.length > 0) {
-          utterance.lang = enVoices[0].lang;
-        }
-
-        // CRITICAL BUGFIX FOR CHROME:
-        // Hold strong JS reference in activeUtterances Set to prevent V8 GC from killing utterance before/during playback.
-        this.activeUtterances.add(utterance);
-
-        let hasEnded = false;
-        let safetyTimer: ReturnType<typeof setTimeout> | null = null;
-
-        const cleanupAndFinish = () => {
-          if (hasEnded) return;
-          hasEnded = true;
-          if (safetyTimer !== null) {
-            clearTimeout(safetyTimer);
-            safetyTimer = null;
-          }
-          this.activeUtterances.delete(utterance);
-          this.notifySpeechEnd();
-          resolve();
-        };
-
-        utterance.onstart = () => {
-          this.notifySpeechStart();
-        };
-
-        utterance.onend = () => {
-          cleanupAndFinish();
-        };
-
-        utterance.onerror = () => {
-          cleanupAndFinish();
-        };
-
-        // Safety fallback timer so state never hangs if Chrome drops onend
-        const words = text.trim().split(/\s+/).length;
-        const estimatedDurationMs = Math.max(3000, words * 800 + 2000);
-        safetyTimer = setTimeout(() => {
-          if (!hasEnded) {
-            cleanupAndFinish();
-          }
-        }, estimatedDurationMs);
-
-        try {
-          this.synth.speak(utterance);
-        } catch {
-          cleanupAndFinish();
-        }
-      };
-
-      if (effectiveDelay > 0) {
-        this.pendingSpeakTimer = setTimeout(executeSpeak, effectiveDelay);
-      } else {
-        executeSpeak();
-      }
-    });
+    console.warn(`[AudioService] speak() was called with "${text}", but browser SpeechSynthesis is strictly disabled per project architecture.`);
   }
 
   /**
    * Dedicated helper for pronouncing single letter phonemes (backward-compatible)
    */
   public async speakPhoneme(phonemeSpoken: string): Promise<void> {
-    await this.speak(phonemeSpoken, { interrupt: true });
+    const clean = phonemeSpoken.toLowerCase().replace(/[^a-z]/g, '');
+    if (clean) {
+      await this.playVoice(`phoneme.${clean}`);
+    }
   }
 
   /**
    * Speaks the phoneme sound followed by the full word (backward-compatible)
    */
   public async speakPhonemeAndWord(phoneme: string, word: string): Promise<void> {
-    const phrase = `${phoneme}... ${word}!`;
-    await this.speak(phrase, { interrupt: true });
+    const cleanP = phoneme.toLowerCase().replace(/[^a-z]/g, '');
+    const cleanW = word.toLowerCase().trim();
+    if (cleanP) {
+      await this.playPhonemeWordBlend(`phoneme.${cleanP}`, `word.${cleanW}`, cleanW);
+    }
   }
 
   /**

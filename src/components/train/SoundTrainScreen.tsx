@@ -142,15 +142,8 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
       setIsWordRevealed(true);
       triggerGentleConfetti();
       audioService.playChime();
-      setMiloSpeech(`Brilliant! ${currentWord.word.toUpperCase()}!`);
+      setMiloSpeech(`Brilliant! ${currentWord.word.toUpperCase()}! 🌟`);
 
-      // Read the story sentence slowly after a brief breath pause
-      await new Promise((resolve) => setTimeout(resolve, 650));
-      setIsPlayingSentence(true);
-      await audioService.playSentence(currentWord.id, currentWord.meaning);
-      setIsPlayingSentence(false);
-
-      setMiloSpeech("Your turn! Tap Again or Next Word! 🌟");
       setJustFinishedAudio(true);
       setTimeout(() => setJustFinishedAudio(false), 2600);
     } finally {

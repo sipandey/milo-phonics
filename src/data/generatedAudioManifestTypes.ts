@@ -17,13 +17,15 @@ export interface GeneratedAudioEntry {
   /** TTS voice used e.g. "coral" */
   voice: string;
   /** Instruction config version — bump to force regeneration */
-  instructionVersion: number;
+  instructionVersion?: number;
   /** SHA-256 fingerprint of: id+text+model+voice+instructionVersion */
-  fingerprint: string;
+  fingerprint?: string;
   /** ISO 8601 timestamp of when this asset was generated */
-  generatedAt: string;
+  generatedAt?: string;
   /** Audio format e.g. "mp3" */
   format: string;
+  /** Optional local static asset path for zero-latency offline playback */
+  localUrl?: string;
 }
 
 export interface GeneratedManifestFile {

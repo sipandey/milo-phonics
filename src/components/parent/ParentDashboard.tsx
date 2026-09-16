@@ -11,9 +11,6 @@ interface ParentDashboardProps {
 
 export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => {
   const [progress, setProgress] = useState(progressService.getProgress());
-  const [settings, setSettings] = useState(audioService.getSettings());
-  const [testSpeechText, setTestSpeechText] = useState('sat... pat... tap!');
-  const voices = audioService.getAvailableVoices();
 
   useEffect(() => {
     const unsubscribe = progressService.subscribe((updated) => {
@@ -21,16 +18,6 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
     });
     return unsubscribe;
   }, []);
-
-  const handleUpdateSettings = (key: string, value: number | string | null) => {
-    const newSettings = { ...settings, [key]: value };
-    setSettings(newSettings);
-    audioService.updateSettings({ [key]: value });
-  };
-
-  const handleTestVoice = () => {
-    audioService.speak(testSpeechText, { interrupt: true });
-  };
 
   const handleResetProgress = () => {
     if (window.confirm('Reset all toddler stars and unlocked levels back to Level 1?')) {
@@ -151,60 +138,54 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
           </div>
         </div>
 
-        {/* Audio & Narration Settings */}
-        <div className="space-y-4 mb-6 pt-4 border-t border-gray-100">
+        {/* Audio & Narration Pipeline Status */}
+        <div className="space-y-3 mb-6 pt-4 border-t border-gray-100">
           <h3 className="text-sm font-black text-amber-900 uppercase tracking-wider flex items-center gap-2">
             <Volume2 className="w-4 h-4 text-amber-500" />
-            Voice & Toddler Audio Tuning
+            Audio Engine: Oxford-First & AI Cloudinary Pipeline
           </h3>
 
-          <div>
-            <div className="flex justify-between text-xs font-bold text-gray-700 mb-1">
-              <span>Speech Speed (Slower for toddlers)</span>
-              <span>{Math.round(settings.voiceSpeed * 100)}%</span>
+          <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 text-xs space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-gray-800">1. Oxford Dictionary Authentic Audio:</span>
+              <span className="font-black text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-lg">Active (Top Precedence)</span>
             </div>
-            <input
-              type="range"
-              min="0.5"
-              max="1.1"
-              step="0.05"
-              value={settings.voiceSpeed}
-              onChange={(e) => handleUpdateSettings('voiceSpeed', parseFloat(e.target.value))}
-              className="w-full accent-amber-500 cursor-pointer"
-            />
+            <p className="text-[11px] text-gray-600">
+              Authentic British English human recordings for all 26 letter phonemes and Oxford sound catalog.
+            </p>
+
+            <div className="flex items-center justify-between pt-1 border-t border-amber-100">
+              <span className="font-bold text-gray-800">2. Pre-Recorded British AI (Coral):</span>
+              <span className="font-black text-blue-700 bg-blue-100 px-2 py-0.5 rounded-lg">Active (Cloudinary CDN)</span>
+            </div>
+            <p className="text-[11px] text-gray-600">
+              Calm toddler pacing (~0.75x) matching Oxford tone. 84 words, 38 CVC blends, letters, & story sentences.
+            </p>
+
+            <div className="flex items-center justify-between pt-1 border-t border-amber-100">
+              <span className="font-bold text-gray-800">3. Browser SpeechSynthesis:</span>
+              <span className="font-bold text-gray-500 bg-gray-200 px-2 py-0.5 rounded-lg">Disabled (Zero Native Speech)</span>
+            </div>
           </div>
 
-          {voices.length > 1 && (
-            <div>
-              <label className="text-xs font-bold text-gray-700 block mb-1">Fallback Voice</label>
-              <select
-                value={settings.selectedVoiceName || ''}
-                onChange={(e) => handleUpdateSettings('selectedVoiceName', e.target.value || null)}
-                className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium"
-              >
-                <option value="">Default Recommended Voice</option>
-                {voices.map((v) => (
-                  <option key={v.name} value={v.name}>
-                    {v.name} ({v.lang})
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={testSpeechText}
-              onChange={(e) => setTestSpeechText(e.target.value)}
-              className="flex-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium"
-              placeholder="Test speech text"
-            />
+          <div className="flex gap-2 items-center">
             <button
-              onClick={handleTestVoice}
-              className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold squish-tap cursor-pointer"
+              onClick={() => {
+                audioService.playPhonemeWordBlend('phoneme.s', 'word.sun', 'Sun');
+              }}
+              className="flex-1 py-2.5 px-4 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold squish-tap cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
             >
-              Test Voice 🔊
+              <Volume2 className="w-4 h-4" />
+              <span>Test Oxford Sound & Coral Word Blend (/s/... Sun!)</span>
+            </button>
+
+            <button
+              onClick={() => {
+                audioService.playCvcWord('sat', 'Sat');
+              }}
+              className="py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold squish-tap cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
+            >
+              <span>Test CVC Blend (Sat!)</span>
             </button>
           </div>
         </div>
