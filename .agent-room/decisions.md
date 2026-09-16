@@ -16,6 +16,16 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-09-16 — Synchronous Ref Guards & Hardware Debounce Against Duplicate Audio Triggering
+
+**Decision:** Implemented synchronous reference guards (`hasPoppedRef`, `isAudioBusyRef`, `isProcessingIncorrectRef`, `lastTapTimeRef`) and a 400ms–450ms hardware debounce across interactive game elements (`BubblePopScreen`, `CharacterMilo`, `FeedMiloScreen`):
+- **Synchronous vs Asynchronous Guarding**: Replaced purely asynchronous React state checks (`poppedLetterId`, `isAudioBusy`) with immediate synchronous refs (`hasPoppedRef.current = true`). Rapid subsequent clicks (50–250ms) are dropped before any audio synthesis or delayed `setTimeout` callbacks can be scheduled.
+- **Milo Tap Decoupling**: Updated `<CharacterMilo>` to debounce clicks (450ms) and eliminated redundant internal `audioService.playBoing()` calls when an explicit `onTap` handler is passed, preventing layered dual-sound collisions (boing + pop + voice).
+- **Explicit Speech Timer Cancellation**: Centralized `clearPendingActionTimers()` in `BubblePopScreen` to actively clear any in-flight speech or reset timeouts when a new round or user action begins.
+**Why:** Real-world toddler and multi-touch interactions frequently produce double-taps within 50–150ms before React state updates flush to the DOM. Relying on asynchronous state allowed multiple click handlers to run concurrently, triggering duplicate Web Audio oscillator pops and duplicate HTMLAudioElement speech playbacks.
+**Rejected:** Relying solely on React `disabled` DOM attributes (disabled attributes do not take effect until the next render commit, leaving a multi-frame window where rapid taps execute).
+
+
 ### 2026-09-16 — Single-Action Auto-Advancing Loops for Bubble Pop & Sound Train
 
 **Decision:** Simplified the interaction architecture of both Bubble Pop and Sound Train under Toddler Focus Mode (`progress.toddlerFocusMode !== false`):

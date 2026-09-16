@@ -21,6 +21,13 @@ Append a new entry every time:
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-09-16 — Relying on asynchronous React state to block rapid multi-tap audio triggers
+
+**What happened:** Rapid double-clicks on bubbles or Milo caused sound effects (procedural oscillator pops) and Oxford phoneme audio to fire twice in immediate succession ("P-Pop! /t/ - /t/!"), creating an unpleasant stutter echo.
+**Root cause:** React state setters (`setIsAudioBusy(true)`, `setPoppedLetterId(id)`) schedule state changes for the next render pass. Clicks occurring within 50–250ms of each other execute in the same or pending render context where state is still `null`/`false`, allowing multiple click handlers to invoke audio APIs before buttons are disabled in the DOM.
+**Avoid:** Never rely on asynchronous React state or DOM `disabled` attributes alone to block rapid audio triggers. Always guard audio-triggering user interactions with immediate synchronous ref flags (`hasPoppedRef.current = true`) and a timestamp-based hardware debounce (`now - lastTapRef.current < 400ms`).
+
+
 ### 2026-09-16 — Awaiting HTMLAudioElement event listeners without resolution on pause or cancellation
 
 **What happened:** Calling `audio.pause()` during speech interruption left the Promise returned by `playRemoteVoice` hanging forever, permanently suspending awaiting async callers (`playPhonemeWordBlend`), preventing `finally { this.setBusy(false); }` cleanup, and permanently disabling the hero card without auto-advancing.
