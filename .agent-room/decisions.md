@@ -16,6 +16,16 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-09-16 — Anti-Deadlock Audio Promise Architecture, Concurrency Tokens & Non-Blocking Visual Aura
+
+**Decision:** Overhauled audio promise lifecycle management and interaction overlays to permanently eliminate deadlocks caused by rapid multi-clicks while audio is speaking:
+- **Immediate Resolver Unblocking**: Added `currentAudioResolve` tracking to `AudioService`. When `stopRemoteAudio()` or a new sound is triggered, any pending resolver is invoked immediately, guaranteeing that no awaiting Promise is leaked or suspended when an active audio element is paused.
+- **Concurrency Token (`currentBlendToken`)**: Added sequential tokens to all multi-step blend routines (`playPhonemeWordBlend`, `playSequentialBlend`). If a new tap interrupts playback, stale asynchronous steps abort immediately, preventing race conditions over `setBusy(false)`.
+- **Fail-Safe Watchdog Pacing**: Added a 5.5s watchdog timeout inside `playRemoteVoice` and a 4.5s fail-safe watchdog timer in `LetsPlayScreen`'s `handleTapObject`, ensuring that even under severe audio pipeline or network stalls, auto-advance and state resets are 100% guaranteed.
+- **De-Weaponization of Overlays**: Replaced full-screen pointer-blocking attributes (`cursor-wait`, `select-none`, `touch-none`, `e.stopPropagation()`) in `<ListenRipple>` with `pointer-events-none z-20`, ensuring visual musical notes never intercept, trap, or swallow toddler taps.
+**Why:** In the HTML5 Audio standard, `audio.pause()` does not fire `'ended'` or `'error'` events. Awaiting `ended` caused interrupted speech promises to hang forever, preventing `finally { this.setBusy(false); }` and auto-advance from executing, while `ListenRipple` at `z-40` covered the screen and blocked all clicks.
+**Rejected:** Keeping full-screen blocking overlays to absorb touch jitter (creates catastrophic deadlocks whenever audio stalls or rejects) and relying on unmonitored HTMLAudioElement event callbacks without fallback watchdogs.
+
 ### 2026-09-16 — Persistent Progress Resume, Continuous Repetition Loop & Scaled-Up Card Visuals
 
 **Decision:** Implemented persistent position resumption and continuous auditory repetition in "Let's Play", alongside scaled-up character and card visuals:

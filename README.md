@@ -55,11 +55,15 @@ The primary learning objective is developing **phonemic awareness, letter-sound 
 * **Cognitive Safeguards & Lifeline**: Strictly **2 plates** for Level 1; 3 plates for Levels 2–7. Incorrect drops trigger a zero-shame cartoon wobble (`boing` sfx + gentle re-prompt); a 6-second inactivity lifeline pulses the target plate with a golden glow.
 * **Chef Milo Micro-Celebration**: Completing 5 rounds triggers celebratory fanfare, a Chef Milo badge (`🧑‍🍳`), and a **+5 Stars!** payout modal.
 
-### 5. 🛡️ Toddler Impatience & Multi-Tap Pacing Protection
-* **Non-Destructive Touch Absorber (`ListenRipple.tsx`)**: When impatient or excited toddlers tap rapidly while educational audio is speaking, screen taps are gently absorbed without stopping audio or triggering premature navigation.
-* **Tactile Musical Particles**: Floating whimsical emojis (`🎵`, `🎶`, `✨`, `⭐`, `👂`) rise under the child's touch with a soft wooden bubble pop sound.
-* **Visual Attention Spotlight**: Active Elkonin sound carriages or story cards receive a glowing golden focus ring, while surrounding UI controls dim, focusing toddler attention directly on the sound source.
-* **600ms Hardware Debounce & "Your Turn" Unlock Pulse**: Prevents accidental double-taps while pulsing the next action button with a welcoming bounce once audio finishes.
+### 5. 🎯 Toddler Focus Mode & Anti-Deadlock Audio Architecture
+* **Single-Action Auto-Advancing Loop**: Designed for 24–36 month olds. Strips away extraneous stepping-stone tabs, level-map pills, and manual "Next" buttons, providing a single, massive tactile Hero Card. Tapping triggers the authentic Oxford phoneme blend, celebration chime, and automatically advances after a 1.2s golden pause.
+* **Persistent Progress Resume**: Automatically tracks and restores both `lastLetter` and `lastObjectIndex`. Opening "Let's Play!" immediately resumes on the child's exact active card rather than resetting to Set 1.
+* **Continuous Auditory Repetition**: Plays the authentic sound every 5.5s with a gentle card wiggle until the toddler taps the card, cancelling immediately upon tap to celebrate.
+* **Anti-Deadlock Audio Architecture (`audioService.ts`)**:
+  * **Safe Resolver Unblocking**: Tracking active resolvers (`currentAudioResolve`) ensures that when `stopVoice()` pauses an HTMLAudioElement, awaiting Promises resolve immediately instead of hanging on omitted `'ended'` events.
+  * **Concurrency Tokens (`currentBlendToken`)**: Multi-step blend routines discard stale asynchronous steps upon interruption, eliminating race conditions over busy state.
+  * **Fail-Safe Watchdog Pacing**: 5.5s audio watchdog in `AudioService` and 4.5s card watchdog in `LetsPlayScreen` guarantee auto-advance and state cleanup even during browser audio pipeline stalls.
+* **Non-Blocking Touch Experience (`ListenRipple.tsx`)**: Replaced pointer-trapping overlays with `pointer-events-none z-20`, rendering ambient musical notes without intercepting, delaying, or swallowing toddler taps.
 
 ### 6. 🔤 Full A–Z Alphabet Explorer (84 Curriculum Words)
 * Full 26-letter interactive alphabet board featuring 84 illustrated child-friendly objects.

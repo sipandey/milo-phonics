@@ -21,6 +21,18 @@ Append a new entry every time:
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-09-16 — Awaiting HTMLAudioElement event listeners without resolution on pause or cancellation
+
+**What happened:** Calling `audio.pause()` during speech interruption left the Promise returned by `playRemoteVoice` hanging forever, permanently suspending awaiting async callers (`playPhonemeWordBlend`), preventing `finally { this.setBusy(false); }` cleanup, and permanently disabling the hero card without auto-advancing.
+**Root cause:** In the HTML5 Audio standard, calling `audio.pause()` does not dispatch the `'ended'` or `'error'` events. When an audio wrapper Promise resolves only inside those event handlers, pausing an active sound leaks an unresolvable Promise.
+**Avoid:** Always maintain an explicit resolver reference (`currentAudioResolve`) and invoke/clear it immediately when `stopRemoteAudio()` or an interrupting sound is triggered. Back every audio Promise with a fail-safe watchdog timer (e.g. 5.5s).
+
+### 2026-09-16 — Using full-screen touch-blocking overlays with stopPropagation to absorb input jitter
+
+**What happened:** The `<ListenRipple>` overlay sat at `z-40` with `cursor-wait select-none touch-none` and called `e.stopPropagation(); e.preventDefault();`. When audio stalled or when rapid taps occurred, the overlay blocked all clicks across the entire app, locking out navigation and game buttons.
+**Root cause:** Full-screen overlays that capture pointer events become catastrophic failure points whenever underlying state gets delayed or stuck.
+**Avoid:** Ambient visual effects and listening indicators must strictly use `pointer-events-none`. Handle debouncing and rapid-tap absorption directly on interactive elements, never via full-screen touch barriers.
+
 ### 2026-09-16 — Hardcoded audio ID string delimiters vs semantic manifest dot-notation
 
 **What happened:** In `BubblePopScreen.tsx`, phoneme audio calls were initially typed with an underscore (`phoneme_${letterId}`), causing `audioService` to fail lookup and log missing audio warnings during live gameplay.
