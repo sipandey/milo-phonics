@@ -25,10 +25,19 @@ interface SoundTrainScreenProps {
 }
 
 export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) => {
-  const [progress] = useState<ChildProgress>(progressService.getProgress());
+  const [progress, setProgress] = useState<ChildProgress>(progressService.getProgress());
   const [selectedLevelId, setSelectedLevelId] = useState<number>(progress.currentLevelId || 1);
   const [isLevelModalOpen, setIsLevelModalOpen] = useState(false);
   const isToddlerMode = progress.toddlerFocusMode !== false;
+
+  // Sync with progress changes (e.g. Level Graduation or Parent Dashboard selection)
+  useEffect(() => {
+    const unsub = progressService.subscribe((updated) => {
+      setProgress(updated);
+      setSelectedLevelId(updated.currentLevelId || 1);
+    });
+    return unsub;
+  }, []);
 
   // Available words for the active level
   const availableWords = useMemo(() => {
