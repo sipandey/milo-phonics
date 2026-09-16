@@ -197,8 +197,14 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
 
       {/* Level Picker Modal */}
       {isLevelModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-pop-in">
-          <div className="bg-white rounded-4xl p-5 sm:p-6 max-w-md w-full shadow-2xl border-4 border-amber-300 max-h-[90vh] flex flex-col">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-pop-in cursor-pointer"
+          onClick={() => setIsLevelModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-4xl p-5 sm:p-6 max-w-md w-full shadow-2xl border-4 border-amber-300 max-h-[90vh] flex flex-col cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between pb-3 border-b border-gray-100 mb-3">
               <div className="flex items-center gap-2">
                 <span className="text-3xl">🚂</span>
@@ -209,9 +215,10 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
               </div>
               <button
                 onClick={() => setIsLevelModalOpen(false)}
-                className="p-2 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors cursor-pointer"
+                className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors cursor-pointer shrink-0"
+                aria-label="Close Level Picker"
               >
-                <X className="w-6 h-6" />
+                <X className="w-7 h-7 sm:w-8 sm:h-8" />
               </button>
             </div>
 
@@ -265,7 +272,7 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
         </div>
       )}
 
-      {/* 1. Header Bar: Home, Level Station Badge, Word Counter */}
+      {/* 1. Header Bar: Home and Level Station Badge */}
       <header className={`flex justify-between items-center w-full gap-2 pt-1 pb-1 transition-opacity duration-300 ${isBusy ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
         {/* Chunky Home Button */}
         <button
@@ -301,12 +308,6 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
             </p>
           </div>
         </button>
-
-        {/* Word Counter Pill */}
-        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-3xl bg-white shadow-[0_4px_0_#FDE68A] border-3 border-amber-200 flex flex-col items-center justify-center text-amber-900 font-black text-sm shrink-0">
-          <span className="text-[10px] text-gray-400 leading-none">WORD</span>
-          <span className="text-base sm:text-lg leading-tight">{currentWordIndex + 1}/{availableWords.length}</span>
-        </div>
       </header>
 
       {/* 2. Conductor Milo with friendly speech bubble */}
@@ -333,7 +334,7 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
           </div>
 
           {/* Carriages (Elkonin Sound Boxes) */}
-          <div className="flex items-center gap-2.5 sm:gap-4 justify-center">
+          <div className="flex items-center gap-2 sm:gap-4 justify-center">
             {currentWord.letters.map((letter, index) => {
               const isHighlighted = highlightedCarriage === index;
 
@@ -344,7 +345,7 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
                     onClick={() => handleTapCarriage(index)}
                     disabled={isBusy}
                     aria-label={`Sound ${letter}`}
-                    className={`squish-tap relative w-20 h-28 sm:w-26 sm:h-34 rounded-3xl border-4 shadow-xl flex flex-col items-center justify-between p-2 cursor-pointer transition-all duration-300 focus:outline-none ${
+                    className={`squish-tap relative w-[88px] min-w-[88px] h-28 min-h-[112px] sm:w-28 sm:h-36 rounded-3xl border-4 shadow-xl flex flex-col items-center justify-between p-2 cursor-pointer transition-all duration-300 focus:outline-none ${
                       isHighlighted
                         ? 'scale-115 -translate-y-2 ring-6 ring-amber-400 bg-amber-100 border-amber-500 shadow-[0_15px_30px_rgba(217,119,6,0.3)]'
                         : isBusy

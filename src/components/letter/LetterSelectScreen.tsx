@@ -132,18 +132,18 @@ export const LetterSelectScreen: React.FC<LetterSelectScreenProps> = ({
                   {letter.symbol}
                 </span>
 
-                {/* Phoneme Label - clickable sound pill */}
+                {/* Phoneme Label - subordinate clickable sound pill */}
                 <button
                   onClick={(e) => handlePlaySoundOnly(e, letter.phonemeAudioId, letter.id)}
                   aria-label={`Sound ${letter.phoneme}`}
-                  className="flex items-center gap-1 px-3 py-1 rounded-full text-base sm:text-lg font-black mt-1.5 hover:scale-108 active:scale-95 transition-transform shadow-xs"
+                  className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold mt-1.5 opacity-75 hover:opacity-100 hover:scale-105 active:scale-95 transition-all shadow-xs"
                   style={{
                     backgroundColor: letter.colorTheme.badgeBg,
                     color: letter.colorTheme.text,
                   }}
                 >
                   <span>{letter.phoneme}</span>
-                  <Volume2 className="w-3.5 h-3.5 opacity-70" />
+                  <Volume2 className="w-3 h-3 opacity-60" />
                 </button>
 
                 {/* Preview object emojis */}

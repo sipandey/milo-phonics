@@ -13,7 +13,6 @@ import {
   Home,
   Sparkles,
   Dices,
-  BookOpen,
   Star,
   Lock,
   MapPin,
@@ -28,8 +27,8 @@ interface LetsPlayScreenProps {
 
 export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
   onGoHome,
-  onExploreLetter,
-  onOpenSoundTrain,
+  onExploreLetter: _onExploreLetter,
+  onOpenSoundTrain: _onOpenSoundTrain,
 }) => {
   const [progress, setProgress] = useState<ChildProgress>(progressService.getProgress());
   const [selectedLevelId, setSelectedLevelId] = useState<number>(progress.currentLevelId || 1);
@@ -299,8 +298,14 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
 
       {/* 2. Full-Screen Island Adventure Map Modal (Replaces cramped top L1-L7 tab pills!) */}
       {isMapModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-pop-in">
-          <div className="bg-white rounded-4xl p-5 sm:p-6 max-w-lg w-full shadow-2xl border-4 border-amber-300 max-h-[90vh] flex flex-col">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-pop-in cursor-pointer"
+          onClick={() => setIsMapModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-4xl p-5 sm:p-6 max-w-lg w-full shadow-2xl border-4 border-amber-300 max-h-[90vh] flex flex-col cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between pb-3 border-b border-gray-100 mb-3">
               <div className="flex items-center gap-2">
                 <span className="text-3xl">🗺️</span>
@@ -311,9 +316,10 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
               </div>
               <button
                 onClick={() => setIsMapModalOpen(false)}
-                className="p-2 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors cursor-pointer"
+                className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors cursor-pointer shrink-0"
+                aria-label="Close Phonics World Map"
               >
-                <X className="w-6 h-6" />
+                <X className="w-7 h-7 sm:w-8 sm:h-8" />
               </button>
             </div>
 
@@ -416,38 +422,6 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
             </div>
           </div>
         </button>
-
-        {/* Right Header Buttons: Sound Train & Letter Explorer */}
-        <div className="flex items-center gap-1.5 shrink-0">
-          {onOpenSoundTrain && (
-            <button
-              onClick={() => {
-                audioService.playPop();
-                onOpenSoundTrain();
-              }}
-              aria-label="Blend Words in Sound Train"
-              className="w-13 h-13 sm:w-16 sm:h-16 rounded-3xl bg-white shadow-[0_4px_0_#A7F3D0] border-3 border-emerald-300 flex flex-col items-center justify-center text-emerald-800 squish-tap shrink-0 hover:scale-105 cursor-pointer active:scale-95"
-              title="Blend Words in Sound Train 🚂"
-            >
-              <span className="text-xl sm:text-2xl leading-none">🚂</span>
-              <span className="text-[9px] font-black leading-none mt-0.5 text-emerald-800">TRAIN</span>
-            </button>
-          )}
-
-          {/* Chunky Explorer Shortcut Button */}
-          <button
-            onClick={() => {
-              audioService.playPop();
-              onExploreLetter(currentLetter.id);
-            }}
-            aria-label={`Explore letter ${currentLetter.symbol}`}
-            className="w-13 h-13 sm:w-16 sm:h-16 rounded-3xl bg-white shadow-[0_4px_0_#FDE68A] border-3 border-amber-200 flex flex-col items-center justify-center text-amber-800 squish-tap shrink-0 hover:scale-105 cursor-pointer active:scale-95"
-            title={`Explore Letter ${currentLetter.symbol}`}
-          >
-            <BookOpen className="w-5 h-5 sm:w-7 sm:h-7 text-amber-600" />
-            <span className="text-[10px] font-black leading-none mt-0.5">{currentLetter.symbol}</span>
-          </button>
-        </div>
       </header>
 
       {/* 4. Giant Stepping Stones Bar (Active Level's Sounds: Big, Juicy, 70px+ targets) */}

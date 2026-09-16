@@ -34,9 +34,9 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
         <button
           onClick={onClose}
           aria-label="Close Parent Dashboard"
-          className="absolute top-5 right-5 p-2 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors cursor-pointer"
+          className="absolute top-4 right-4 w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors cursor-pointer shrink-0"
         >
-          <X className="w-6 h-6" />
+          <X className="w-7 h-7 sm:w-8 sm:h-8" />
         </button>
 
         <div className="flex items-center gap-3 mb-5">

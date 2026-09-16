@@ -10,7 +10,7 @@ interface HomeScreenProps {
   onOpenLetters: () => void;
   onOpenOxfordSounds: () => void;
   onOpenParentGate: () => void;
-  onTeaserClick: (title: string, message: string) => void;
+  onTeaserClick?: (title: string, message: string) => void;
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
@@ -19,7 +19,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenLetters,
   onOpenOxfordSounds,
   onOpenParentGate,
-  onTeaserClick,
+  onTeaserClick: _onTeaserClick,
 }) => {
   const [isMuted, setIsMuted] = useState(false);
   const [miloSpeech, setMiloSpeech] = useState<string | null>("Hi! Let's play!");
@@ -114,14 +114,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           />
         </div>
 
-        {/* Secondary Toddler Choices */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 w-full max-w-2xl px-2">
+        {/* Secondary Toddler Choices - 2x2 Balanced Grid */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 w-full max-w-2xl px-2">
           {/* Letters Screen */}
           <BigButton
             variant="coral"
-            size="md"
+            size="lg"
             onClick={onOpenLetters}
-            icon={<span className="text-4xl">🔤</span>}
+            icon={<span className="text-4xl sm:text-5xl">🔤</span>}
             label="Letters"
             className="w-full"
           />
@@ -129,31 +129,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           {/* British Sounds Screen */}
           <BigButton
             variant="sky"
-            size="md"
+            size="lg"
             onClick={onOpenOxfordSounds}
-            icon={<span className="text-4xl">🇬🇧</span>}
+            icon={<span className="text-4xl sm:text-5xl">🇬🇧</span>}
             label="Sounds"
             badge="Oxford"
-            className="w-full"
-          />
-
-          {/* Sound Safari Preview */}
-          <BigButton
-            variant="green"
-            size="md"
-            onClick={() => onTeaserClick('Sound Safari', 'Sound Safari with farm animals is coming soon! 🐄 🐷')}
-            icon={<span className="text-4xl">🌳</span>}
-            label="Safari"
-            className="w-full"
-          />
-
-          {/* Stories Preview */}
-          <BigButton
-            variant="purple"
-            size="md"
-            onClick={() => onTeaserClick('Stories', "Milo's Sound Adventure story is coming soon! 📖 ✨")}
-            icon={<span className="text-4xl">📖</span>}
-            label="Stories"
             className="w-full"
           />
         </div>

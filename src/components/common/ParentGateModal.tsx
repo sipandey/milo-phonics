@@ -58,10 +58,10 @@ export const ParentGateModal: React.FC<ParentGateModalProps> = ({
       <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border-4 border-bubble-yellow relative">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
+          className="absolute top-3 right-3 w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-2xl hover:bg-gray-100 transition-colors cursor-pointer"
           aria-label="Close"
         >
-          <X className="w-6 h-6" />
+          <X className="w-6 h-6 sm:w-7 sm:h-7" />
         </button>
 
         <div className="flex items-center gap-3 mb-4">
