@@ -16,6 +16,15 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-09-16 — Persistent Progress Resume, Continuous Repetition Loop & Scaled-Up Card Visuals
+
+**Decision:** Implemented persistent position resumption and continuous auditory repetition in "Let's Play", alongside scaled-up character and card visuals:
+- **Last Position Resume**: Added `lastObjectIndex` to `ChildProgress` schema and implemented `progressService.setLastPosition(letterId, objectIndex)`. When opening "Let's Play", the screen reads `lastLetter` and `lastObjectIndex` and resumes exactly at the child's previous sound card rather than resetting to `S Sun`.
+- **Continuous Auditory Repetition Loop**: When a card is active, after initial audio completes, a 5.5s timer triggers unhurried repetition of `playPhonemeWordBlend` with a gentle card wiggle until the child taps the card. Tapping immediately cancels the loop, awards stars, and auto-advances.
+- **Scaled-Up Visuals**: Enlarged companion Milo to `size="lg"` (`w-32 h-32 sm:w-40 sm:h-40`, a 35% scale-up) and expanded the Hero Card to responsive `w-[min(84vw,340px)] h-[min(84vw,340px)] sm:w-84 sm:h-84 md:w-92 md:h-92` with `text-9xl sm:text-[9.5rem]` emoji and `text-4xl sm:text-5xl` typography.
+**Why:** Toddlers easily lose focus or get distracted; repeating the authentic sound every 5.5s maintains auditory engagement without annoying pacing. Storing exact progress honors the child's learning journey across sessions. Scaling up the hero card and Milo takes full advantage of the uncluttered Focus Mode canvas, creating a massive, inviting tactile centerpiece.
+**Rejected:** Resetting to S on every entry, repeating audio faster than 4 seconds (creates sensory overload), and rigid non-responsive card widths that clip on small viewports.
+
 ### 2026-09-16 — Toddler Focus Mode (Single-Action Auto-Advancing Pacing) & Audio Remastering to -1.0 dBFS Peak
 
 **Decision:** Introduced Toddler Focus Mode (`toddlerFocusMode: true` by default, toggled via Parent Dashboard) with single-action auto-advancing pacing across the app, and remastered all 269 voice audio files to broadcast loudness standard (-1.0 dBFS peak).
