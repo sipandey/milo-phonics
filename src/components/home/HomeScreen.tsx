@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { CharacterMilo } from '../common/CharacterMilo';
 import { BigButton } from '../common/BigButton';
 import { audioService } from '../../services/audioService';
+import { progressService } from '../../services/progressService';
 import { Settings, Volume2, VolumeX } from 'lucide-react';
 
 interface HomeScreenProps {
@@ -27,6 +28,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 }) => {
   const [isMuted, setIsMuted] = useState(false);
   const [miloSpeech, setMiloSpeech] = useState<string | null>("Hi! Let's play!");
+  const [progress, setProgress] = useState(progressService.getProgress());
+
+  useEffect(() => {
+    const unsub = progressService.subscribe((p) => setProgress(p));
+    return unsub;
+  }, []);
+
+  const isToddlerMode = progress.toddlerFocusMode !== false;
 
   useEffect(() => {
     // Warm greeting on entry
@@ -143,27 +152,29 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             />
           </div>
 
-          {/* Row 3: Reference & Sound Explorers */}
-          <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
-            <BigButton
-              variant="white"
-              size="lg"
-              onClick={onOpenLetters}
-              icon={<span className="text-3xl sm:text-5xl">🔤</span>}
-              label="Letters"
-              className="w-full"
-            />
+          {/* Row 3: Reference & Sound Explorers (Hidden in Toddler Focus Mode) */}
+          {!isToddlerMode && (
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
+              <BigButton
+                variant="white"
+                size="lg"
+                onClick={onOpenLetters}
+                icon={<span className="text-3xl sm:text-5xl">🔤</span>}
+                label="Letters"
+                className="w-full"
+              />
 
-            <BigButton
-              variant="sky"
-              size="lg"
-              onClick={onOpenOxfordSounds}
-              icon={<span className="text-3xl sm:text-5xl">🇬🇧</span>}
-              label="Sounds"
-              badge="Oxford"
-              className="w-full"
-            />
-          </div>
+              <BigButton
+                variant="sky"
+                size="lg"
+                onClick={onOpenOxfordSounds}
+                icon={<span className="text-3xl sm:text-5xl">🇬🇧</span>}
+                label="Sounds"
+                badge="Oxford"
+                className="w-full"
+              />
+            </div>
+          )}
         </div>
       </main>
 

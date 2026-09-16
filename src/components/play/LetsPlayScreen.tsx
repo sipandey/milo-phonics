@@ -80,6 +80,15 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
   const [justFinishedAudio, setJustFinishedAudio] = useState<boolean>(false);
   const lastActionTime = useRef<number>(0);
   const hasIntroduced = useRef(false);
+  const autoAdvanceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const isToddlerMode = progress.toddlerFocusMode !== false;
+
+  // Cleanup auto-advance timer on unmount
+  useEffect(() => {
+    return () => {
+      if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
+    };
+  }, []);
 
   // Subscribe to audio busy states to manage listening aura
   useEffect(() => {
@@ -87,12 +96,12 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
       setIsAudioBusy(busy);
       if (!busy) {
         setJustFinishedAudio(true);
-        setMiloSpeech("Your turn! Tap the card or tap Next! 🌟");
+        setMiloSpeech(isToddlerMode ? null : "Your turn! Tap the card or tap Next! 🌟");
         setTimeout(() => setJustFinishedAudio(false), 2600);
       }
     });
     return unsub;
-  }, []);
+  }, [isToddlerMode]);
 
   // Debounce guard: absorbs rapid multi-clicks to prevent audio churn
   const canAct = () => {
@@ -133,8 +142,9 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
   }, [currentObject.id, currentLetter.id, cleanPhoneme, activeLevel.id]);
 
   // Tap Object interaction: plays sound blend, awards stars, checks unlock
-  const handleTapObject = () => {
+  const handleTapObject = async () => {
     if (!canAct()) return;
+    if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
     setIsObjectAnimating(true);
     audioService.playSoundEffect(currentObject.soundType);
     setMiloSpeech("Listen closely! 👂🎶");
@@ -144,7 +154,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
       currentObject.letterId
     );
 
-    audioService.playPhonemeWordBlend(
+    await audioService.playPhonemeWordBlend(
       currentLetter.phonemeAudioId,
       currentObject.wordAudioId,
       currentObject.name
@@ -164,7 +174,14 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
 
     setTimeout(() => {
       setIsObjectAnimating(false);
-    }, 600);
+    }, 400);
+
+    // In Toddler Focus Mode: automatically advance smoothly to next sound/card
+    if (isToddlerMode) {
+      autoAdvanceTimerRef.current = setTimeout(() => {
+        handleNext();
+      }, 1200);
+    }
   };
 
   // Tap Letter badge / phoneme pill
@@ -471,82 +488,92 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
           <Home className="w-7 h-7 sm:w-8 sm:h-8" />
         </button>
 
-        {/* Level & Stars Island Badge (Tapping opens World Map Modal) */}
-        <button
-          onClick={() => {
-            audioService.playChime();
-            setIsMapModalOpen(true);
-          }}
-          aria-label="Open Phonics World Map"
-          className="flex items-center gap-2 sm:gap-3 bg-white/95 backdrop-blur-md px-4 sm:px-6 py-2.5 rounded-full border-3 border-amber-200 shadow-[0_4px_0_#FDE68A] squish-tap cursor-pointer hover:scale-103"
-        >
-          <span className="text-2xl sm:text-3xl">{activeLevel.badgeEmoji}</span>
-          <div className="text-left">
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs sm:text-sm font-black text-gray-900 leading-tight">
-                Level {activeLevel.id}
-              </span>
-              <MapPin className="w-3.5 h-3.5 text-amber-500" />
-            </div>
-            <div className="flex items-center gap-1 text-[11px] font-extrabold text-amber-600">
-              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
-              <span>{progress.totalStars} Stars</span>
-            </div>
+        {isToddlerMode ? (
+          /* Toddler Focus Mode: Clean Star Counter Pill */
+          <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md px-5 py-2.5 rounded-full border-3 border-amber-200 shadow-[0_4px_0_#FDE68A] font-black text-amber-700 text-sm">
+            <Star className="w-5 h-5 fill-amber-400 text-amber-500" />
+            <span>{progress.totalStars} Stars</span>
           </div>
-        </button>
+        ) : (
+          /* Full Explorer Mode: Level & Stars Island Badge (Tapping opens World Map Modal) */
+          <button
+            onClick={() => {
+              audioService.playChime();
+              setIsMapModalOpen(true);
+            }}
+            aria-label="Open Phonics World Map"
+            className="flex items-center gap-2 sm:gap-3 bg-white/95 backdrop-blur-md px-4 sm:px-6 py-2.5 rounded-full border-3 border-amber-200 shadow-[0_4px_0_#FDE68A] squish-tap cursor-pointer hover:scale-103"
+          >
+            <span className="text-2xl sm:text-3xl">{activeLevel.badgeEmoji}</span>
+            <div className="text-left">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs sm:text-sm font-black text-gray-900 leading-tight">
+                  Level {activeLevel.id}
+                </span>
+                <MapPin className="w-3.5 h-3.5 text-amber-500" />
+              </div>
+              <div className="flex items-center gap-1 text-[11px] font-extrabold text-amber-600">
+                <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
+                <span>{progress.totalStars} Stars</span>
+              </div>
+            </div>
+          </button>
+        )}
       </header>
 
-      {/* 4. Giant Stepping Stones Bar (Active Level's Sounds: Big, Juicy, 70px+ targets) */}
-      <div className={`w-full my-1 flex justify-center shrink-0 transition-opacity duration-300 ${isAudioBusy ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
-        <div className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 bg-white/80 backdrop-blur-md rounded-3xl border-3 border-amber-200 shadow-sm max-w-md w-full justify-around">
-          {activeLevel.letterIds.map((letterId) => {
-            const letter = getLetterById(letterId);
-            const isSelected = selectedLetterId === letterId;
-            const stars = progress.letterStars[letterId] || 0;
+      {/* 4. Giant Stepping Stones Bar (Active Level's Sounds) - Only in Full Explorer Mode */}
+      {!isToddlerMode && (
+        <div className={`w-full my-1 flex justify-center shrink-0 transition-opacity duration-300 ${isAudioBusy ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
+          <div className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 bg-white/80 backdrop-blur-md rounded-3xl border-3 border-amber-200 shadow-sm max-w-md w-full justify-around">
+            {activeLevel.letterIds.map((letterId) => {
+              const letter = getLetterById(letterId);
+              const isSelected = selectedLetterId === letterId;
+              const stars = progress.letterStars[letterId] || 0;
 
-            return (
-              <button
-                key={letterId}
-                onClick={() => {
-                  if (!canAct()) return;
-                  audioService.playPop();
-                  setSelectedLetterId(letterId);
-                  setCurrentObjectIndex(0);
-                }}
-                className={`flex-1 h-16 sm:h-20 rounded-2xl flex flex-col items-center justify-center transition-all squish-tap cursor-pointer border-3 ${
-                  isSelected
-                    ? 'scale-110 shadow-lg ring-4 ring-amber-400 font-black border-amber-500'
-                    : 'opacity-85 hover:opacity-100 hover:scale-102 border-transparent'
-                }`}
-                style={{
-                  backgroundColor: letter.colorTheme.badgeBg,
-                }}
-              >
-                <span
-                  className="text-2xl sm:text-3xl font-black font-fun leading-none"
-                  style={{ color: letter.colorTheme.text }}
+              return (
+                <button
+                  key={letterId}
+                  onClick={() => {
+                    if (!canAct()) return;
+                    audioService.playPop();
+                    setSelectedLetterId(letterId);
+                    setCurrentObjectIndex(0);
+                  }}
+                  className={`flex-1 h-16 sm:h-20 rounded-2xl flex flex-col items-center justify-center transition-all squish-tap cursor-pointer border-3 ${
+                    isSelected
+                      ? 'scale-110 shadow-lg ring-4 ring-amber-400 font-black border-amber-500'
+                      : 'opacity-85 hover:opacity-100 hover:scale-102 border-transparent'
+                  }`}
+                  style={{
+                    backgroundColor: letter.colorTheme.badgeBg,
+                  }}
                 >
-                  {letter.symbol}
-                </span>
+                  <span
+                    className="text-2xl sm:text-3xl font-black font-fun leading-none"
+                    style={{ color: letter.colorTheme.text }}
+                  >
+                    {letter.symbol}
+                  </span>
 
-                {/* Stars Indicator for this sound */}
-                <div className="flex gap-0.5 mt-1">
-                  {[1, 2, 3].map((starIdx) => (
-                    <Star
-                      key={starIdx}
-                      className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${
-                        starIdx <= stars
-                          ? 'fill-amber-400 text-amber-500'
-                          : 'fill-gray-200 text-gray-300'
-                      }`}
-                    />
-                  ))}
-                </div>
-              </button>
-            );
-          })}
+                  {/* Stars Indicator for this sound */}
+                  <div className="flex gap-0.5 mt-1">
+                    {[1, 2, 3].map((starIdx) => (
+                      <Star
+                        key={starIdx}
+                        className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${
+                          starIdx <= stars
+                            ? 'fill-amber-400 text-amber-500'
+                            : 'fill-gray-200 text-gray-300'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* 5. Main Hero Arena: Large Character + Giant Tactile Sound Card */}
       <main className="flex-1 flex flex-col items-center justify-center my-auto min-h-0">
@@ -612,13 +639,17 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
           >
             {/* Clean Phoneme Pill (NO //s// bug, strictly /{cleanPhoneme}/) */}
             <div
-              onClick={(e) => {
-                e.stopPropagation();
-                handleTapLetter();
-              }}
-              className={`absolute -top-4 px-5 py-1.5 rounded-full bg-white shadow-md border-3 flex items-center gap-1.5 font-black text-base sm:text-lg cursor-pointer transition-transform ${
-                isLetterAnimating ? 'scale-125 rotate-6' : 'hover:scale-108'
-              }`}
+              onClick={
+                isToddlerMode
+                  ? undefined
+                  : (e) => {
+                      e.stopPropagation();
+                      handleTapLetter();
+                    }
+              }
+              className={`absolute -top-4 px-5 py-1.5 rounded-full bg-white shadow-md border-3 flex items-center gap-1.5 font-black text-base sm:text-lg transition-transform ${
+                isToddlerMode ? 'pointer-events-none' : 'cursor-pointer hover:scale-108'
+              } ${isLetterAnimating ? 'scale-125 rotate-6' : ''}`}
               style={{ borderColor: currentLetter.colorTheme.primary, color: currentLetter.colorTheme.text }}
             >
               <span>/{cleanPhoneme}/</span>
@@ -645,32 +676,34 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
         </div>
       </main>
 
-      {/* 6. Big, Juicy, Toddler-Proof Action Buttons: Clean 2-Button Dock */}
-      <footer className={`w-full max-w-md mx-auto flex justify-center items-center gap-3 sm:gap-4 pt-2 pb-3 sm:pb-4 shrink-0 px-2 transition-opacity duration-300 ${isAudioBusy ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
-        {/* Symmetrical Squircle Audio Replay Button (~35% width) */}
-        <button
-          onClick={handleTapObject}
-          disabled={isAudioBusy}
-          aria-label="Play sound again"
-          className="squish-tap w-24 h-20 sm:w-28 sm:h-24 rounded-3xl bg-white text-amber-700 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex flex-col items-center justify-center p-1.5 shrink-0 cursor-pointer"
-        >
-          <RotateCcw className="w-8 h-8 sm:w-9 sm:h-9 stroke-[2.5]" />
-          <span className="text-xs sm:text-sm font-black mt-1 leading-none">Again</span>
-        </button>
+      {/* 6. Big, Juicy, Toddler-Proof Action Buttons: Clean 2-Button Dock (Hidden in Toddler Focus Mode) */}
+      {!isToddlerMode && (
+        <footer className={`w-full max-w-md mx-auto flex justify-center items-center gap-3 sm:gap-4 pt-2 pb-3 sm:pb-4 shrink-0 px-2 transition-opacity duration-300 ${isAudioBusy ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
+          {/* Symmetrical Squircle Audio Replay Button (~35% width) */}
+          <button
+            onClick={handleTapObject}
+            disabled={isAudioBusy}
+            aria-label="Play sound again"
+            className="squish-tap w-24 h-20 sm:w-28 sm:h-24 rounded-3xl bg-white text-amber-700 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex flex-col items-center justify-center p-1.5 shrink-0 cursor-pointer"
+          >
+            <RotateCcw className="w-8 h-8 sm:w-9 sm:h-9 stroke-[2.5]" />
+            <span className="text-xs sm:text-sm font-black mt-1 leading-none">Again</span>
+          </button>
 
-        {/* Big Juicy Next Button (~65% width) */}
-        <button
-          onClick={handleNext}
-          disabled={isAudioBusy}
-          aria-label="Next Sound"
-          className={`squish-tap flex-1 h-20 sm:h-24 rounded-3xl bg-bubble-yellow text-amber-950 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex items-center justify-center gap-2 font-black text-xl sm:text-2xl cursor-pointer transition-all ${
-            justFinishedAudio ? 'scale-104 ring-4 ring-amber-400 animate-bounce-gentle shadow-lg' : ''
-          }`}
-        >
-          <span>Next</span>
-          <ArrowRight className="w-7 h-7 sm:w-8 sm:h-8 stroke-[3] shrink-0" />
-        </button>
-      </footer>
+          {/* Big Juicy Next Button (~65% width) */}
+          <button
+            onClick={handleNext}
+            disabled={isAudioBusy}
+            aria-label="Next Sound"
+            className={`squish-tap flex-1 h-20 sm:h-24 rounded-3xl bg-bubble-yellow text-amber-950 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex items-center justify-center gap-2 font-black text-xl sm:text-2xl cursor-pointer transition-all ${
+              justFinishedAudio ? 'scale-104 ring-4 ring-amber-400 animate-bounce-gentle shadow-lg' : ''
+            }`}
+          >
+            <span>Next</span>
+            <ArrowRight className="w-7 h-7 sm:w-8 sm:h-8 stroke-[3] shrink-0" />
+          </button>
+        </footer>
+      )}
     </div>
   );
 };

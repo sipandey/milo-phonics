@@ -51,6 +51,7 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
   const chewStartTimeRef = useRef<number>(0);
   const activeLevelId = progress.currentLevelId || 1;
   const activeLevel = getLevelById(activeLevelId) || CURRICULUM_LEVELS[0];
+  const isToddlerMode = progress.toddlerFocusMode !== false;
 
   // Subscribe to progress changes
   useEffect(() => {
@@ -357,34 +358,36 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
             />
 
             {/* Chunky Replay Sound / Yum Button */}
-            <button
-              onClick={miloState === 'chewing' ? handleMiloTap : handleReplay}
-              disabled={isAudioBusy}
-              aria-label={miloState === 'chewing' ? 'Feed next sound' : 'Listen to sound again'}
-              className={`mt-2 squish-tap w-20 h-20 sm:w-22 sm:h-22 rounded-3xl bg-gradient-to-b from-amber-300 to-amber-400 text-amber-950 border-4 border-amber-200 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex flex-col items-center justify-center cursor-pointer transition-all ${
-                isAudioBusy
-                  ? 'opacity-60 ring-6 ring-amber-300 scale-105'
-                  : miloState === 'chewing'
-                  ? 'ring-6 ring-amber-400 scale-105 animate-bounce-gentle'
-                  : 'hover:scale-105 animate-bounce-gentle'
-              }`}
-            >
-              {miloState === 'chewing' ? (
-                <>
-                  <span className="text-2xl animate-bounce">😋</span>
-                  <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider mt-0.5">
-                    Yum!
-                  </span>
-                </>
-              ) : (
-                <>
-                  <Volume2 className="w-8 h-8 sm:w-9 sm:h-9" />
-                  <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider mt-0.5">
-                    {isAudioBusy ? 'Listening...' : 'Hear Sound'}
-                  </span>
-                </>
-              )}
-            </button>
+            {!isToddlerMode && (
+              <button
+                onClick={miloState === 'chewing' ? handleMiloTap : handleReplay}
+                disabled={isAudioBusy}
+                aria-label={miloState === 'chewing' ? 'Feed next sound' : 'Listen to sound again'}
+                className={`mt-2 squish-tap w-20 h-20 sm:w-22 sm:h-22 rounded-3xl bg-gradient-to-b from-amber-300 to-amber-400 text-amber-950 border-4 border-amber-200 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex flex-col items-center justify-center cursor-pointer transition-all ${
+                  isAudioBusy
+                    ? 'opacity-60 ring-6 ring-amber-300 scale-105'
+                    : miloState === 'chewing'
+                    ? 'ring-6 ring-amber-400 scale-105 animate-bounce-gentle'
+                    : 'hover:scale-105 animate-bounce-gentle'
+                }`}
+              >
+                {miloState === 'chewing' ? (
+                  <>
+                    <span className="text-2xl animate-bounce">😋</span>
+                    <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider mt-0.5">
+                      Yum!
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Volume2 className="w-8 h-8 sm:w-9 sm:h-9" />
+                    <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider mt-0.5">
+                      {isAudioBusy ? 'Listening...' : 'Hear Sound'}
+                    </span>
+                  </>
+                )}
+              </button>
+            )}
           </div>
 
           {/* Floating Food Plates Stage */}
@@ -446,12 +449,14 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
           </div>
 
           {/* Footer Guidance */}
-          <footer className="text-center py-1 shrink-0">
-            <p className="text-amber-900/60 font-black text-xs sm:text-sm flex items-center justify-center gap-1.5">
-              <span>Drag or tap the food that begins with the sound!</span>
-              <Sparkle className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
-            </p>
-          </footer>
+          {!isToddlerMode && (
+            <footer className="text-center py-1 shrink-0">
+              <p className="text-amber-900/60 font-black text-xs sm:text-sm flex items-center justify-center gap-1.5">
+                <span>Drag or tap the food that begins with the sound!</span>
+                <Sparkle className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
+              </p>
+            </footer>
+          )}
         </main>
       ) : (
         /* 3. Session Complete Celebration Card */
