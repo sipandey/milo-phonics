@@ -16,6 +16,18 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-09-16 — Bubble Pop Auditory Discrimination Game Architecture for 24–36 Months
+
+**Decision:** Built an active auditory discrimination game ("Bubble Pop!") structured as 5-round micro-sessions (~60–75s total duration) with binary choices (strictly 2 bubbles: Target + 1 Distractor) for Level 1, and 3 bubbles for Levels 2–7. Rounds begin with automatic Oxford RP isolated phoneme playback (`phoneme.<letter>`), companion Milo in an ear-cupping listening pose (`isListening`), an 80×80px "Hear Again" squircle replay button, zero-shame cartoon wobble on errors (`boing` sfx + softly whispered error sound + re-prompts target + zero star penalty), a 6-second inactivity golden shimmer lifeline, and a grand 5-round celebration card with a crowned Milo (`👑`) and +5 stars payout.
+**Why:** Toddlers aged 24–36 months have ~60s attention spans and limited auditory working memory. Binary choices prevent visual choice overload; zero-shame resilience keeps toddlers engaged without frustration or fear of failure; non-verbal ear-cupping posture directs listening focus without relying on unreadable text instructions.
+**Rejected:** Timed rounds, negative buzzer sounds, deducting stars on error, 4-bubble layouts for Level 1, and text-only instructions.
+
+### 2026-09-16 — Home Screen 2 - 1 - 2 Symmetrical Activity Layout
+
+**Decision:** Arranged toddler activities on the Home Screen into a balanced 2 - 1 - 2 grid: Row 1 features core exploration (`Let's Play!` yellow) and blending (`Sound Train!` green); Row 2 features the active auditory game (`Bubble Pop!` purple banner with `🫧` icon and `Listen & Pop! 👂` badge); Row 3 features reference tools (`Letters` coral and `Sounds` sky). Styled with responsive heights fitting within `100dvh` on mobile and desktop.
+**Why:** Balances the 5 core learning activities without burying new features in submenus or forcing toddlers to scroll vertically on compact mobile viewports (e.g. 320×568 and 390×844).
+**Rejected:** 1-column vertical list (forces excessive scrolling on mobile), hiding minigames in a parent/settings drawer.
+
 ### 2026-09-16 — Complete Eradication of Browser SpeechSynthesis in Favor of Oxford-First & AI Cloudinary Pipeline
 
 **Decision:** Completely eliminated all calls to `window.speechSynthesis`, utterances, and browser native speech synthesis across `audioService.ts` and all components. Authentic Oxford Dictionary human recordings (`/audio/phoneme_<letter>.mp3`) strictly take top precedence for all 26 letter phonemes. Everything else (84 curriculum words, 38 CVC words, 38 story sentences, 26 letter names, 4 game prompts, 6 praise cues) is pre-recorded with OpenAI TTS (`coral` voice, slow 0.70x–0.75x British RP pace matching Oxford) backed by Cloudinary CDN URLs and local edge caching in `public/audio/`.

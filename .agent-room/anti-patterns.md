@@ -21,6 +21,12 @@ Append a new entry every time:
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-09-16 — Hardcoded audio ID string delimiters vs semantic manifest dot-notation
+
+**What happened:** In `BubblePopScreen.tsx`, phoneme audio calls were initially typed with an underscore (`phoneme_${letterId}`), causing `audioService` to fail lookup and log missing audio warnings during live gameplay.
+**Root cause:** Static files in `public/audio/` use underscores (`phoneme_s.mp3`), but the semantic audio manifest and `audioService.playVoice` API strictly standardize on dot-delimited audio IDs (`phoneme.s`).
+**Avoid:** Always route all spoken audio playback through semantic audio manifest IDs (`phoneme.${letterId}`) rather than raw file naming conventions.
+
 ### 2026-09-16 — Retaining unmanaged trailing silence in AI-generated TTS audio files
 
 **What happened:** Sound Train blending took 12–14 seconds, and sequential phoneme/word playback felt sluggish and laggy to toddlers.
