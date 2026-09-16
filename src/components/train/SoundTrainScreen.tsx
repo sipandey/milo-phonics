@@ -17,6 +17,7 @@ import {
   Lock,
   X,
   MapPin,
+  Star,
 } from 'lucide-react';
 
 interface SoundTrainScreenProps {
@@ -27,6 +28,7 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
   const [progress] = useState<ChildProgress>(progressService.getProgress());
   const [selectedLevelId, setSelectedLevelId] = useState<number>(progress.currentLevelId || 1);
   const [isLevelModalOpen, setIsLevelModalOpen] = useState(false);
+  const isToddlerMode = progress.toddlerFocusMode !== false;
 
   // Available words for the active level
   const availableWords = useMemo(() => {
@@ -51,10 +53,20 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
   const [isPlayingWord, setIsPlayingWord] = useState(false);
   const [isAudioBusy, setIsAudioBusy] = useState(false);
   const [justFinishedAudio, setJustFinishedAudio] = useState(false);
-  const [miloSpeech, setMiloSpeech] = useState<string>("All aboard! Tap each sound, then blend!");
+  const [miloSpeech, setMiloSpeech] = useState<string | null>(isToddlerMode ? null : "All aboard! Tap each sound, then blend!");
   const lastActionTime = useRef<number>(0);
+  const autoAdvanceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const isBusy = isBlending || isPlayingSentence || isPlayingWord || isAudioBusy;
+
+  // Cleanup timers on unmount
+  useEffect(() => {
+    return () => {
+      if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+    };
+  }, []);
 
   // Listen to audio busy state
   useEffect(() => {
@@ -67,11 +79,19 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
   // Debounce guard
   const canAct = () => {
     const now = Date.now();
-    if (isBusy || now - lastActionTime.current < 600) {
+    if (isBusy || now - lastActionTime.current < 450) {
       return false;
     }
     lastActionTime.current = now;
     return true;
+  };
+
+  // Next word
+  const handleNextWord = () => {
+    if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
+    if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+    audioService.playPop();
+    setCurrentWordIndex((prev) => (prev + 1) % availableWords.length);
   };
 
   // When word changes, reset reveal state and stop active speech
@@ -80,13 +100,25 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
     setHighlightedCarriage(-1);
     setIsPlayingSentence(false);
     setIsPlayingWord(false);
+    if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
+    if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
     audioService.stopVoice();
-    setMiloSpeech(`Can you blend ${currentWord.letters.join(' - ')}? Choo-choo!`);
-  }, [currentWord.id]);
+    setMiloSpeech(isToddlerMode ? null : `Can you blend ${currentWord.letters.join(' - ')}? Choo-choo!`);
+
+    // In Toddler Focus Mode: schedule gentle invitation sound if idle for 5.5s
+    if (isToddlerMode) {
+      idleTimerRef.current = setTimeout(() => {
+        if (!isBusy && !isWordRevealed) {
+          audioService.playBoing();
+        }
+      }, 5500);
+    }
+  }, [currentWord.id, isToddlerMode]);
 
   // Tap an individual carriage: play single Oxford sound
   const handleTapCarriage = async (index: number) => {
     if (!canAct()) return;
+    if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
     setHighlightedCarriage(index);
     const phonemeAudioId = currentWord.phonemeAudioIds[index];
     if (phonemeAudioId) {
@@ -98,7 +130,7 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
     }, 450);
   };
 
-  // Play isolated blended word
+  // Play isolated blended word (Explorer Mode)
   const handlePlayWord = async () => {
     if (!canAct()) return;
     setIsPlayingWord(true);
@@ -108,7 +140,7 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
     setIsPlayingWord(false);
   };
 
-  // Play slow contextual sentence
+  // Play slow contextual sentence (Explorer Mode)
   const handlePlaySentence = async () => {
     if (!canAct()) return;
     setIsPlayingSentence(true);
@@ -121,11 +153,21 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
   // Full sequential train blend
   const handleBlendWord = async () => {
     if (isBusy) return;
+    if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+    if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
+
     setIsBlending(true);
     setIsWordRevealed(false);
     setIsPlayingSentence(false);
     setIsPlayingWord(false);
-    setMiloSpeech("Listen closely as we blend... 👂");
+    setMiloSpeech(isToddlerMode ? null : "Listen closely as we blend... 👂");
+
+    // Fail-safe watchdog: advance in 5.5s if browser audio stalls
+    const watchdogTimer = setTimeout(() => {
+      if (isToddlerMode) {
+        handleNextWord();
+      }
+    }, 5500);
 
     try {
       await audioService.playSequentialBlend(
@@ -137,24 +179,28 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
         }
       );
 
-      // Reveal complete word card!
-      setIsWordRevealed(true);
+      // Award star & trigger confetti
+      progressService.awardStars(currentWord.letters[0] || 's', 1);
       triggerGentleConfetti();
       audioService.playChime();
-      setMiloSpeech(`Brilliant! ${currentWord.word.toUpperCase()}! 🌟`);
+      setIsWordRevealed(true);
+      setMiloSpeech(isToddlerMode ? null : `Brilliant! ${currentWord.word.toUpperCase()}! 🌟`);
 
       setJustFinishedAudio(true);
       setTimeout(() => setJustFinishedAudio(false), 2600);
+
+      // In Toddler Focus Mode: automatically advance smoothly after 1.5s golden celebration!
+      if (isToddlerMode) {
+        autoAdvanceTimerRef.current = setTimeout(() => {
+          clearTimeout(watchdogTimer);
+          handleNextWord();
+        }, 1500);
+      }
+    } catch (err) {
+      console.warn('[SoundTrainScreen] Error during train blend:', err);
     } finally {
       setIsBlending(false);
     }
-  };
-
-  // Next word
-  const handleNextWord = () => {
-    if (!canAct()) return;
-    audioService.playPop();
-    setCurrentWordIndex((prev) => (prev + 1) % availableWords.length);
   };
 
   // Switch level
@@ -259,7 +305,7 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
         </div>
       )}
 
-      {/* 1. Header Bar: Home and Level Station Badge */}
+      {/* 1. Header Bar: Home and Level Station Badge / Star Counter */}
       <header className={`flex justify-between items-center w-full gap-2 pt-1 pb-1 transition-opacity duration-300 ${isBusy ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
         {/* Chunky Home Button */}
         <button
@@ -268,40 +314,48 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
             onGoHome();
           }}
           aria-label="Go Home"
-          className="w-14 h-14 sm:w-16 sm:h-16 rounded-3xl bg-white shadow-[0_4px_0_#FDE68A] border-3 border-amber-200 flex items-center justify-center text-amber-700 squish-tap shrink-0 cursor-pointer hover:scale-105"
+          className="w-14 h-14 sm:w-16 sm:h-16 rounded-3xl bg-white shadow-[0_4px_0_#FDE68A] border-3 border-amber-200 flex items-center justify-center text-amber-700 squish-tap shrink-0 cursor-pointer hover:scale-105 active:scale-95"
         >
           <Home className="w-7 h-7 sm:w-8 sm:h-8" />
         </button>
 
-        {/* Level Station Badge */}
-        <button
-          onClick={() => {
-            audioService.playChime();
-            setIsLevelModalOpen(true);
-          }}
-          aria-label="Change Train Station Level"
-          className="flex items-center gap-2 sm:gap-3 bg-white/95 backdrop-blur-md px-4 sm:px-6 py-2.5 rounded-full border-3 border-amber-200 shadow-[0_4px_0_#FDE68A] squish-tap cursor-pointer hover:scale-103"
-        >
-          <span className="text-2xl sm:text-3xl">🚂</span>
-          <div className="text-left">
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs sm:text-sm font-black text-gray-900 leading-tight">
-                Level {activeLevel.id} Station
-              </span>
-              <MapPin className="w-3.5 h-3.5 text-amber-500" />
-            </div>
-            <p className="text-[11px] font-extrabold text-amber-700">
-              Word {currentWordIndex + 1} of {availableWords.length}
-            </p>
+        {isToddlerMode ? (
+          /* Toddler Focus Mode: Clean Star Counter Pill */
+          <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md px-5 py-2.5 rounded-full border-3 border-amber-200 shadow-[0_4px_0_#FDE68A] font-black text-amber-700 text-sm">
+            <Star className="w-5 h-5 fill-amber-400 text-amber-500" />
+            <span>{progress.totalStars} Stars</span>
           </div>
-        </button>
+        ) : (
+          /* Full Explorer Mode: Level Station Badge */
+          <button
+            onClick={() => {
+              audioService.playChime();
+              setIsLevelModalOpen(true);
+            }}
+            aria-label="Change Train Station Level"
+            className="flex items-center gap-2 sm:gap-3 bg-white/95 backdrop-blur-md px-4 sm:px-6 py-2.5 rounded-full border-3 border-amber-200 shadow-[0_4px_0_#FDE68A] squish-tap cursor-pointer hover:scale-103"
+          >
+            <span className="text-2xl sm:text-3xl">🚂</span>
+            <div className="text-left">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs sm:text-sm font-black text-gray-900 leading-tight">
+                  Level {activeLevel.id} Station
+                </span>
+                <MapPin className="w-3.5 h-3.5 text-amber-500" />
+              </div>
+              <p className="text-[11px] font-extrabold text-amber-700">
+                Word {currentWordIndex + 1} of {availableWords.length}
+              </p>
+            </div>
+          </button>
+        )}
       </header>
 
       {/* 2. Conductor Milo with listening pose during audio */}
       <div className="flex justify-center my-0.5 sm:my-1 shrink-0">
         <CharacterMilo
-          size="md"
-          speechBubble={isBusy ? null : miloSpeech}
+          size={isToddlerMode ? 'lg' : 'md'}
+          speechBubble={isToddlerMode || isBusy ? null : miloSpeech}
           isListening={isBusy}
           onTap={() => {
             handleBlendWord();
@@ -314,7 +368,11 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
         {/* Train Engine + Carriages Container */}
         <div className="w-full flex items-center justify-center gap-2 sm:gap-3">
           {/* Cute Little Train Engine Icon */}
-          <div className="hidden sm:flex flex-col items-center justify-center shrink-0 pr-1">
+          <div
+            onClick={isBusy ? undefined : handleBlendWord}
+            className={`hidden sm:flex flex-col items-center justify-center shrink-0 pr-1 ${isBusy ? 'opacity-60' : 'cursor-pointer hover:scale-105 squish-tap'}`}
+            title="Tap Train to Blend"
+          >
             <span className="text-5xl sm:text-6xl animate-bounce-gentle filter drop-shadow-md">🚂</span>
             <span className="text-[10px] font-black text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full mt-1">
               Choo-Choo!
@@ -333,7 +391,11 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
                     onClick={() => handleTapCarriage(index)}
                     disabled={isBusy}
                     aria-label={`Sound ${letter}`}
-                    className={`squish-tap relative w-[88px] min-w-[88px] h-28 min-h-[112px] sm:w-28 sm:h-36 rounded-3xl border-4 shadow-xl flex flex-col items-center justify-between p-2 cursor-pointer transition-all duration-300 focus:outline-none ${
+                    className={`squish-tap relative ${
+                      isToddlerMode
+                        ? 'w-24 min-w-[96px] h-32 min-h-[128px] sm:w-32 sm:h-40'
+                        : 'w-[88px] min-w-[88px] h-28 min-h-[112px] sm:w-28 sm:h-36'
+                    } rounded-3xl border-4 shadow-xl flex flex-col items-center justify-between p-2 cursor-pointer transition-all duration-300 focus:outline-none ${
                       isHighlighted
                         ? 'scale-115 -translate-y-2 ring-6 ring-amber-400 bg-amber-100 border-amber-500 shadow-[0_15px_30px_rgba(217,119,6,0.3)]'
                         : isBusy
@@ -343,14 +405,16 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
                   >
                     {/* Top Sound Dot (British Sound Button ⚫) */}
                     <div
-                      className={`w-3.5 h-3.5 rounded-full transition-all ${
+                      className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full transition-all ${
                         isHighlighted ? 'bg-amber-600 scale-125' : 'bg-amber-400'
                       }`}
                     />
 
                     {/* Giant Letter Symbol */}
                     <span
-                      className={`text-4xl sm:text-6xl font-black font-fun tracking-wide capitalize transition-transform ${
+                      className={`${
+                        isToddlerMode ? 'text-5xl sm:text-7xl' : 'text-4xl sm:text-6xl'
+                      } font-black font-fun tracking-wide capitalize transition-transform ${
                         isHighlighted ? 'scale-115 text-amber-900' : 'text-gray-900'
                       }`}
                     >
@@ -360,16 +424,16 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
                     {/* Sound Pill Button underneath */}
                     <div className="w-full flex items-center justify-center gap-1 bg-amber-50 px-2 py-0.5 rounded-xl border border-amber-200">
                       <Volume2 className="w-3 h-3 text-amber-600" />
-                      <span className="text-[11px] font-extrabold text-amber-800">
+                      <span className="text-[11px] sm:text-xs font-extrabold text-amber-800">
                         /{letter}/
                       </span>
                     </div>
                   </button>
 
                   {/* Train Wheels */}
-                  <div className="flex justify-between w-16 sm:w-20 px-1 mt-1">
-                    <div className="w-4 h-4 rounded-full bg-gray-800 border-2 border-gray-400 shadow-xs" />
-                    <div className="w-4 h-4 rounded-full bg-gray-800 border-2 border-gray-400 shadow-xs" />
+                  <div className="flex justify-between w-18 sm:w-22 px-1 mt-1">
+                    <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-gray-800 border-2 border-gray-400 shadow-xs" />
+                    <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-gray-800 border-2 border-gray-400 shadow-xs" />
                   </div>
                 </div>
               );
@@ -393,16 +457,34 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
               onClick={handleBlendWord}
               disabled={isBusy}
               aria-label="Blend sounds together"
-              className={`squish-tap w-full h-16 sm:h-18 rounded-3xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white border-4 border-emerald-300 shadow-[0_6px_0_#065F46] active:translate-y-1 active:shadow-[0_2px_0_#065F46] flex items-center justify-center gap-3 font-black text-xl sm:text-2xl cursor-pointer transition-all ${
-                isBusy ? 'opacity-60 pointer-events-none' : 'opacity-100'
+              className={`squish-tap w-full ${
+                isToddlerMode ? 'h-20 sm:h-22 text-2xl sm:text-3xl' : 'h-16 sm:h-18 text-xl sm:text-2xl'
+              } rounded-3xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white border-4 border-emerald-300 shadow-[0_6px_0_#065F46] active:translate-y-1 active:shadow-[0_2px_0_#065F46] flex items-center justify-center gap-3 font-black cursor-pointer transition-all ${
+                isBusy ? 'opacity-60 pointer-events-none' : 'opacity-100 ring-4 ring-amber-300 animate-pulse-glow'
               }`}
             >
-              <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 animate-wiggle" />
+              <Sparkles className="w-7 h-7 sm:w-8 sm:h-8 animate-wiggle" />
               <span>{isBlending ? 'Blending...' : 'Blend! 🚂 Choo-Choo!'}</span>
             </button>
           </div>
+        ) : isToddlerMode ? (
+          /* Toddler Focus Mode: Clean, Massive Celebratory Picture + Word Card */
+          <div className="mt-2 w-full max-w-sm px-2 animate-pop-in">
+            <div className="p-4 sm:p-6 rounded-4xl bg-white border-4 border-amber-300 shadow-2xl flex flex-col items-center justify-center gap-2 text-center ring-6 ring-amber-200">
+              <span className="text-7xl sm:text-8xl animate-bounce-gentle filter drop-shadow-md">
+                {currentWord.emoji}
+              </span>
+              <h3 className="text-4xl sm:text-5xl font-black font-fun text-gray-900 tracking-wide uppercase">
+                {currentWord.word}
+              </h3>
+              <div className="flex items-center gap-1.5 text-emerald-600 font-extrabold text-sm mt-1">
+                <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                <span>Brilliant Blending! ⭐</span>
+              </div>
+            </div>
+          </div>
         ) : (
-          /* Revealed Word Card Popup with Celebratory Reward & Slow Sentence Narration */
+          /* Full Explorer Mode: Revealed Word Card with Word Replay & Story Sentence */
           <div className="mt-1 w-full max-w-sm px-2 animate-pop-in">
             <div className={`p-3 sm:p-4 rounded-3xl bg-white border-4 border-amber-300 shadow-xl flex flex-col gap-2 transition-all ${
               isPlayingSentence || isPlayingWord ? 'ring-6 ring-amber-400 shadow-[0_0_35px_rgba(245,158,11,0.45)]' : ''
@@ -475,36 +557,38 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
         )}
       </main>
 
-      {/* 4. Bottom Toddler Action Controls: Clean 2-Button Dock */}
-      <footer className="w-full max-w-md mx-auto flex justify-center items-center gap-3 sm:gap-4 pt-2 pb-3 sm:pb-4 shrink-0 px-2">
-        {/* Again Button (~35% width) */}
-        <button
-          onClick={handleBlendWord}
-          disabled={isBusy}
-          aria-label="Blend sounds again"
-          className={`squish-tap w-24 h-20 sm:w-28 sm:h-24 rounded-3xl bg-white text-amber-700 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex flex-col items-center justify-center p-1.5 shrink-0 cursor-pointer transition-all ${
-            isBusy ? 'opacity-40 pointer-events-none' : 'opacity-100'
-          }`}
-        >
-          <RotateCcw className="w-8 h-8 sm:w-9 sm:h-9 stroke-[2.5]" />
-          <span className="text-xs sm:text-sm font-black mt-1 leading-none">Again</span>
-        </button>
+      {/* 4. Bottom Action Controls: Only in Full Explorer Mode */}
+      {!isToddlerMode && (
+        <footer className="w-full max-w-md mx-auto flex justify-center items-center gap-3 sm:gap-4 pt-2 pb-3 sm:pb-4 shrink-0 px-2">
+          {/* Again Button (~35% width) */}
+          <button
+            onClick={handleBlendWord}
+            disabled={isBusy}
+            aria-label="Blend sounds again"
+            className={`squish-tap w-24 h-20 sm:w-28 sm:h-24 rounded-3xl bg-white text-amber-700 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex flex-col items-center justify-center p-1.5 shrink-0 cursor-pointer transition-all ${
+              isBusy ? 'opacity-40 pointer-events-none' : 'opacity-100'
+            }`}
+          >
+            <RotateCcw className="w-8 h-8 sm:w-9 sm:h-9 stroke-[2.5]" />
+            <span className="text-xs sm:text-sm font-black mt-1 leading-none">Again</span>
+          </button>
 
-        {/* Next Word Button (~65% width) */}
-        <button
-          onClick={handleNextWord}
-          disabled={isBusy}
-          aria-label="Next word"
-          className={`squish-tap flex-1 h-20 sm:h-24 rounded-3xl bg-bubble-yellow text-amber-950 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex items-center justify-center gap-2 font-black text-xl sm:text-2xl cursor-pointer transition-all ${
-            isBusy ? 'opacity-40 pointer-events-none' : 'opacity-100'
-          } ${
-            justFinishedAudio ? 'scale-104 ring-4 ring-amber-400 animate-bounce-gentle shadow-lg' : ''
-          }`}
-        >
-          <span>Next</span>
-          <ArrowRight className="w-7 h-7 sm:w-8 sm:h-8 stroke-[3] shrink-0" />
-        </button>
-      </footer>
+          {/* Next Word Button (~65% width) */}
+          <button
+            onClick={handleNextWord}
+            disabled={isBusy}
+            aria-label="Next word"
+            className={`squish-tap flex-1 h-20 sm:h-24 rounded-3xl bg-bubble-yellow text-amber-950 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex items-center justify-center gap-2 font-black text-xl sm:text-2xl cursor-pointer transition-all ${
+              isBusy ? 'opacity-40 pointer-events-none' : 'opacity-100'
+            } ${
+              justFinishedAudio ? 'scale-104 ring-4 ring-amber-400 animate-bounce-gentle shadow-lg' : ''
+            }`}
+          >
+            <span>Next</span>
+            <ArrowRight className="w-7 h-7 sm:w-8 sm:h-8 stroke-[3] shrink-0" />
+          </button>
+        </footer>
+      )}
     </div>
   );
 };

@@ -45,8 +45,20 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
   const [sessionStarsEarned, setSessionStarsEarned] = useState<number>(0);
 
   const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const repeatTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const autoAdvanceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const activeLevelId = progress.currentLevelId || 1;
   const activeLevel = getLevelById(activeLevelId) || CURRICULUM_LEVELS[0];
+  const isToddlerMode = progress.toddlerFocusMode !== false;
+
+  // Cleanup timers on unmount
+  useEffect(() => {
+    return () => {
+      if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
+      if (repeatTimerRef.current) clearTimeout(repeatTimerRef.current);
+      if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
+    };
+  }, []);
 
   // Subscribe to progress changes
   useEffect(() => {
@@ -57,20 +69,17 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
   // Generate round data
   const generateRound = useCallback((roundIdx: number): RoundData => {
     const levelLetterIds = [...activeLevel.letterIds];
-    
     const allLetters = getAllLetters();
 
     // Pick target letter (round-robin across level letters with wrap-around)
     const targetId = levelLetterIds[roundIdx % levelLetterIds.length];
     const targetLetter = getLetterById(targetId) || allLetters[0];
 
-    // Distractors: For Level 1, strictly 1 distractor (2 bubbles total)
-    // For higher levels, 2 distractors (3 bubbles total)
-    const isLevelOne = activeLevelId === 1;
-    const distractorCount = isLevelOne ? 1 : 2;
+    // In Toddler Focus Mode: strictly 1 distractor (2 bubbles total) across all levels
+    // In Explorer Mode: 1 distractor for Level 1, 2 distractors for higher levels
+    const distractorCount = isToddlerMode ? 1 : (activeLevelId === 1 ? 1 : 2);
 
     const availableDistractorIds = levelLetterIds.filter((id) => id !== targetId);
-    // If not enough distractors in level, pull from global letters
     if (availableDistractorIds.length < distractorCount) {
       allLetters.forEach((l) => {
         if (l.id !== targetId && !availableDistractorIds.includes(l.id)) {
@@ -79,7 +88,6 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
       });
     }
 
-    // Shuffle and slice distractors
     const shuffledDistractors = availableDistractorIds.sort(() => Math.random() - 0.5);
     const chosenDistractorIds = shuffledDistractors.slice(0, distractorCount);
 
@@ -107,9 +115,9 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
       targetPhonemeAudioId: targetLetter.phonemeAudioId,
       choices,
     };
-  }, [activeLevel, activeLevelId]);
+  }, [activeLevel, activeLevelId, isToddlerMode]);
 
-  // Reset inactivity timer
+  // Reset inactivity timer (6s)
   const resetInactivityTimer = useCallback(() => {
     if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
     setIsHintActive(false);
@@ -118,15 +126,24 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
     }, 6000);
   }, []);
 
+  // Schedule auditory repetition every 5.0s if idle
+  const scheduleAuditoryRepeat = useCallback((phonemeAudioId: string) => {
+    if (repeatTimerRef.current) clearTimeout(repeatTimerRef.current);
+    repeatTimerRef.current = setTimeout(() => {
+      if (poppedLetterId || isSessionComplete || audioService.isBusyPlaying()) return;
+      playTargetSound(phonemeAudioId);
+    }, 5000);
+  }, [poppedLetterId, isSessionComplete]);
+
   // Play target sound
   const playTargetSound = useCallback((phonemeAudioId: string) => {
     setIsAudioBusy(true);
     audioService.playVoice(phonemeAudioId, { interrupt: true });
-    // Sound length is ~800-1100ms
     setTimeout(() => {
       setIsAudioBusy(false);
+      scheduleAuditoryRepeat(phonemeAudioId);
     }, 1100);
-  }, []);
+  }, [scheduleAuditoryRepeat]);
 
   // Setup round
   useEffect(() => {
@@ -136,8 +153,9 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
     setRoundData(newRound);
     setPoppedLetterId(null);
     setWobblingLetterId(null);
+    if (repeatTimerRef.current) clearTimeout(repeatTimerRef.current);
+    if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
 
-    // Play target sound after short stage transition
     const introTimer = setTimeout(() => {
       playTargetSound(newRound.targetPhonemeAudioId);
       resetInactivityTimer();
@@ -146,6 +164,8 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
     return () => {
       clearTimeout(introTimer);
       if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
+      if (repeatTimerRef.current) clearTimeout(repeatTimerRef.current);
+      if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
     };
   }, [currentRound, generateRound, isSessionComplete, playTargetSound, resetInactivityTimer]);
 
@@ -157,9 +177,26 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
     resetInactivityTimer();
   };
 
+  // Advance to next round or finish session
+  const advanceRound = useCallback(() => {
+    if (autoAdvanceTimerRef.current) {
+      clearTimeout(autoAdvanceTimerRef.current);
+      autoAdvanceTimerRef.current = null;
+    }
+    if (currentRound < 4) {
+      setCurrentRound((prev) => prev + 1);
+    } else {
+      // Micro-session complete! (5 rounds done)
+      setIsSessionComplete(true);
+      audioService.playFanfare();
+      triggerGentleConfetti();
+    }
+  }, [currentRound]);
+
   // Handle bubble tap
   const handleBubbleTap = (choice: BubbleChoice) => {
     if (isAudioBusy || poppedLetterId) return;
+    if (repeatTimerRef.current) clearTimeout(repeatTimerRef.current);
     resetInactivityTimer();
 
     if (choice.isTarget) {
@@ -180,17 +217,16 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
         audioService.playChime();
       }, 250);
 
-      // Advance after celebrating
-      setTimeout(() => {
-        if (currentRound < 4) {
-          setCurrentRound((prev) => prev + 1);
-        } else {
-          // Micro-session complete! (5 rounds done)
-          setIsSessionComplete(true);
-          audioService.playFanfare();
-          triggerGentleConfetti();
-        }
-      }, 1000);
+      // Fail-safe watchdog: guarantee advance even under audio delay
+      const watchdog = setTimeout(() => {
+        advanceRound();
+      }, 3500);
+
+      // Smooth auto-advance after 1.1s celebration
+      autoAdvanceTimerRef.current = setTimeout(() => {
+        clearTimeout(watchdog);
+        advanceRound();
+      }, 1100);
     } else {
       // 〰️ Incorrect Tap: Gentle cartoon wobble (No-Shame design)
       setWobblingLetterId(choice.letterId);
@@ -269,32 +305,34 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
           {/* Milo Companion in Listening Pose */}
           <div className="flex flex-col items-center shrink-0">
             <CharacterMilo
-              size="md"
+              size={isToddlerMode ? 'lg' : 'md'}
               isListening={isAudioBusy}
               onTap={handleReplay}
               className="transition-transform"
             />
 
-            {/* Chunky Replay Sound Button (80x80px squircle) */}
-            <button
-              onClick={handleReplay}
-              disabled={isAudioBusy}
-              aria-label="Listen to sound again"
-              className={`mt-2 squish-tap w-20 h-20 sm:w-22 sm:h-22 rounded-3xl bg-gradient-to-b from-amber-300 to-amber-400 text-amber-950 border-4 border-amber-200 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex flex-col items-center justify-center cursor-pointer transition-all ${
-                isAudioBusy
-                  ? 'opacity-60 ring-6 ring-amber-300 scale-105'
-                  : 'hover:scale-105 animate-bounce-gentle'
-              }`}
-            >
-              <Volume2 className="w-8 h-8 sm:w-9 sm:h-9" />
-              <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider mt-0.5">
-                {isAudioBusy ? 'Listening...' : 'Hear Again'}
-              </span>
-            </button>
+            {/* In Explorer Mode: show Replay Sound Button (80x80px squircle). In Toddler Mode: Eradicate it! */}
+            {!isToddlerMode && (
+              <button
+                onClick={handleReplay}
+                disabled={isAudioBusy}
+                aria-label="Listen to sound again"
+                className={`mt-2 squish-tap w-20 h-20 sm:w-22 sm:h-22 rounded-3xl bg-gradient-to-b from-amber-300 to-amber-400 text-amber-950 border-4 border-amber-200 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex flex-col items-center justify-center cursor-pointer transition-all ${
+                  isAudioBusy
+                    ? 'opacity-60 ring-6 ring-amber-300 scale-105'
+                    : 'hover:scale-105 animate-bounce-gentle'
+                }`}
+              >
+                <Volume2 className="w-8 h-8 sm:w-9 sm:h-9" />
+                <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider mt-0.5">
+                  {isAudioBusy ? 'Listening...' : 'Hear Again'}
+                </span>
+              </button>
+            )}
           </div>
 
           {/* Floating Bubble Stage */}
-          <div className="w-full flex items-center justify-center gap-4 sm:gap-8 my-auto py-2">
+          <div className="w-full flex items-center justify-center gap-6 sm:gap-10 md:gap-14 my-auto py-2">
             {roundData?.choices.map((choice) => {
               const isPopped = poppedLetterId === choice.letterId;
               const isWobbling = wobblingLetterId === choice.letterId;
@@ -307,7 +345,11 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
                     onClick={() => handleBubbleTap(choice)}
                     disabled={isAudioBusy || !!poppedLetterId}
                     aria-label={`Bubble letter ${choice.symbol}`}
-                    className={`squish-tap relative w-28 h-28 sm:w-36 sm:h-36 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 select-none ${
+                    className={`squish-tap relative ${
+                      isToddlerMode
+                        ? 'w-36 h-36 sm:w-44 sm:h-44 md:w-48 md:h-48'
+                        : 'w-28 h-28 sm:w-36 sm:h-36'
+                    } rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 select-none ${
                       isPopped
                         ? 'scale-150 opacity-0 pointer-events-none transition-all duration-500'
                         : isWobbling
@@ -326,12 +368,14 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
                     }}
                   >
                     {/* Glossy Specular Light Reflection Arc */}
-                    <div className="absolute top-3 left-4 w-7 h-3.5 sm:w-9 sm:h-4 rounded-full bg-white/80 rotate-[-25deg] filter blur-[0.5px]" />
-                    <div className="absolute top-4 left-3 w-2 h-2 rounded-full bg-white/90" />
+                    <div className={`absolute top-3 left-4 ${isToddlerMode ? 'w-10 h-5 sm:w-12 sm:h-6' : 'w-7 h-3.5 sm:w-9 sm:h-4'} rounded-full bg-white/80 rotate-[-25deg] filter blur-[0.5px]`} />
+                    <div className="absolute top-4 left-3 w-2.5 h-2.5 rounded-full bg-white/90" />
 
                     {/* Giant Letter Symbol inside Bubble */}
                     <span
-                      className={`text-5xl sm:text-6xl font-black font-fun tracking-wide capitalize transition-transform duration-300 drop-shadow-sm ${
+                      className={`${
+                        isToddlerMode ? 'text-6xl sm:text-7xl md:text-8xl' : 'text-5xl sm:text-6xl'
+                      } font-black font-fun tracking-wide capitalize transition-transform duration-300 drop-shadow-sm ${
                         isPopped ? 'scale-130 text-amber-500' : ''
                       }`}
                       style={{ color: choice.colorTheme.primary }}
@@ -346,14 +390,14 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
                       {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => (
                         <div
                           key={deg}
-                          className="absolute w-3.5 h-3.5 rounded-full bg-amber-400 transition-transform duration-500"
+                          className="absolute w-4 h-4 rounded-full bg-amber-400 transition-transform duration-500"
                           style={{
-                            transform: `rotate(${deg}deg) translate(55px)`,
+                            transform: `rotate(${deg}deg) translate(65px)`,
                             opacity: 0.85,
                           }}
                         />
                       ))}
-                      <Sparkles className="w-16 h-16 text-amber-400 animate-wiggle" />
+                      <Sparkles className="w-18 h-18 text-amber-400 animate-wiggle" />
                     </div>
                   )}
                 </div>
@@ -361,13 +405,15 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
             })}
           </div>
 
-          {/* Gentle Footer Hint: Audio-only encouragement */}
-          <footer className="text-center py-1 shrink-0">
-            <p className="text-amber-900/60 font-black text-xs sm:text-sm flex items-center justify-center gap-1.5">
-              <span>Pop the bubble that matches the sound!</span>
-              <Sparkle className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
-            </p>
-          </footer>
+          {/* Gentle Footer Hint: Audio-only encouragement (Hidden in Toddler Focus Mode) */}
+          {!isToddlerMode && (
+            <footer className="text-center py-1 shrink-0">
+              <p className="text-amber-900/60 font-black text-xs sm:text-sm flex items-center justify-center gap-1.5">
+                <span>Pop the bubble that matches the sound!</span>
+                <Sparkle className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
+              </p>
+            </footer>
+          )}
         </main>
       ) : (
         /* 3. Session Celebration Summary Modal */
