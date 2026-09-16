@@ -30,26 +30,19 @@ export const MiloVideoCompanion: React.FC<MiloVideoCompanionProps> = ({
   isListening = false,
   isTargetOver = false,
 }) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [videoError, setVideoError] = useState(false);
+  const hungryVideoRef = useRef<HTMLVideoElement>(null);
+  const chewingVideoRef = useRef<HTMLVideoElement>(null);
+  const [hungryError, setHungryError] = useState(false);
+  const [chewingError, setChewingError] = useState(false);
   const [isHappyTap, setIsHappyTap] = useState(false);
-  const [activeSrc, setActiveSrc] = useState<string>(VIDEO_PATHS[state]);
 
-  // Handle state changes and fallback to hungry video if specific video is pending
+  // Rewind and play chewing video immediately when entering 'chewing' state
   useEffect(() => {
-    const targetPath = VIDEO_PATHS[state];
-    setActiveSrc(targetPath);
-    setVideoError(false);
-  }, [state]);
-
-  // If a specific state video fails to load (e.g. not yet provided), fallback to hungry video first
-  const handleVideoError = () => {
-    if (activeSrc !== VIDEO_PATHS.hungry) {
-      setActiveSrc(VIDEO_PATHS.hungry);
-    } else {
-      setVideoError(true);
+    if (state === 'chewing' && chewingVideoRef.current && !chewingError) {
+      chewingVideoRef.current.currentTime = 0;
+      chewingVideoRef.current.play().catch(() => {});
     }
-  };
+  }, [state, chewingError]);
 
   const handleTap = () => {
     setIsHappyTap(true);
@@ -68,6 +61,9 @@ export const MiloVideoCompanion: React.FC<MiloVideoCompanionProps> = ({
     lg: 'w-48 h-48 sm:w-56 sm:h-56',
     xl: 'w-60 h-60 sm:w-72 sm:h-72',
   };
+
+  const hasAnyVideo = !hungryError;
+  const isChewingActive = state === 'chewing' && !chewingError;
 
   return (
     <div className={`relative flex flex-col items-center select-none ${className}`}>
@@ -93,26 +89,43 @@ export const MiloVideoCompanion: React.FC<MiloVideoCompanionProps> = ({
             : 'hover:scale-105'
         }`}
       >
-        {!videoError ? (
+        {hasAnyVideo ? (
           <div className="relative w-full h-full rounded-4xl overflow-hidden shadow-xl border-4 border-amber-200 bg-[#F8F4EA]">
-            {/* Center-cropped 1:1 Video Container */}
+            {/* Hungry Video (Default Base Pose) */}
             <video
-              ref={videoRef}
-              key={activeSrc}
-              src={activeSrc}
+              ref={hungryVideoRef}
+              src={VIDEO_PATHS.hungry}
               autoPlay
               loop
               muted
               playsInline
-              onError={handleVideoError}
-              className={`w-full h-full object-cover object-center transition-all duration-300 ${
-                state === 'chewing' ? 'scale-105 animate-wiggle-repeat' : ''
+              onError={() => setHungryError(true)}
+              className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-300 ${
+                isChewingActive ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'
               } ${state === 'curious' ? '-rotate-3 scale-98' : ''}`}
             />
 
+            {/* Chewing Video (Instant Chomp & Chew Action) */}
+            {!chewingError && (
+              <video
+                ref={chewingVideoRef}
+                src={VIDEO_PATHS.chewing}
+                autoPlay
+                loop
+                muted
+                playsInline
+                onError={() => setChewingError(true)}
+                className={`absolute inset-0 w-full h-full object-cover object-center scale-108 transition-all duration-200 ${
+                  isChewingActive
+                    ? 'opacity-100 z-10 animate-wiggle-repeat'
+                    : 'opacity-0 pointer-events-none z-0'
+                }`}
+              />
+            )}
+
             {/* Listening Sound Wave Rings */}
             {isListening && (
-              <div className="absolute top-3 right-3 bg-amber-400 text-amber-950 px-2 py-1 rounded-full text-xs font-black flex items-center gap-1 shadow-md border-2 border-white animate-pulse">
+              <div className="absolute top-3 right-3 bg-amber-400 text-amber-950 px-2 py-1 rounded-full text-xs font-black flex items-center gap-1 shadow-md border-2 border-white animate-pulse z-20">
                 <span>👂</span>
                 <span className="hidden sm:inline">Listening</span>
               </div>
@@ -120,7 +133,7 @@ export const MiloVideoCompanion: React.FC<MiloVideoCompanionProps> = ({
 
             {/* Eating / Drop Target Glow Overlay when dragging over Milo */}
             {isTargetOver && (
-              <div className="absolute inset-0 bg-amber-400/20 backdrop-blur-[1px] flex items-center justify-center border-4 border-dashed border-amber-400 rounded-4xl animate-pulse">
+              <div className="absolute inset-0 bg-amber-400/20 backdrop-blur-[1px] flex items-center justify-center border-4 border-dashed border-amber-400 rounded-4xl animate-pulse z-20">
                 <span className="text-4xl animate-bounce">😋</span>
               </div>
             )}

@@ -227,7 +227,7 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
           audioService.playFanfare();
           triggerGentleConfetti();
         }
-      }, 1400);
+      }, 1800);
     } else {
       // 〰️ Wrong Food: Gentle "Hmm" (Zero-Shame design)
       setWobblingItemId(choice.object.id);
