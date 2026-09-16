@@ -16,6 +16,17 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-09-16 — Automatic Level Graduation, Home Mute Protection & Parent Level Selector
+
+**Decision:** Addressed three high-impact P0 product findings across curriculum progression, sensory stability, and parent agency:
+- **Automatic Level Graduation**: Connected `advanceToNext` in `LetsPlayScreen` to detect when the child completes the final object of the final letter in their active curriculum set. Instead of looping back to `s`, the engine triggers a grand milestone celebration (fanfare audio, confetti, celebratory milestone card), promotes `progressService.unlockLevel(nextLevelId)` and `progressService.setCurrentLevel(nextLevelId)`, and smoothly transitions into Level 2 (`i, n, m, d`).
+- **Cross-Game Level Synchronization**: Connected `SoundTrainScreen` to subscribe to `progressService` updates and prioritize newly unlocked level words (`pan`, `pin`, `mat`, `dad`) so the entire four-game ecosystem immediately reflects the new phonics set.
+- **Accidental Mute Protection**: Replaced the prominent 56px bare `Mute` button in the top-left corner of `HomeScreen` with a child-friendly `Star Bank Badge` (`{progress.totalStars} Stars`), completely eliminating accidental toddler mute taps. Relocated master audio and volume controls exclusively inside the `ParentDashboard` (behind the math gate).
+- **Interactive Parent Level Selector**: Converted read-only curriculum set cards in `ParentDashboard` into interactive buttons, allowing parents to tap any unlocked phonics set (e.g. Level 2: `I N M D`) to set it as active with immediate acoustic confirmation.
+**Why:** In Toddler Focus Mode, removing modal buttons previously trapped toddlers in Level 1 indefinitely. Furthermore, exposing a bare mute toggle on the toddler home screen led to accidental silent-mode drop-offs. Automating graduation and empowering parents behind the math gate preserves zero-text toddler simplicity while ensuring continuous pedagogical advancement.
+**Rejected:** Requiring toddlers to manually select levels via complex map drawers, leaving the mute toggle exposed on the child stage, and keeping curriculum sets read-only in the Parent Dashboard.
+
+
 ### 2026-09-16 — Synchronous Ref Guards & Hardware Debounce Against Duplicate Audio Triggering
 
 **Decision:** Implemented synchronous reference guards (`hasPoppedRef`, `isAudioBusyRef`, `isProcessingIncorrectRef`, `lastTapTimeRef`) and a 400ms–450ms hardware debounce across interactive game elements (`BubblePopScreen`, `CharacterMilo`, `FeedMiloScreen`):
