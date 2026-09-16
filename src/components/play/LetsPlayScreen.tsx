@@ -122,10 +122,10 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     return unsub;
   }, [isToddlerMode]);
 
-  // Debounce guard: absorbs rapid multi-clicks to prevent audio churn
+  // Debounce guard: absorbs rapid jitter clicks (<350ms) to prevent audio churn
   const canAct = () => {
     const now = Date.now();
-    if (isAudioBusy || now - lastActionTime.current < 600) {
+    if (now - lastActionTime.current < 350) {
       return false;
     }
     lastActionTime.current = now;
@@ -197,6 +197,9 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     hasTappedCardRef.current = true;
     if (repeatTimerRef.current) clearTimeout(repeatTimerRef.current);
     if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
+
+    // Stop any in-flight repeat speech so celebration takes over immediately
+    audioService.stopVoice();
 
     setIsObjectAnimating(true);
     audioService.playSoundEffect(currentObject.soundType);
@@ -683,7 +686,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
           {/* Huge Touch Hero Card */}
           <button
             onClick={handleTapObject}
-            disabled={isAudioBusy}
+            disabled={hasTappedCardRef.current}
             aria-label={`Tap ${currentObject.name}`}
             className={`squish-tap relative ${
               isToddlerMode
