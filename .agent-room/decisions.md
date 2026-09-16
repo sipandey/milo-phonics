@@ -16,6 +16,12 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-09-16 — Toddler Paced Chewing (3.8s) with Tap-to-Skip & Eradication of Text Speech Bubbles
+
+**Decision:** Extended Milo's chewing reward duration from 1.8s to 3.8s in "Feed Milo!", completely eradicated the text speech bubble from the game arena, and added a dual early-advance affordance: tapping Milo directly or tapping the chunky `[ 😋 Yum! ]` button after the 1.4s Oxford phoneme audio finishes skips ahead to the next round immediately.
+**Why:** Toddlers aged 24–36 months cannot read; text speech bubbles add vertical clutter, compete for attention with the 3D character video, and contradict the app's zero-text first principle. Furthermore, 1.8s was too brief, cutting off Milo's chewing video right before his puffed-cheek munch and smile (Beat 2 & 3), while creating auditory crowding (~1.1s) between the reward sound and the next target phoneme. A 3.8s auto-advance provides unhurried auditory consolidation and full video appreciation, while tap-to-skip provides impatient toddlers with 100% agency without introducing a mandatory blocking "Next" button.
+**Rejected:** Mandatory blocking "Next" buttons (causes toddler drop-off/abandonment when children don't realize they have to click a UI arrow to continue) and keeping text dialogue balloons for pre-readers.
+
 ### 2026-09-16 — "Feed Milo!" Initial-Sound Feeding Minigame & 3D Video Companion Architecture for 24–36 Months
 
 **Decision:** Built an initial-sound sorting minigame ("Feed Milo!") structured as 5-round micro-sessions (~60–75s duration) with dual feeding affordances (physical pointer/touch drag-and-drop OR 1-tap arc swoop feeding into Milo's mouth). Integrated a center-cropped 1:1 squircle 3D video avatar (`<MiloVideoCompanion>`) using AI-generated 3D character video (`milo_hungry_pose.mp4`) with smooth fallback to `<CharacterMilo />` SVG. Rounds feature authentic Oxford RP phoneme prompts (`phoneme.<letter>`), Level 1 binary choices (strictly 2 plates) and Levels 2–7 3 plates, procedural chewing/slurping Web Audio SFX (`audioService.playSfx('crunch')` / `'slurp'`), zero-shame carton wobble on incorrect drops, a 6-second golden shimmer lifeline, and a Chef Milo celebration modal with +5 stars payout.
