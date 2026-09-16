@@ -47,18 +47,26 @@ The primary learning objective is developing **phonemic awareness, letter-sound 
 * **6-Second Inactivity Lifeline**: If no tap occurs for 6 seconds, the correct bubble emits a subtle, pulsing golden glow (`ring-8 ring-amber-400`), gently guiding the child without interrupting their autonomy.
 * **Grand Micro-Celebration**: Crowned Milo (`👑`), confetti bursts, fanfare audio, and a **+5 Stars!** session summary payout with chunky "Play Again! 🔁" and "Go Home 🏠" buttons.
 
-### 4. 🛡️ Toddler Impatience & Multi-Tap Pacing Protection
+### 4. 🍖 "Feed Milo!" (Initial-Sound Feeding Minigame & 3D Video Companion)
+* **Initial-Sound Association Loop**: Milo is hungry! Milo asks for foods that begin with a specific Oxford phoneme sound (e.g., *"Milo wants food starting with /m/!"*).
+* **Dual Interaction Affordance (Drag OR Tap)**: Toddlers can physically drag-and-drop food plates into Milo's mouth OR tap any food plate to trigger an arc swoop animation flying directly into Milo's belly. This accommodates variable fine motor development (24–36 months).
+* **3D Squircle Video Companion (`MiloVideoCompanion.tsx`)**: Displays an animated 3D video character (`milo_hungry_pose.mp4`) center-cropped in a 1:1 squircle frame (`aspect-square object-cover object-center`), featuring live mouth animations, dynamic state switching, hover drop indicators (`😋`), and graceful fallback to the SVG companion.
+* **Procedural Chewing & Celebration**: Correct foods trigger procedural chewing/crunching and slurping sound effects (`audioService.playSfx('crunch')` / `'slurp'`), hearty giggles, +1 star, and radiant golden food halos.
+* **Cognitive Safeguards & Lifeline**: Strictly **2 plates** for Level 1; 3 plates for Levels 2–7. Incorrect drops trigger a zero-shame cartoon wobble (`boing` sfx + gentle re-prompt); a 6-second inactivity lifeline pulses the target plate with a golden glow.
+* **Chef Milo Micro-Celebration**: Completing 5 rounds triggers celebratory fanfare, a Chef Milo badge (`🧑‍🍳`), and a **+5 Stars!** payout modal.
+
+### 5. 🛡️ Toddler Impatience & Multi-Tap Pacing Protection
 * **Non-Destructive Touch Absorber (`ListenRipple.tsx`)**: When impatient or excited toddlers tap rapidly while educational audio is speaking, screen taps are gently absorbed without stopping audio or triggering premature navigation.
 * **Tactile Musical Particles**: Floating whimsical emojis (`🎵`, `🎶`, `✨`, `⭐`, `👂`) rise under the child's touch with a soft wooden bubble pop sound.
 * **Visual Attention Spotlight**: Active Elkonin sound carriages or story cards receive a glowing golden focus ring, while surrounding UI controls dim, focusing toddler attention directly on the sound source.
 * **600ms Hardware Debounce & "Your Turn" Unlock Pulse**: Prevents accidental double-taps while pulsing the next action button with a welcoming bounce once audio finishes.
 
-### 5. 🔤 Full A–Z Alphabet Explorer (84 Curriculum Words)
+### 6. 🔤 Full A–Z Alphabet Explorer (84 Curriculum Words)
 * Full 26-letter interactive alphabet board featuring 84 illustrated child-friendly objects.
 * Each letter card features an instant **🔊 sound button** and clickable phoneme pill, letting toddlers explore pure British phoneme sounds directly on the grid.
 * Tapping a letter launches the deep-dive interactive Letter Detail Stage with object carousels and authentic Oxford phoneme-to-word blends.
 
-### 6. 🗺️ Systematic Synthetic Phonics (SSP) Learning Path
+### 7. 🗺️ Systematic Synthetic Phonics (SSP) Learning Path
 * 7-Set progression aligned with UK National Curriculum / Letters & Sounds:
   * **Set 1**: S, A, T, P
   * **Set 2**: I, N, M, D
@@ -69,18 +77,18 @@ The primary learning objective is developing **phonemic awareness, letter-sound 
   * **Set 7**: Y, Z, Q
 * Star reward tracking and automatic level unlocking as toddlers master sounds.
 
-### 7. 🗣️ British English Sounds Chart (`Sounds 🇬🇧`)
+### 8. 🗣️ British English Sounds Chart (`Sounds 🇬🇧`)
 * Comprehensive IPA sound reference organized by phonetic category:
   * **Consonants (25 sounds)**: /p/, /b/, /t/, /d/, /k/, /g/, /m/, /n/, etc.
   * **Vowels (14 sounds)**: /iː/, /ɪ/, /e/, /æ/, /ə/, /ʌ/, etc.
   * **Diphthongs (8 sounds)**: /eɪ/, /əʊ/, /aɪ/, /aʊ/, /ɔɪ/, etc.
 * Tap any symbol to hear the pure Oxford phoneme; tap example words to hear native British pronunciation.
 
-### 8. 🐵 Milo the Lion Companion
+### 9. 🐵 Milo the Lion Companion
 * Expressive animated character with real-time mouth movement synchronized with speech audio.
 * Natural eye-blinking and squash-tap interaction (giggles and wiggles when tapped).
 
-### 9. ⚙️ Parent Dashboard & Arithmetic Gate
+### 10. ⚙️ Parent Dashboard & Arithmetic Gate
 * Accessible via a discreet gear icon protected by an adult math challenge (`a + b = ?`).
 * Oxford-First & AI Cloudinary Pipeline monitor and interactive audio blend test buttons.
 * Star progress breakdown across all 7 SSP sets with one-click progress reset.
@@ -101,14 +109,17 @@ phonics/
 │   ├── generate-audio.ts    # OpenAI TTS batch generator for curriculum words
 │   ├── generate-cvc-audio.ts# OpenAI TTS batch generator for CVC words & sentences
 │   └── optimize-and-sync-audio.ts # FFmpeg silence trimmer & Cloudinary sync pipeline
-├── public/audio/
-│   ├── phoneme_<x>.mp3      # 26 Authentic Oxford Dictionary human recordings
-│   ├── words/               # 84 Slow British AI words (Coral, 0.70x, trimmed)
-│   ├── cvc/                 # 38 CVC blended words (Coral, 0.75x, trimmed)
-│   ├── sentences/           # 38 Story sentences (Coral, 0.75x, trimmed)
-│   ├── letters/             # 26 British letter names (Coral, 0.75x, trimmed)
-│   ├── praise/              # 6 Gentle praise cues (Coral, 0.75x, trimmed)
-│   └── prompts/             # 4 Game prompts (Coral, 0.75x, trimmed)
+├── public/
+│   ├── audio/
+│   │   ├── phoneme_<x>.mp3  # 26 Authentic Oxford Dictionary human recordings
+│   │   ├── words/           # 84 Slow British AI words (Coral, 0.70x, trimmed)
+│   │   ├── cvc/             # 38 CVC blended words (Coral, 0.75x, trimmed)
+│   │   ├── sentences/       # 38 Story sentences (Coral, 0.75x, trimmed)
+│   │   ├── letters/         # 26 British letter names (Coral, 0.75x, trimmed)
+│   │   ├── praise/          # 6 Gentle praise cues (Coral, 0.75x, trimmed)
+│   │   └── prompts/         # 4 Game prompts (Coral, 0.75x, trimmed)
+│   └── video/
+│       └── milo/            # 3D Milo video companion clips (H.264 MP4)
 ├── src/
 │   ├── types/               # Strong typing for Letters, Audio, CVC, and Progress
 │   ├── services/
@@ -121,9 +132,9 @@ phonics/
 │   │   ├── generatedAudioManifest.ts # Cloudinary CDN manifest for 120 AI voice assets
 │   │   └── lettersData.ts   # Data-driven definitions for 26 letters & 84 objects
 │   ├── components/
-│   │   ├── common/          # Milo character, big buttons, parent gate, ListenRipple
-│   │   ├── home/            # Home screen with big visual choices (2-1-2 layout)
-│   │   ├── game/            # Bubble Pop auditory discrimination minigame
+│   │   ├── common/          # Milo character, MiloVideoCompanion, buttons, gate, ListenRipple
+│   │   ├── home/            # Symmetrical 2x3 home screen grid
+│   │   ├── game/            # Bubble Pop & Feed Milo minigames
 │   │   ├── play/            # Guided discovery loop (Let's Play)
 │   │   ├── letter/          # Letter explorer and detail stages
 │   │   ├── train/           # Sound Train CVC Blending Sandbox
@@ -199,7 +210,7 @@ npm run agent-room:metrics
   * Audio trailing silence trimming via `ffmpeg silenceremove` (< 2.8s blending).
 * [ ] **Phase 3: Extended Interactive Minigames**
   * [x] **"Which Sound Do You Hear?" (Bubble Pop)**: 5-round auditory discrimination minigame with pure Oxford RP phonemes, binary choices on Level 1, zero-shame wobble, ear-cupping listening Milo, 6s inactivity golden pulse, and celebration rewards.
-  * [ ] "Feed Milo": Drag the initial-sound food items into Milo's basket.
+  * [x] **"Feed Milo!" (Initial-Sound Feeding Minigame & 3D Video Companion)**: 5-round sorting minigame with dual feeding affordance (drag or tap), center-cropped 3D video companion (`milo_hungry_pose.mp4`), procedural crunch/slurp sfx, Oxford RP phoneme prompts, 6s golden shimmer lifeline, and Chef Milo celebration.
   * [ ] Digraphs & Blends expansion (sh, ch, th, ck, ng, qu, ee, oo).
 * [ ] **Phase 4: Multi-Environment Sound Safaris & Offline PWA**
   * Farm, Ocean, Forest, and Space Sound Safari worlds.

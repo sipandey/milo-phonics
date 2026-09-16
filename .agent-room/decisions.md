@@ -16,6 +16,18 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-09-16 — "Feed Milo!" Initial-Sound Feeding Minigame & 3D Video Companion Architecture for 24–36 Months
+
+**Decision:** Built an initial-sound sorting minigame ("Feed Milo!") structured as 5-round micro-sessions (~60–75s duration) with dual feeding affordances (physical pointer/touch drag-and-drop OR 1-tap arc swoop feeding into Milo's mouth). Integrated a center-cropped 1:1 squircle 3D video avatar (`<MiloVideoCompanion>`) using AI-generated 3D character video (`milo_hungry_pose.mp4`) with smooth fallback to `<CharacterMilo />` SVG. Rounds feature authentic Oxford RP phoneme prompts (`phoneme.<letter>`), Level 1 binary choices (strictly 2 plates) and Levels 2–7 3 plates, procedural chewing/slurping Web Audio SFX (`audioService.playSfx('crunch')` / `'slurp'`), zero-shame carton wobble on incorrect drops, a 6-second golden shimmer lifeline, and a Chef Milo celebration modal with +5 stars payout.
+**Why:** Toddlers aged 24–36 months are developing fine motor skills; requiring drag-and-drop alone causes drop fatigue and frustration, so dual affordance (drag OR 1-tap swoop) guarantees 100% accessibility. Video companions create profound emotional bonding, while center-cropping (720×720 square crop from 1280×720 16:9) isolates the character dead-center and eliminates edge watermarks without letterboxing. Muted video playback prevents audio collision with pure Oxford RP phonemes.
+**Rejected:** Strict drag-and-drop only without tap fallback (unforgiving for toddler motor control), unmuted video audio (conflicts with phoneme learning), and 3+ food choices on Level 1.
+
+### 2026-09-16 — Home Screen 2×3 Symmetrical Activity Grid Layout
+
+**Decision:** Arranged toddler activities on the Home Screen into an even 2×3 grid: Row 1: Core Exploration (`Let's Play!` yellow) + Blending (`Sound Train!` green); Row 2: Auditory Discrimination (`Bubble Pop!` purple) + Initial Sounds (`Feed Milo!` amber); Row 3: Reference Tools (`Letters` coral) + (`Sounds` sky). Styled with responsive heights fitting within `100dvh` on mobile and desktop without vertical scroll clipping.
+**Why:** Maintains visual symmetry and equal access to all 6 core learning activities without burying features in submenus or forcing scrolling on compact mobile devices (320px–390px viewports).
+**Rejected:** 2-1-2 layout with an oversized solitary banner (unbalanced once the 6th feature was added) and vertical scrolling feeds.
+
 ### 2026-09-16 — Bubble Pop Auditory Discrimination Game Architecture for 24–36 Months
 
 **Decision:** Built an active auditory discrimination game ("Bubble Pop!") structured as 5-round micro-sessions (~60–75s total duration) with binary choices (strictly 2 bubbles: Target + 1 Distractor) for Level 1, and 3 bubbles for Levels 2–7. Rounds begin with automatic Oxford RP isolated phoneme playback (`phoneme.<letter>`), companion Milo in an ear-cupping listening pose (`isListening`), an 80×80px "Hear Again" squircle replay button, zero-shame cartoon wobble on errors (`boing` sfx + softly whispered error sound + re-prompts target + zero star penalty), a 6-second inactivity golden shimmer lifeline, and a grand 5-round celebration card with a crowned Milo (`👑`) and +5 stars payout.
