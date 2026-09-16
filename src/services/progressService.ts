@@ -28,6 +28,7 @@ const defaultProgress: ChildProgress = {
   totalTaps: 0,
   lastPlayed: new Date().toISOString(),
   lastLetter: 's',
+  toddlerFocusMode: true,
 };
 
 type ProgressListener = (progress: ChildProgress) => void;
@@ -120,6 +121,7 @@ class ProgressService {
       lastPlayed: raw.lastPlayed || new Date().toISOString(),
       lastLetter: raw.lastLetter || 's',
       cloudSyncedAt: raw.cloudSyncedAt,
+      toddlerFocusMode: raw.toddlerFocusMode !== undefined ? raw.toddlerFocusMode : true,
     };
   }
 
@@ -135,6 +137,11 @@ class ProgressService {
 
   public getProgress(): ChildProgress {
     return { ...this.progress };
+  }
+
+  public setToddlerFocusMode(enabled: boolean) {
+    this.progress.toddlerFocusMode = enabled;
+    this.saveProgress();
   }
 
   public setCurrentLevel(levelId: number) {

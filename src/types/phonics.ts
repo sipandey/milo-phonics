@@ -103,6 +103,7 @@ export interface ChildProgress {
   lastPlayed: string;
   lastLetter: string;
   cloudSyncedAt?: string;
+  toddlerFocusMode?: boolean; // Single-action pacing with no button clutter
 }
 
 export interface AudioSettings {

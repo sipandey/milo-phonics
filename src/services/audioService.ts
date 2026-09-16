@@ -117,11 +117,17 @@ class AudioService {
 
   private notifySpeechStart() {
     this.setBusy(true);
+    if (this.sfxGain && this.audioCtx) {
+      this.sfxGain.gain.setValueAtTime(this.isMuted ? 0 : 0.4, this.audioCtx.currentTime);
+    }
     this.speechStartListeners.forEach(cb => cb());
   }
 
   private notifySpeechEnd() {
     this.setBusy(false);
+    if (this.sfxGain && this.audioCtx) {
+      this.sfxGain.gain.setValueAtTime(this.isMuted ? 0 : this.settings.sfxVolume, this.audioCtx.currentTime);
+    }
     this.speechEndListeners.forEach(cb => cb());
   }
 

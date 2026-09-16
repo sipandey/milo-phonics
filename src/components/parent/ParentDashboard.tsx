@@ -52,7 +52,50 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
           <ParentClerkSync />
         </div>
 
-        {/* Section 2: Systematic Synthetic Phonics (SSP) Progress */}
+        {/* Section 2: Toddler Focus Mode (Single-Action Pacing) */}
+        <div className="mb-6 p-4 sm:p-5 rounded-3xl bg-amber-50/90 border-2 border-amber-300 shadow-sm">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <span className="text-3xl">👶</span>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-base font-black text-amber-950">
+                    Toddler Focus Mode
+                  </h3>
+                  <span className="text-[10px] bg-emerald-500 text-white font-extrabold px-2 py-0.5 rounded-full">
+                    Recommended (Ages 2–3)
+                  </span>
+                </div>
+                <p className="text-xs text-amber-800/90 mt-1 leading-relaxed">
+                  Single-action view: removes secondary tabs, menus, and next buttons. Plays sound on tap and auto-advances smoothly to keep toddlers from frantically clicking.
+                </p>
+              </div>
+            </div>
+
+            {/* Accessible Toggle Switch */}
+            <button
+              type="button"
+              role="switch"
+              aria-checked={progress.toddlerFocusMode !== false}
+              onClick={() => {
+                const newVal = !(progress.toddlerFocusMode !== false);
+                progressService.setToddlerFocusMode(newVal);
+                audioService.playPop();
+              }}
+              className={`w-14 h-8 rounded-full p-1 transition-colors cursor-pointer shrink-0 ${
+                progress.toddlerFocusMode !== false ? 'bg-emerald-500' : 'bg-gray-300'
+              }`}
+            >
+              <div
+                className={`w-6 h-6 rounded-full bg-white shadow-md transform transition-transform duration-200 ${
+                  progress.toddlerFocusMode !== false ? 'translate-x-6' : 'translate-x-0'
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+
+        {/* Section 3: Systematic Synthetic Phonics (SSP) Progress */}
         <div className="space-y-4 mb-6">
           <h3 className="text-sm font-black text-amber-900 uppercase tracking-wider flex items-center gap-2">
             <Award className="w-4 h-4 text-amber-500" />
