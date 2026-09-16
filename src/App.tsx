@@ -7,6 +7,7 @@ import { LetterDetailScreen } from './components/letter/LetterDetailScreen';
 import { OxfordSoundsScreen } from './components/sounds/OxfordSoundsScreen';
 import { SoundTrainScreen } from './components/train/SoundTrainScreen';
 import { BubblePopScreen } from './components/game/BubblePopScreen';
+import { FeedMiloScreen } from './components/game/FeedMiloScreen';
 import { ParentGateModal } from './components/common/ParentGateModal';
 import { ParentDashboard } from './components/parent/ParentDashboard';
 import { TeaserModal } from './components/common/TeaserModal';
@@ -33,6 +34,10 @@ export function App() {
 
   const handleOpenBubblePop = () => {
     setCurrentScreen('bubble-pop');
+  };
+
+  const handleOpenFeedMilo = () => {
+    setCurrentScreen('feed-milo');
   };
 
   const handleOpenLetters = () => {
@@ -80,6 +85,7 @@ export function App() {
           onStartPlay={handleStartPlay}
           onOpenSoundTrain={handleOpenSoundTrain}
           onOpenBubblePop={handleOpenBubblePop}
+          onOpenFeedMilo={handleOpenFeedMilo}
           onOpenLetters={handleOpenLetters}
           onOpenOxfordSounds={handleOpenOxfordSounds}
           onOpenParentGate={handleOpenParentGate}
@@ -89,6 +95,12 @@ export function App() {
 
       {currentScreen === 'bubble-pop' && (
         <BubblePopScreen
+          onGoHome={handleGoHome}
+        />
+      )}
+
+      {currentScreen === 'feed-milo' && (
+        <FeedMiloScreen
           onGoHome={handleGoHome}
         />
       )}

@@ -127,5 +127,5 @@ export interface BlendingWord {
   color: string;
 }
 
-export type ScreenType = 'home' | 'lets-play' | 'letters' | 'letter-detail' | 'sound-safari' | 'story' | 'parent' | 'oxford-sounds' | 'sound-train' | 'bubble-pop';
+export type ScreenType = 'home' | 'lets-play' | 'letters' | 'letter-detail' | 'sound-safari' | 'story' | 'parent' | 'oxford-sounds' | 'sound-train' | 'bubble-pop' | 'feed-milo';
 

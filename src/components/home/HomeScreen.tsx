@@ -8,6 +8,7 @@ interface HomeScreenProps {
   onStartPlay: () => void;
   onOpenSoundTrain: () => void;
   onOpenBubblePop: () => void;
+  onOpenFeedMilo: () => void;
   onOpenLetters: () => void;
   onOpenOxfordSounds: () => void;
   onOpenParentGate: () => void;
@@ -18,6 +19,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onStartPlay,
   onOpenSoundTrain,
   onOpenBubblePop,
+  onOpenFeedMilo,
   onOpenLetters,
   onOpenOxfordSounds,
   onOpenParentGate,
@@ -118,21 +120,33 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             />
           </div>
 
-          {/* Row 2: Auditory Discrimination Featured Game */}
-          <BigButton
-            variant="purple"
-            size="lg"
-            onClick={onOpenBubblePop}
-            className="w-full"
-            icon={<span className="text-3xl sm:text-5xl">🫧</span>}
-            label="Bubble Pop!"
-            badge="Listen & Pop! 👂"
-          />
+          {/* Row 2: Interactive Toddler Minigames */}
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
+            <BigButton
+              variant="purple"
+              size="lg"
+              onClick={onOpenBubblePop}
+              className="w-full"
+              icon={<span className="text-3xl sm:text-5xl">🫧</span>}
+              label="Bubble Pop!"
+              badge="Listen & Pop! 👂"
+            />
+
+            <BigButton
+              variant="coral"
+              size="lg"
+              onClick={onOpenFeedMilo}
+              className="w-full"
+              icon={<span className="text-3xl sm:text-5xl">🍎</span>}
+              label="Feed Milo!"
+              badge="Munch Sounds! 😋"
+            />
+          </div>
 
           {/* Row 3: Reference & Sound Explorers */}
           <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
             <BigButton
-              variant="coral"
+              variant="white"
               size="lg"
               onClick={onOpenLetters}
               icon={<span className="text-3xl sm:text-5xl">🔤</span>}
