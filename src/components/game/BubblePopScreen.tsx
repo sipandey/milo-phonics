@@ -176,7 +176,7 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
 
       // Repeat target sound in triumph after pop
       setTimeout(() => {
-        audioService.playVoice(choice.letterId ? `phoneme_${choice.letterId}` : '', { interrupt: true });
+        audioService.playVoice(choice.letterId ? `phoneme.${choice.letterId}` : '', { interrupt: true });
         audioService.playChime();
       }, 250);
 
@@ -198,7 +198,7 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
 
       // Softly whisper tapped letter's sound for acoustic comparison
       setTimeout(() => {
-        audioService.playVoice(`phoneme_${choice.letterId}`, { interrupt: true });
+        audioService.playVoice(`phoneme.${choice.letterId}`, { interrupt: true });
       }, 150);
 
       // Clear wobble and gently re-prompt target after 1.2s
