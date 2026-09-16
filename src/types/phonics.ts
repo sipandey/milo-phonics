@@ -102,6 +102,7 @@ export interface ChildProgress {
   totalTaps: number;
   lastPlayed: string;
   lastLetter: string;
+  lastObjectIndex?: number;
   cloudSyncedAt?: string;
   toddlerFocusMode?: boolean; // Single-action pacing with no button clutter
 }

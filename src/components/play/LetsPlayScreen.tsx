@@ -45,8 +45,15 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     return getLevelById(selectedLevelId) || CURRICULUM_LEVELS[0];
   }, [selectedLevelId]);
 
-  // Selected letter within the active level
-  const [selectedLetterId, setSelectedLetterId] = useState<string>(activeLevel.letterIds[0]);
+  // Selected letter within the active level: restore from progress if valid
+  const [selectedLetterId, setSelectedLetterId] = useState<string>(() => {
+    const p = progressService.getProgress();
+    const lvl = getLevelById(progress.currentLevelId || 1) || CURRICULUM_LEVELS[0];
+    if (p.lastLetter && lvl.letterIds.includes(p.lastLetter)) {
+      return p.lastLetter;
+    }
+    return lvl.letterIds[0];
+  });
 
   // Ensure selected letter is always valid for the active level
   useEffect(() => {
@@ -65,7 +72,16 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     return currentLetter.phoneme.replace(/\//g, '');
   }, [currentLetter.phoneme]);
 
-  const [currentObjectIndex, setCurrentObjectIndex] = useState<number>(0);
+  // Object index for the selected letter: restore from progress if valid
+  const [currentObjectIndex, setCurrentObjectIndex] = useState<number>(() => {
+    const p = progressService.getProgress();
+    return typeof p.lastObjectIndex === 'number' ? p.lastObjectIndex : 0;
+  });
+
+  // Persist current letter & object position to progress whenever they change
+  useEffect(() => {
+    progressService.setLastPosition(selectedLetterId, currentObjectIndex);
+  }, [selectedLetterId, currentObjectIndex]);
 
   const currentObject: PhonicsObject = useMemo(() => {
     const objs = currentLetter.objects;
@@ -81,12 +97,15 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
   const lastActionTime = useRef<number>(0);
   const hasIntroduced = useRef(false);
   const autoAdvanceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const repeatTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const hasTappedCardRef = useRef<boolean>(false);
   const isToddlerMode = progress.toddlerFocusMode !== false;
 
-  // Cleanup auto-advance timer on unmount
+  // Cleanup timers on unmount
   useEffect(() => {
     return () => {
       if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
+      if (repeatTimerRef.current) clearTimeout(repeatTimerRef.current);
     };
   }, []);
 
@@ -113,9 +132,35 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     return true;
   };
 
-  // Intro playback when object changes
+  // Intro and continuous auditory repetition loop: keeps playing until kid taps card
   useEffect(() => {
     let cancel = false;
+    hasTappedCardRef.current = false;
+    if (repeatTimerRef.current) clearTimeout(repeatTimerRef.current);
+    if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
+
+    const scheduleRepeat = () => {
+      if (repeatTimerRef.current) clearTimeout(repeatTimerRef.current);
+      repeatTimerRef.current = setTimeout(async () => {
+        if (cancel || hasTappedCardRef.current || audioService.isBusyPlaying()) {
+          return;
+        }
+
+        // Gentle card wiggle animation to draw toddler's eyes back to the card
+        setIsObjectAnimating(true);
+        setTimeout(() => setIsObjectAnimating(false), 500);
+
+        await audioService.playPhonemeWordBlend(
+          currentLetter.phonemeAudioId,
+          currentObject.wordAudioId,
+          currentObject.name
+        );
+
+        if (!cancel && !hasTappedCardRef.current) {
+          scheduleRepeat();
+        }
+      }, 5500);
+    };
 
     const playIntro = async () => {
       if (!hasIntroduced.current) {
@@ -132,19 +177,27 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
         currentObject.wordAudioId,
         currentObject.name
       );
+
+      if (!cancel && !hasTappedCardRef.current) {
+        scheduleRepeat();
+      }
     };
 
     playIntro();
 
     return () => {
       cancel = true;
+      if (repeatTimerRef.current) clearTimeout(repeatTimerRef.current);
     };
   }, [currentObject.id, currentLetter.id, cleanPhoneme, activeLevel.id]);
 
   // Tap Object interaction: plays sound blend, awards stars, checks unlock
   const handleTapObject = async () => {
-    if (!canAct()) return;
+    if (!canAct() || hasTappedCardRef.current) return;
+    hasTappedCardRef.current = true;
+    if (repeatTimerRef.current) clearTimeout(repeatTimerRef.current);
     if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
+
     setIsObjectAnimating(true);
     audioService.playSoundEffect(currentObject.soundType);
     setMiloSpeech("Listen closely! 👂🎶");
@@ -212,6 +265,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
 
   // Advance to next object or next letter in level
   const advanceToNext = () => {
+    hasTappedCardRef.current = false;
     audioService.playPop();
     const objs = currentLetter.objects;
     if (currentObjectIndex + 1 < objs.length) {
@@ -584,11 +638,12 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
       <main className="flex-1 flex flex-col items-center justify-center my-auto min-h-0">
         {/* Companion Milo with listening pose during audio */}
         <CharacterMilo
-          size="md"
+          size={isToddlerMode ? 'lg' : 'md'}
           speechBubble={isAudioBusy ? null : miloSpeech}
           isListening={isAudioBusy}
           className="mb-1 sm:mb-2 shrink-0"
           onTap={() => {
+            hasTappedCardRef.current = false;
             setMiloSpeech(currentObject.spokenIntro);
             audioService.playPhonemeWordBlend(
               currentLetter.phonemeAudioId,
@@ -613,7 +668,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
           }}
           onMouseUp={onPointerEnd}
           onMouseLeave={onPointerEnd}
-          className="relative w-full max-w-sm flex flex-col items-center justify-center touch-pan-y cursor-grab active:cursor-grabbing select-none"
+          className={`relative w-full ${isToddlerMode ? 'max-w-md' : 'max-w-sm'} flex flex-col items-center justify-center touch-pan-y cursor-grab active:cursor-grabbing select-none`}
           style={{
             transform: `translateX(${dragOffset}px) rotate(${dragOffset * 0.03}deg)`,
             transition: isDragging ? 'none' : 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)',
@@ -630,7 +685,11 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
             onClick={handleTapObject}
             disabled={isAudioBusy}
             aria-label={`Tap ${currentObject.name}`}
-            className={`squish-tap relative w-64 h-64 sm:w-76 sm:h-76 rounded-5xl border-8 shadow-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 focus:outline-none ${
+            className={`squish-tap relative ${
+              isToddlerMode
+                ? 'w-[min(84vw,340px)] h-[min(84vw,340px)] sm:w-84 sm:h-84 md:w-92 md:h-92 rounded-[2.75rem] sm:rounded-[3.25rem]'
+                : 'w-64 h-64 sm:w-76 sm:h-76 rounded-5xl'
+            } border-8 shadow-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 focus:outline-none ${
               isAudioBusy
                 ? 'scale-106 ring-8 ring-amber-400 shadow-[0_0_45px_rgba(245,158,11,0.55)]'
                 : isObjectAnimating
@@ -652,18 +711,20 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
                       handleTapLetter();
                     }
               }
-              className={`absolute -top-4 px-5 py-1.5 rounded-full bg-white shadow-md border-3 flex items-center gap-1.5 font-black text-base sm:text-lg transition-transform ${
+              className={`absolute -top-4 sm:-top-5 px-5 sm:px-6 py-1.5 sm:py-2 rounded-full bg-white shadow-lg border-3 sm:border-4 flex items-center gap-1.5 sm:gap-2 font-black text-base sm:text-xl transition-transform ${
                 isToddlerMode ? 'pointer-events-none' : 'cursor-pointer hover:scale-108'
               } ${isLetterAnimating ? 'scale-125 rotate-6' : ''}`}
               style={{ borderColor: currentLetter.colorTheme.primary, color: currentLetter.colorTheme.text }}
             >
               <span>/{cleanPhoneme}/</span>
-              <Sparkles className="w-4 h-4 text-amber-500" />
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
             </div>
 
             {/* Giant Visual Emoji / Illustration */}
             <span
-              className={`text-8xl sm:text-9xl transition-transform duration-300 filter drop-shadow-md select-none ${
+              className={`${
+                isToddlerMode ? 'text-9xl sm:text-[9.5rem] md:text-[10rem]' : 'text-8xl sm:text-9xl'
+              } transition-transform duration-300 filter drop-shadow-md select-none ${
                 isObjectAnimating ? 'scale-120 animate-wiggle' : ''
               }`}
             >
@@ -672,7 +733,9 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
 
             {/* Friendly Big Object Name */}
             <span
-              className="mt-2 text-3xl sm:text-4xl font-black font-fun tracking-wide capitalize select-none"
+              className={`mt-2 ${
+                isToddlerMode ? 'text-4xl sm:text-5xl md:text-6xl' : 'text-3xl sm:text-4xl'
+              } font-black font-fun tracking-wide capitalize select-none`}
               style={{ color: currentObject.accentColor }}
             >
               {currentObject.name}

@@ -28,6 +28,7 @@ const defaultProgress: ChildProgress = {
   totalTaps: 0,
   lastPlayed: new Date().toISOString(),
   lastLetter: 's',
+  lastObjectIndex: 0,
   toddlerFocusMode: true,
 };
 
@@ -120,6 +121,7 @@ class ProgressService {
       totalTaps: raw.totalTaps || 0,
       lastPlayed: raw.lastPlayed || new Date().toISOString(),
       lastLetter: raw.lastLetter || 's',
+      lastObjectIndex: typeof raw.lastObjectIndex === 'number' ? Math.max(0, raw.lastObjectIndex) : 0,
       cloudSyncedAt: raw.cloudSyncedAt,
       toddlerFocusMode: raw.toddlerFocusMode !== undefined ? raw.toddlerFocusMode : true,
     };
@@ -141,6 +143,12 @@ class ProgressService {
 
   public setToddlerFocusMode(enabled: boolean) {
     this.progress.toddlerFocusMode = enabled;
+    this.saveProgress();
+  }
+
+  public setLastPosition(letterId: string, objectIndex: number) {
+    this.progress.lastLetter = letterId;
+    this.progress.lastObjectIndex = Math.max(0, objectIndex);
     this.saveProgress();
   }
 
