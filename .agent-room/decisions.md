@@ -16,11 +16,31 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-09-16 — Complete Eradication of Browser SpeechSynthesis in Favor of Oxford-First & AI Cloudinary Pipeline
+
+**Decision:** Completely eliminated all calls to `window.speechSynthesis`, utterances, and browser native speech synthesis across `audioService.ts` and all components. Authentic Oxford Dictionary human recordings (`/audio/phoneme_<letter>.mp3`) strictly take top precedence for all 26 letter phonemes. Everything else (84 curriculum words, 38 CVC words, 38 story sentences, 26 letter names, 4 game prompts, 6 praise cues) is pre-recorded with OpenAI TTS (`coral` voice, slow 0.70x–0.75x British RP pace matching Oxford) backed by Cloudinary CDN URLs and local edge caching in `public/audio/`.
+**Why:** User directives: "never use browser native capability for speaking, always use / get the recording from AI ans store in cloudinary" and "for phonemes and words and audio in oxford audio should take precedence". Modern browsers (Chrome/Safari) throttle or cancel speech synthesis outside immediate user gestures, and OS system voices sound robotic and inconsistent across operating systems.
+**Rejected:** Hybrid speech synthesis fallback, client-side Web Speech API, or live streaming TTS.
+
+### 2026-09-16 — Trailing Dead Silence Trimming & Decoupled Blending UX
+
+**Decision:** Automated `ffmpeg silenceremove` across all pre-recorded TTS audio files, stripping 1.5s–3.4s of trailing dead silence per file (e.g. `cvc.sat.mp3` reduced 83% from 3.89s to 0.65s). Decoupled automatic blocking story sentence playback from the Sound Train blend action; blending sequence unlocks action buttons immediately once the blended word sounds (~2.8s total sequence instead of 13s), leaving the sentence accessible on-demand via the revealed card.
+**Why:** Blending previously took 12–14s due to OpenAI TTS silent padding and blocking sentence narration, exceeding toddler attention spans. Snappy < 2.8s blending keeps toddlers engaged while preserving clear phonemic isolation.
+**Rejected:** Artificial audio acceleration or omitting pauses between phonemes (harms phonics learning).
+
+### 2026-09-15 — Toddler Impatience Protection: Non-Destructive Tap Absorber & Attention Spotlight
+
+**Decision:** Built `<ListenRipple>` touch absorber with floating musical emojis (`🎵`, `🎶`, `✨`), 600ms hardware debounce guard, glowing attention spotlight on sounding items, and "Your Turn" unlock pulse across both Sound Train and Let's Play modes. Synchronized through centralized `audioService.isBusyPlaying()` lifecycle.
+**Why:** Toddlers aged 2–3 tap frantically and repeatedly when excited or impatient. Crudely locking the screen or ignoring taps frustrates children, while unmanaged taps cause audio stutter, clipped utterances, and accidental screen skips.
+**Rejected:** Intrusive warning dialogs, negative error buzzer sounds, or rigid modal freezes.
+
 ### 2026-09-15 — Oxford Dictionary British Audio & Local Static Word Bundling
 
 **Decision:** Sourced authentic human British English recordings for all 47 phonemes from the Oxford Dictionary dataset (`xiaozhah/phoneme_audio`) as static files (`/audio/phoneme_<letter>.mp3`). Generated all 84 curriculum words using OpenAI TTS (voice: `coral`, speed: `0.70`) bundled directly into `public/audio/words/`. Expanded curriculum from 3 to all 26 letters with in-place sound buttons.
 **Why:** Synthetic AI models struggle with pure isolated phonemes without letter-name contamination. Browser `SpeechSynthesis` silently fails or drops audio when called asynchronously after audio elements due to user-activation expiry and missing British OS voice packs. 100% local static MP3 files guarantee zero latency, zero API costs, zero CORS/proxy issues, and 100% offline reliability across all platforms.
 **Rejected:** Remote Cloudinary streaming (blocked by local proxy/CORS), browser SpeechSynthesis for words (silent drops in Chrome/Safari), and synthetic formant phoneme approximation.
+
+### 2026-09-14 — Semantic Audio Manifest Architecture
 
 **Decision:** Refactored audio architecture to route all spoken content through semantic audio IDs (e.g. `letter.m`, `phoneme.m`, `word.monkey`, `phrase.m-monkey`) registered in `src/data/audioManifest.ts`. `AudioManager` resolves IDs, supports remote URL playback with in-memory caching and preloading, and falls back to calibrated `SpeechSynthesis` using manifest `fallbackText`. Procedural Web Audio SFX remain distinct and local.
 **Why:** Decouples game components from browser speech synthesis and prepares the application for pre-generated Cloudinary audio assets in Phase 2 without changing component contracts or learner interactions.
