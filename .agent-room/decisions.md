@@ -16,6 +16,16 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-09-16 — Toddler Focus Mode (Single-Action Auto-Advancing Pacing) & Audio Remastering to -1.0 dBFS Peak
+
+**Decision:** Introduced Toddler Focus Mode (`toddlerFocusMode: true` by default, toggled via Parent Dashboard) with single-action auto-advancing pacing across the app, and remastered all 269 voice audio files to broadcast loudness standard (-1.0 dBFS peak).
+- In `LetsPlayScreen`: Eradicated the 4-letter stepping stone tabs, top level-map badge button, and footer "Again" / "Next" dock when in Toddler Focus Mode. The central Giant Card is the sole visual affordance. Tapping the card plays authentic Oxford phoneme blend + word sound, celebrates with star rewards, and smoothly advances to the next object after a 1.2s golden pause without requiring any manual button taps.
+- In `FeedMiloScreen`: Eradicated redundant replay/yum buttons under Milo and bottom instruction text; toddlers focus purely on Milo and feeding plates.
+- In `HomeScreen`: Filtered out adult reference dictionary grids ("Letters" and "Sounds"), presenting pre-readers with only 4 colorful core play activities.
+- In Audio Infrastructure: Peak-normalized all 269 speech/word files to exactly -1.0 dBFS (permanent +12dB to +20dB boost) and restored corrupted silent `cvc.cat.mp3`. Added dynamic SFX ducking in `AudioService` (procedural chimes/pops duck to 40% gain during speech and restore to 90% afterwards).
+**Why:** Real-world toddler playtesting revealed that 2-year-olds frantically tap every button in sight (tabs, map, next, replay) without listening to phonemes, while faint audio (~-29 LUFS on mobile) was drowned out by background noise or Web Audio SFX. Removing extraneous buttons transforms frantic button-mashing into a focused "Tap -> Listen -> Celebrate -> Auto-Advance" single-action loop.
+**Rejected:** Keeping mandatory "Next" and "Play Again" buttons for toddlers (causes cognitive overload and premature sound skipping), leaving volume unbalanced, or forcing non-reversible UI stripping (Parent Dashboard toggle preserves full Explorer Mode for older children).
+
 ### 2026-09-16 — Toddler Paced Chewing (3.8s) with Tap-to-Skip & Eradication of Text Speech Bubbles
 
 **Decision:** Extended Milo's chewing reward duration from 1.8s to 3.8s in "Feed Milo!", completely eradicated the text speech bubble from the game arena, and added a dual early-advance affordance: tapping Milo directly or tapping the chunky `[ 😋 Yum! ]` button after the 1.4s Oxford phoneme audio finishes skips ahead to the next round immediately.
