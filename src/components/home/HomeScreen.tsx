@@ -7,6 +7,7 @@ import { Settings, Volume2, VolumeX } from 'lucide-react';
 interface HomeScreenProps {
   onStartPlay: () => void;
   onOpenSoundTrain: () => void;
+  onOpenBubblePop: () => void;
   onOpenLetters: () => void;
   onOpenOxfordSounds: () => void;
   onOpenParentGate: () => void;
@@ -16,6 +17,7 @@ interface HomeScreenProps {
 export const HomeScreen: React.FC<HomeScreenProps> = ({
   onStartPlay,
   onOpenSoundTrain,
+  onOpenBubblePop,
   onOpenLetters,
   onOpenOxfordSounds,
   onOpenParentGate,
@@ -82,60 +84,72 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
 
         <CharacterMilo
-          size="lg"
+          size="md"
           speechBubble={miloSpeech}
-          className="mb-4"
+          className="mb-3 sm:mb-4"
           onTap={() => {
             setMiloSpeech("Yay! Let's have fun!");
             audioService.playVoice('prompt.have-fun');
           }}
         />
 
-        {/* Two Main Toddler Adventures: Sound Sets & Sound Train */}
-        <div className="w-full max-w-xl px-2 mb-4 sm:mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        {/* Toddler Activities Grid: 2 - 1 - 2 Symmetrical Layout */}
+        <div className="w-full max-w-xl px-2 mb-3 sm:mb-5 flex flex-col gap-2.5 sm:gap-3.5">
+          {/* Row 1: Core Exploration & Blending */}
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
+            <BigButton
+              variant="yellow"
+              size="lg"
+              onClick={onStartPlay}
+              className="w-full animate-pulse-glow"
+              icon={<span className="text-3xl sm:text-5xl">🦁</span>}
+              label="Let's Play!"
+              badge="Sound Sets 🌱"
+            />
+
+            <BigButton
+              variant="green"
+              size="lg"
+              onClick={onOpenSoundTrain}
+              className="w-full"
+              icon={<span className="text-3xl sm:text-5xl">🚂</span>}
+              label="Sound Train!"
+              badge="Blend Words 🔤"
+            />
+          </div>
+
+          {/* Row 2: Auditory Discrimination Featured Game */}
           <BigButton
-            variant="yellow"
+            variant="purple"
             size="lg"
-            onClick={onStartPlay}
-            className="w-full animate-pulse-glow"
-            icon={<span className="text-4xl sm:text-5xl">🦁</span>}
-            label="Let's Play!"
-            badge="Sound Sets 🌱"
+            onClick={onOpenBubblePop}
+            className="w-full"
+            icon={<span className="text-3xl sm:text-5xl">🫧</span>}
+            label="Bubble Pop!"
+            badge="Listen & Pop! 👂"
           />
 
-          <BigButton
-            variant="green"
-            size="lg"
-            onClick={onOpenSoundTrain}
-            className="w-full"
-            icon={<span className="text-4xl sm:text-5xl">🚂</span>}
-            label="Sound Train!"
-            badge="Blend Words 🔤"
-          />
-        </div>
+          {/* Row 3: Reference & Sound Explorers */}
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
+            <BigButton
+              variant="coral"
+              size="lg"
+              onClick={onOpenLetters}
+              icon={<span className="text-3xl sm:text-5xl">🔤</span>}
+              label="Letters"
+              className="w-full"
+            />
 
-        {/* Secondary Toddler Choices - 2x2 Balanced Grid */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 w-full max-w-2xl px-2">
-          {/* Letters Screen */}
-          <BigButton
-            variant="coral"
-            size="lg"
-            onClick={onOpenLetters}
-            icon={<span className="text-4xl sm:text-5xl">🔤</span>}
-            label="Letters"
-            className="w-full"
-          />
-
-          {/* British Sounds Screen */}
-          <BigButton
-            variant="sky"
-            size="lg"
-            onClick={onOpenOxfordSounds}
-            icon={<span className="text-4xl sm:text-5xl">🇬🇧</span>}
-            label="Sounds"
-            badge="Oxford"
-            className="w-full"
-          />
+            <BigButton
+              variant="sky"
+              size="lg"
+              onClick={onOpenOxfordSounds}
+              icon={<span className="text-3xl sm:text-5xl">🇬🇧</span>}
+              label="Sounds"
+              badge="Oxford"
+              className="w-full"
+            />
+          </div>
         </div>
       </main>
 

@@ -6,6 +6,7 @@ import { LetterSelectScreen } from './components/letter/LetterSelectScreen';
 import { LetterDetailScreen } from './components/letter/LetterDetailScreen';
 import { OxfordSoundsScreen } from './components/sounds/OxfordSoundsScreen';
 import { SoundTrainScreen } from './components/train/SoundTrainScreen';
+import { BubblePopScreen } from './components/game/BubblePopScreen';
 import { ParentGateModal } from './components/common/ParentGateModal';
 import { ParentDashboard } from './components/parent/ParentDashboard';
 import { TeaserModal } from './components/common/TeaserModal';
@@ -28,6 +29,10 @@ export function App() {
 
   const handleOpenSoundTrain = () => {
     setCurrentScreen('sound-train');
+  };
+
+  const handleOpenBubblePop = () => {
+    setCurrentScreen('bubble-pop');
   };
 
   const handleOpenLetters = () => {
@@ -74,10 +79,17 @@ export function App() {
         <HomeScreen
           onStartPlay={handleStartPlay}
           onOpenSoundTrain={handleOpenSoundTrain}
+          onOpenBubblePop={handleOpenBubblePop}
           onOpenLetters={handleOpenLetters}
           onOpenOxfordSounds={handleOpenOxfordSounds}
           onOpenParentGate={handleOpenParentGate}
           onTeaserClick={handleShowTeaser}
+        />
+      )}
+
+      {currentScreen === 'bubble-pop' && (
+        <BubblePopScreen
+          onGoHome={handleGoHome}
         />
       )}
 
