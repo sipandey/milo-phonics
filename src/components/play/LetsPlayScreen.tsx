@@ -12,7 +12,6 @@ import {
   RotateCcw,
   Home,
   Sparkles,
-  Dices,
   Star,
   Lock,
   MapPin,
@@ -210,15 +209,88 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     }
   };
 
-  // Random surprise within the active level
-  const handleSurprise = () => {
+  // Previous object for the letter, or cycle to previous letter in the level
+  const handlePrev = () => {
     if (!canAct()) return;
-    audioService.playChime();
-    triggerGentleConfetti();
-    const randomLetterId = activeLevel.letterIds[Math.floor(Math.random() * activeLevel.letterIds.length)];
-    setSelectedLetterId(randomLetterId);
-    const letter = getLetterById(randomLetterId);
-    setCurrentObjectIndex(Math.floor(Math.random() * letter.objects.length));
+    audioService.playPop();
+    if (currentObjectIndex > 0) {
+      setCurrentObjectIndex((prev) => prev - 1);
+    } else {
+      // Move to previous letter in level
+      const currentLetterIdx = activeLevel.letterIds.indexOf(selectedLetterId);
+      const prevLetterIdx = (currentLetterIdx - 1 + activeLevel.letterIds.length) % activeLevel.letterIds.length;
+      setSelectedLetterId(activeLevel.letterIds[prevLetterIdx]);
+      const prevLetter = getLetterById(activeLevel.letterIds[prevLetterIdx]);
+      setCurrentObjectIndex(prevLetter.objects.length - 1);
+    }
+  };
+
+  // Tactile Swipe Gesture State with Elastic Rubber-Banding
+  const [dragStartX, setDragStartX] = useState<number | null>(null);
+  const [dragStartY, setDragStartY] = useState<number | null>(null);
+  const [dragOffset, setDragOffset] = useState<number>(0);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+
+  const onPointerStart = (clientX: number, clientY: number) => {
+    setDragStartX(clientX);
+    setDragStartY(clientY);
+    setIsDragging(true);
+  };
+
+  const onPointerMove = (clientX: number, clientY: number) => {
+    if (dragStartX === null || dragStartY === null) return;
+    const dx = clientX - dragStartX;
+    const dy = clientY - dragStartY;
+
+    // Ignore vertical scrolling motions
+    if (Math.abs(dy) > Math.abs(dx) && Math.abs(dx) < 10) return;
+
+    if (isAudioBusy) {
+      // Elastic rubber-band dampening: 18% travel gives tactile feedback without advancing
+      setDragOffset(dx * 0.18);
+    } else {
+      // Fluid 1:1 translation
+      setDragOffset(dx);
+    }
+  };
+
+  const onPointerEnd = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+
+    const threshold = 60; // 60px swipe trigger threshold
+
+    if (isAudioBusy) {
+      // Released during audio: snap back with gentle spring sound
+      if (Math.abs(dragOffset) > 8) {
+        audioService.playBoing();
+      }
+      setDragOffset(0);
+      setDragStartX(null);
+      setDragStartY(null);
+      return;
+    }
+
+    if (dragOffset < -threshold) {
+      // Swiped Left -> NEXT
+      setDragOffset(-window.innerWidth * 0.4);
+      setTimeout(() => {
+        handleNext();
+        setDragOffset(0);
+      }, 180);
+    } else if (dragOffset > threshold) {
+      // Swiped Right -> PREVIOUS
+      setDragOffset(window.innerWidth * 0.4);
+      setTimeout(() => {
+        handlePrev();
+        setDragOffset(0);
+      }, 180);
+    } else {
+      setDragOffset(0);
+    }
+
+    setDragStartX(null);
+    setDragStartY(null);
   };
 
   // Switch active Level
@@ -478,10 +550,11 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
 
       {/* 5. Main Hero Arena: Large Character + Giant Tactile Sound Card */}
       <main className="flex-1 flex flex-col items-center justify-center my-auto min-h-0">
-        {/* Companion Milo with friendly speech bubble */}
+        {/* Companion Milo with listening pose during audio */}
         <CharacterMilo
           size="md"
-          speechBubble={miloSpeech}
+          speechBubble={isAudioBusy ? null : miloSpeech}
+          isListening={isAudioBusy}
           className="mb-1 sm:mb-2 shrink-0"
           onTap={() => {
             setMiloSpeech(currentObject.spokenIntro);
@@ -493,8 +566,27 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
           }}
         />
 
-        {/* Central Giant Interactive Sound & Object Stage */}
-        <div className="relative w-full max-w-sm flex flex-col items-center justify-center">
+        {/* Central Giant Interactive Sound & Object Stage with Tactile Swipe & Rubber-Banding */}
+        <div
+          onTouchStart={(e) => {
+            if (e.touches.length === 1) onPointerStart(e.touches[0].clientX, e.touches[0].clientY);
+          }}
+          onTouchMove={(e) => {
+            if (e.touches.length === 1) onPointerMove(e.touches[0].clientX, e.touches[0].clientY);
+          }}
+          onTouchEnd={onPointerEnd}
+          onMouseDown={(e) => onPointerStart(e.clientX, e.clientY)}
+          onMouseMove={(e) => {
+            if (isDragging) onPointerMove(e.clientX, e.clientY);
+          }}
+          onMouseUp={onPointerEnd}
+          onMouseLeave={onPointerEnd}
+          className="relative w-full max-w-sm flex flex-col items-center justify-center touch-pan-y cursor-grab active:cursor-grabbing select-none"
+          style={{
+            transform: `translateX(${dragOffset}px) rotate(${dragOffset * 0.03}deg)`,
+            transition: isDragging ? 'none' : 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          }}
+        >
           {/* Glowing Aura Background */}
           <div
             className="absolute inset-0 rounded-full filter blur-3xl opacity-35 animate-pulse-glow"
@@ -553,41 +645,30 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
         </div>
       </main>
 
-      {/* 6. Big, Juicy, Toddler-Proof Action Buttons (Perfect 80px-96px proportions) */}
-      <footer className={`w-full flex justify-center items-center gap-2.5 sm:gap-4 pt-2 pb-3 sm:pb-4 shrink-0 px-1 transition-opacity duration-300 ${isAudioBusy ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
-        {/* Symmetrical Squircle Audio Replay Button (80x80px minimum) */}
+      {/* 6. Big, Juicy, Toddler-Proof Action Buttons: Clean 2-Button Dock */}
+      <footer className={`w-full max-w-md mx-auto flex justify-center items-center gap-3 sm:gap-4 pt-2 pb-3 sm:pb-4 shrink-0 px-2 transition-opacity duration-300 ${isAudioBusy ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
+        {/* Symmetrical Squircle Audio Replay Button (~35% width) */}
         <button
           onClick={handleTapObject}
           disabled={isAudioBusy}
           aria-label="Play sound again"
-          className="squish-tap w-20 h-20 sm:w-24 sm:h-24 aspect-square rounded-3xl bg-white text-amber-700 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex flex-col items-center justify-center p-1.5 shrink-0 cursor-pointer"
+          className="squish-tap w-24 h-20 sm:w-28 sm:h-24 rounded-3xl bg-white text-amber-700 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex flex-col items-center justify-center p-1.5 shrink-0 cursor-pointer"
         >
           <RotateCcw className="w-8 h-8 sm:w-9 sm:h-9 stroke-[2.5]" />
-          <span className="text-[11px] sm:text-xs font-black mt-1 leading-none">Again</span>
+          <span className="text-xs sm:text-sm font-black mt-1 leading-none">Again</span>
         </button>
 
-        {/* Big Chunky Surprise Me Button */}
-        <button
-          onClick={handleSurprise}
-          disabled={isAudioBusy}
-          aria-label="Random Surprise in Level"
-          className="squish-tap flex-1 h-20 sm:h-24 rounded-3xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white border-4 border-purple-400 shadow-[0_6px_0_#6D28D9] active:translate-y-1 active:shadow-[0_2px_0_#6D28D9] flex items-center justify-center gap-1.5 sm:gap-2 font-black text-lg sm:text-2xl cursor-pointer"
-        >
-          <Dices className="w-6 h-6 sm:w-7 sm:h-7 animate-wiggle shrink-0" />
-          <span>Surprise!</span>
-        </button>
-
-        {/* Big Juicy Next Button */}
+        {/* Big Juicy Next Button (~65% width) */}
         <button
           onClick={handleNext}
           disabled={isAudioBusy}
           aria-label="Next Sound"
-          className={`squish-tap flex-1 h-20 sm:h-24 rounded-3xl bg-bubble-yellow text-amber-950 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex items-center justify-center gap-1.5 sm:gap-2 font-black text-lg sm:text-2xl cursor-pointer transition-all ${
+          className={`squish-tap flex-1 h-20 sm:h-24 rounded-3xl bg-bubble-yellow text-amber-950 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex items-center justify-center gap-2 font-black text-xl sm:text-2xl cursor-pointer transition-all ${
             justFinishedAudio ? 'scale-104 ring-4 ring-amber-400 animate-bounce-gentle shadow-lg' : ''
           }`}
         >
           <span>Next</span>
-          <ArrowRight className="w-6 h-6 sm:w-8 sm:h-8 stroke-[3] shrink-0" />
+          <ArrowRight className="w-7 h-7 sm:w-8 sm:h-8 stroke-[3] shrink-0" />
         </button>
       </footer>
     </div>

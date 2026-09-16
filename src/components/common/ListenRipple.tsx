@@ -19,7 +19,7 @@ const MUSICAL_EMOJIS = ['🎵', '🎶', '✨', '⭐', '👂'];
 export const ListenRipple: React.FC<ListenRippleProps> = ({
   isActive,
   onTap,
-  hintText = "Shh... Listen! 👂🎶",
+  hintText: _hintText = "Shh... Listen! 👂🎶",
 }) => {
   const [particles, setParticles] = useState<RippleParticle[]>([]);
 
@@ -75,14 +75,6 @@ export const ListenRipple: React.FC<ListenRippleProps> = ({
           {p.emoji}
         </div>
       ))}
-
-      {/* Gentle Floating Listening Pill near bottom */}
-      <div className="absolute bottom-24 sm:bottom-28 left-1/2 -translate-x-1/2 pointer-events-none animate-bounce-gentle">
-        <div className="bg-amber-900/90 backdrop-blur-md text-amber-100 text-xs sm:text-sm font-black px-4 py-2 rounded-full shadow-lg border-2 border-amber-300 flex items-center gap-2">
-          <span className="text-base animate-pulse">👂</span>
-          <span>{hintText}</span>
-        </div>
-      </div>
     </div>
   );
 };

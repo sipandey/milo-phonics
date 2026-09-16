@@ -12,7 +12,6 @@ import {
   RotateCcw,
   Home,
   Sparkles,
-  Dices,
   Volume2,
   CheckCircle2,
   Lock,
@@ -158,18 +157,6 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
     setCurrentWordIndex((prev) => (prev + 1) % availableWords.length);
   };
 
-  // Surprise random word
-  const handleSurpriseWord = () => {
-    if (!canAct()) return;
-    audioService.playChime();
-    triggerGentleConfetti();
-    let nextIdx = Math.floor(Math.random() * availableWords.length);
-    if (availableWords.length > 1 && nextIdx === currentWordIndex) {
-      nextIdx = (nextIdx + 1) % availableWords.length;
-    }
-    setCurrentWordIndex(nextIdx);
-  };
-
   // Switch level
   const handleSelectLevel = (levelId: number) => {
     const isUnlocked = progress.unlockedLevels.includes(levelId);
@@ -310,11 +297,12 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
         </button>
       </header>
 
-      {/* 2. Conductor Milo with friendly speech bubble */}
+      {/* 2. Conductor Milo with listening pose during audio */}
       <div className="flex justify-center my-0.5 sm:my-1 shrink-0">
         <CharacterMilo
           size="md"
-          speechBubble={miloSpeech}
+          speechBubble={isBusy ? null : miloSpeech}
+          isListening={isBusy}
           onTap={() => {
             handleBlendWord();
           }}
@@ -487,47 +475,34 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
         )}
       </main>
 
-      {/* 4. Bottom Toddler Action Controls (Symmetrical 80px tall buttons!) */}
-      <footer className="w-full flex justify-center items-center gap-2.5 sm:gap-4 pt-2 pb-3 sm:pb-4 shrink-0 px-1">
-        {/* Again Button */}
+      {/* 4. Bottom Toddler Action Controls: Clean 2-Button Dock */}
+      <footer className="w-full max-w-md mx-auto flex justify-center items-center gap-3 sm:gap-4 pt-2 pb-3 sm:pb-4 shrink-0 px-2">
+        {/* Again Button (~35% width) */}
         <button
           onClick={handleBlendWord}
           disabled={isBusy}
           aria-label="Blend sounds again"
-          className={`squish-tap w-20 h-20 sm:w-24 sm:h-24 aspect-square rounded-3xl bg-white text-amber-700 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex flex-col items-center justify-center p-1.5 shrink-0 cursor-pointer transition-all ${
+          className={`squish-tap w-24 h-20 sm:w-28 sm:h-24 rounded-3xl bg-white text-amber-700 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex flex-col items-center justify-center p-1.5 shrink-0 cursor-pointer transition-all ${
             isBusy ? 'opacity-40 pointer-events-none' : 'opacity-100'
           }`}
         >
           <RotateCcw className="w-8 h-8 sm:w-9 sm:h-9 stroke-[2.5]" />
-          <span className="text-[11px] sm:text-xs font-black mt-1 leading-none">Again</span>
+          <span className="text-xs sm:text-sm font-black mt-1 leading-none">Again</span>
         </button>
 
-        {/* Surprise Word Button */}
-        <button
-          onClick={handleSurpriseWord}
-          disabled={isBusy}
-          aria-label="Random word in level"
-          className={`squish-tap flex-1 h-20 sm:h-24 rounded-3xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white border-4 border-purple-400 shadow-[0_6px_0_#6D28D9] active:translate-y-1 active:shadow-[0_2px_0_#6D28D9] flex items-center justify-center gap-1.5 sm:gap-2 font-black text-lg sm:text-2xl cursor-pointer transition-all ${
-            isBusy ? 'opacity-40 pointer-events-none' : 'opacity-100'
-          }`}
-        >
-          <Dices className="w-6 h-6 sm:w-7 sm:h-7 animate-wiggle shrink-0" />
-          <span>Surprise!</span>
-        </button>
-
-        {/* Next Word Button */}
+        {/* Next Word Button (~65% width) */}
         <button
           onClick={handleNextWord}
           disabled={isBusy}
           aria-label="Next word"
-          className={`squish-tap flex-1 h-20 sm:h-24 rounded-3xl bg-bubble-yellow text-amber-950 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex items-center justify-center gap-1.5 sm:gap-2 font-black text-lg sm:text-2xl cursor-pointer transition-all ${
+          className={`squish-tap flex-1 h-20 sm:h-24 rounded-3xl bg-bubble-yellow text-amber-950 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex items-center justify-center gap-2 font-black text-xl sm:text-2xl cursor-pointer transition-all ${
             isBusy ? 'opacity-40 pointer-events-none' : 'opacity-100'
           } ${
             justFinishedAudio ? 'scale-104 ring-4 ring-amber-400 animate-bounce-gentle shadow-lg' : ''
           }`}
         >
           <span>Next</span>
-          <ArrowRight className="w-6 h-6 sm:w-8 sm:h-8 stroke-[3] shrink-0" />
+          <ArrowRight className="w-7 h-7 sm:w-8 sm:h-8 stroke-[3] shrink-0" />
         </button>
       </footer>
     </div>
