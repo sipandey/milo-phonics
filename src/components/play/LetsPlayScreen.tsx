@@ -179,7 +179,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     // In Toddler Focus Mode: automatically advance smoothly to next sound/card
     if (isToddlerMode) {
       autoAdvanceTimerRef.current = setTimeout(() => {
-        handleNext();
+        advanceToNext();
       }, 1200);
     }
   };
@@ -210,9 +210,8 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     }, 500);
   };
 
-  // Next object for the letter, or cycle to next letter in the level
-  const handleNext = () => {
-    if (!canAct()) return;
+  // Advance to next object or next letter in level
+  const advanceToNext = () => {
     audioService.playPop();
     const objs = currentLetter.objects;
     if (currentObjectIndex + 1 < objs.length) {
@@ -224,6 +223,12 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
       setSelectedLetterId(activeLevel.letterIds[nextLetterIdx]);
       setCurrentObjectIndex(0);
     }
+  };
+
+  // Next object for the letter, or cycle to next letter in the level
+  const handleNext = () => {
+    if (!canAct()) return;
+    advanceToNext();
   };
 
   // Previous object for the letter, or cycle to previous letter in the level
