@@ -1,5 +1,4 @@
-import React, { useState, useCallback } from 'react';
-import { audioService } from '../../services/audioService';
+import React, { useState } from 'react';
 
 interface RippleParticle {
   id: number;
@@ -14,53 +13,21 @@ interface ListenRippleProps {
   hintText?: string;
 }
 
-const MUSICAL_EMOJIS = ['🎵', '🎶', '✨', '⭐', '👂'];
-
 export const ListenRipple: React.FC<ListenRippleProps> = ({
   isActive,
-  onTap,
+  onTap: _onTap,
   hintText: _hintText = "Shh... Listen! 👂🎶",
 }) => {
-  const [particles, setParticles] = useState<RippleParticle[]>([]);
-
-  const handlePointerDown = useCallback(
-    (e: React.PointerEvent<HTMLDivElement>) => {
-      if (!isActive) return;
-
-      e.preventDefault();
-      e.stopPropagation();
-
-      const rect = e.currentTarget.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      const newParticle: RippleParticle = {
-        id: Date.now() + Math.random(),
-        x,
-        y,
-        emoji: MUSICAL_EMOJIS[Math.floor(Math.random() * MUSICAL_EMOJIS.length)],
-      };
-
-      setParticles((prev) => [...prev.slice(-6), newParticle]);
-      audioService.playPop();
-      onTap?.();
-
-      setTimeout(() => {
-        setParticles((prev) => prev.filter((p) => p.id !== newParticle.id));
-      }, 700);
-    },
-    [isActive, onTap]
-  );
+  const [particles] = useState<RippleParticle[]>([]);
 
   if (!isActive) return null;
 
   return (
     <div
-      onPointerDown={handlePointerDown}
-      className="absolute inset-0 z-40 cursor-wait select-none touch-none overflow-hidden"
+      className="absolute inset-0 z-20 pointer-events-none select-none overflow-hidden"
       aria-hidden="true"
     >
-      {/* Floating touch particles */}
+      {/* Ambient listening particles (purely visual, zero touch interception) */}
       {particles.map((p) => (
         <div
           key={p.id}

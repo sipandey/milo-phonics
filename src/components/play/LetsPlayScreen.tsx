@@ -210,33 +210,46 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
       currentObject.letterId
     );
 
-    await audioService.playPhonemeWordBlend(
-      currentLetter.phonemeAudioId,
-      currentObject.wordAudioId,
-      currentObject.name
-    );
-
-    if (newlyEarned > 0) {
-      triggerGentleConfetti();
-      audioService.playChime();
-    }
-
-    if (newlyUnlockedLevels.length > 0) {
-      const nextLvl = newlyUnlockedLevels[0];
-      setLevelUnlockAlert(nextLvl);
-      audioService.playFanfare();
-      triggerGentleConfetti();
-    }
-
-    setTimeout(() => {
-      setIsObjectAnimating(false);
-    }, 400);
-
-    // In Toddler Focus Mode: automatically advance smoothly to next sound/card
-    if (isToddlerMode) {
-      autoAdvanceTimerRef.current = setTimeout(() => {
+    // Watchdog timer: failsafe advance in 4.5s in case audio playback stalls or takes too long
+    let watchdogTimer: NodeJS.Timeout | null = setTimeout(() => {
+      if (isToddlerMode) {
         advanceToNext();
-      }, 1200);
+      }
+    }, 4500);
+
+    try {
+      await audioService.playPhonemeWordBlend(
+        currentLetter.phonemeAudioId,
+        currentObject.wordAudioId,
+        currentObject.name
+      );
+
+      if (newlyEarned > 0) {
+        triggerGentleConfetti();
+        audioService.playChime();
+      }
+
+      if (newlyUnlockedLevels.length > 0) {
+        const nextLvl = newlyUnlockedLevels[0];
+        setLevelUnlockAlert(nextLvl);
+        audioService.playFanfare();
+        triggerGentleConfetti();
+      }
+    } catch (err) {
+      console.warn('[LetsPlayScreen] Error during card blend audio:', err);
+    } finally {
+      if (watchdogTimer) {
+        clearTimeout(watchdogTimer);
+        watchdogTimer = null;
+      }
+      setIsObjectAnimating(false);
+
+      // In Toddler Focus Mode: automatically advance smoothly to next sound/card
+      if (isToddlerMode) {
+        autoAdvanceTimerRef.current = setTimeout(() => {
+          advanceToNext();
+        }, 1200);
+      }
     }
   };
 
@@ -646,7 +659,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
           isListening={isAudioBusy}
           className="mb-1 sm:mb-2 shrink-0"
           onTap={() => {
-            hasTappedCardRef.current = false;
+            if (hasTappedCardRef.current) return;
             setMiloSpeech(currentObject.spokenIntro);
             audioService.playPhonemeWordBlend(
               currentLetter.phonemeAudioId,

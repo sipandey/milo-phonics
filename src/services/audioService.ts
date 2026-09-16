@@ -23,6 +23,9 @@ class AudioService {
 
   // Remote audio state & memory cache for preloaded assets
   private currentAudioElement: HTMLAudioElement | null = null;
+  private currentAudioResolve: (() => void) | null = null;
+  private currentAudioTimeout: NodeJS.Timeout | null = null;
+  private currentBlendToken: number = 0;
   private audioCache: Map<string, HTMLAudioElement> = new Map();
 
   // Speech listener callbacks for visual mouth sync (used by CharacterMilo)
@@ -173,7 +176,50 @@ class AudioService {
    */
   private playRemoteVoice(url: string, fallbackText?: string, options?: PlayVoiceOptions): Promise<void> {
     return new Promise((resolve) => {
+      let settled = false;
+      const safeResolve = () => {
+        if (settled) return;
+        settled = true;
+        if (this.currentAudioTimeout) {
+          clearTimeout(this.currentAudioTimeout);
+          this.currentAudioTimeout = null;
+        }
+        if (this.currentAudioResolve === safeResolve) {
+          this.currentAudioResolve = null;
+        }
+        resolve();
+      };
+
+      // Unblock any previously awaiting audio promise immediately so it never hangs
+      if (this.currentAudioResolve) {
+        const prevResolve = this.currentAudioResolve;
+        this.currentAudioResolve = null;
+        prevResolve();
+      }
+      if (this.currentAudioTimeout) {
+        clearTimeout(this.currentAudioTimeout);
+        this.currentAudioTimeout = null;
+      }
+
+      this.currentAudioResolve = safeResolve;
+
+      // Fail-safe watchdog: ensure promise ALWAYS resolves within 5.5s even if browser stalls audio
+      this.currentAudioTimeout = setTimeout(() => {
+        console.warn(`[AudioService] Audio watchdog timeout for asset: ${url}`);
+        if (this.currentAudioElement) {
+          try {
+            this.currentAudioElement.pause();
+          } catch {
+            // Ignore
+          }
+          this.currentAudioElement = null;
+          this.notifySpeechEnd();
+        }
+        safeResolve();
+      }, 5500);
+
       const execute = () => {
+        if (settled) return;
         try {
           let audio = this.audioCache.get(url);
           if (!audio) {
@@ -187,29 +233,33 @@ class AudioService {
           audio.muted = this.isMuted;
           this.currentAudioElement = audio;
 
+          const cleanupListeners = () => {
+            audio.removeEventListener('play', onStart);
+            audio.removeEventListener('ended', onFinish);
+            audio.removeEventListener('error', onError);
+          };
+
           const onStart = () => {
             this.notifySpeechStart();
           };
 
           const onFinish = () => {
-            audio.removeEventListener('play', onStart);
-            audio.removeEventListener('ended', onFinish);
-            audio.removeEventListener('error', onError);
+            cleanupListeners();
             this.notifySpeechEnd();
-            this.currentAudioElement = null;
-            resolve();
+            if (this.currentAudioElement === audio) {
+              this.currentAudioElement = null;
+            }
+            safeResolve();
           };
 
           const onError = (err?: Event) => {
-            audio.removeEventListener('play', onStart);
-            audio.removeEventListener('ended', onFinish);
-            audio.removeEventListener('error', onError);
+            cleanupListeners();
             if (this.currentAudioElement === audio) {
               this.currentAudioElement = null;
               this.notifySpeechEnd();
             }
             console.warn(`[AudioService] Failed to play audio asset: ${url} (${fallbackText || 'voice'})`, err);
-            resolve();
+            safeResolve();
           };
 
           audio.addEventListener('play', onStart, { once: true });
@@ -219,19 +269,20 @@ class AudioService {
           const playPromise = audio.play();
           if (playPromise !== undefined) {
             playPromise.catch((err: unknown) => {
-              if (err instanceof DOMException && err.name === 'AbortError') {
-                audio.removeEventListener('play', onStart);
-                audio.removeEventListener('ended', onFinish);
-                audio.removeEventListener('error', onError);
-                resolve();
-                return;
+              cleanupListeners();
+              if (this.currentAudioElement === audio) {
+                this.currentAudioElement = null;
+                this.notifySpeechEnd();
               }
-              onError();
+              if (!(err instanceof DOMException && err.name === 'AbortError')) {
+                console.warn(`[AudioService] Audio play error: ${url}`, err);
+              }
+              safeResolve();
             });
           }
         } catch (err) {
           console.warn(`[AudioService] Error initializing audio: ${url} (${fallbackText || 'voice'})`, err);
-          resolve();
+          safeResolve();
         }
       };
 
@@ -272,13 +323,16 @@ class AudioService {
   ): Promise<void> {
     if (this.isMuted) return;
 
+    const token = ++this.currentBlendToken;
     this.setBusy(true);
     try {
       // 1. Play authentic Oxford isolated phoneme sound
       await this.playVoice(phonemeAudioId, { interrupt: true });
+      if (this.currentBlendToken !== token) return;
 
       // 2. Short breath pause for toddler comprehension
       await new Promise((resolve) => setTimeout(resolve, 200));
+      if (this.currentBlendToken !== token) return;
 
       // 3. Play the authentic / slow AI-generated word audio asset
       const wordEntry = getAudioEntry(wordAudioId);
@@ -290,7 +344,9 @@ class AudioService {
         await this.playRemoteVoice(cvcUrl, cleanWord, { interrupt: false });
       }
     } finally {
-      this.setBusy(false);
+      if (this.currentBlendToken === token) {
+        this.setBusy(false);
+      }
     }
   }
 
@@ -307,18 +363,23 @@ class AudioService {
   ): Promise<void> {
     if (this.isMuted) return;
 
+    const token = ++this.currentBlendToken;
     this.setBusy(true);
     try {
       // 1. Play each phoneme sequentially with crisp 100ms pacing
       for (let i = 0; i < phonemeAudioIds.length; i++) {
+        if (this.currentBlendToken !== token) return;
         onHighlight?.(i);
         this.playBoing();
         await this.playVoice(phonemeAudioIds[i], { interrupt: true });
+        if (this.currentBlendToken !== token) return;
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
 
+      if (this.currentBlendToken !== token) return;
       onHighlight?.(-1);
       await new Promise((resolve) => setTimeout(resolve, 150));
+      if (this.currentBlendToken !== token) return;
 
       // 2. Play the final blended whole word
       const cleanWord = (fallbackWordText || wordAudioId || '').toLowerCase().replace(/^(word|cvc)\./, '');
@@ -332,6 +393,8 @@ class AudioService {
         }
       }
 
+      if (this.currentBlendToken !== token) return;
+
       // Audio Manifest entry (e.g. word.p-pan)
       if (wordAudioId) {
         const wordEntry = getAudioEntry(wordAudioId);
@@ -341,7 +404,9 @@ class AudioService {
         }
       }
     } finally {
-      this.setBusy(false);
+      if (this.currentBlendToken === token) {
+        this.setBusy(false);
+      }
     }
   }
 
@@ -375,6 +440,10 @@ class AudioService {
    * Stop only remote audio element
    */
   private stopRemoteAudio() {
+    if (this.currentAudioTimeout) {
+      clearTimeout(this.currentAudioTimeout);
+      this.currentAudioTimeout = null;
+    }
     if (this.currentAudioElement) {
       try {
         this.currentAudioElement.pause();
@@ -384,12 +453,18 @@ class AudioService {
       }
       this.currentAudioElement = null;
     }
+    if (this.currentAudioResolve) {
+      const prevResolve = this.currentAudioResolve;
+      this.currentAudioResolve = null;
+      prevResolve();
+    }
   }
 
   /**
    * Stop any currently playing voice audio
    */
   public stopVoice() {
+    this.currentBlendToken++;
     this.stopRemoteAudio();
     this.notifySpeechEnd();
   }
