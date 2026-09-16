@@ -3,7 +3,7 @@ import { progressService } from '../../services/progressService';
 import { audioService } from '../../services/audioService';
 import { CURRICULUM_LEVELS } from '../../data/curriculumData';
 import { ParentClerkSync } from './ParentClerkSync';
-import { X, Volume2, RotateCcw, Sparkles, Star, Award, BookOpen } from 'lucide-react';
+import { X, Volume2, VolumeX, RotateCcw, Sparkles, Star, Award, BookOpen } from 'lucide-react';
 
 interface ParentDashboardProps {
   onClose: () => void;
@@ -11,6 +11,7 @@ interface ParentDashboardProps {
 
 export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => {
   const [progress, setProgress] = useState(progressService.getProgress());
+  const [isMuted, setIsMuted] = useState(audioService.getIsMuted());
 
   useEffect(() => {
     const unsubscribe = progressService.subscribe((updated) => {
@@ -131,9 +132,14 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
             </div>
           </div>
 
-          {/* 7 Levels Breakdown */}
+          {/* 7 Levels Breakdown (Interactive Selector) */}
           <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-2">
-            <p className="text-xs font-bold text-gray-700 mb-2">SSP Learning Sets:</p>
+            <div className="flex items-center justify-between mb-1">
+              <p className="text-xs font-bold text-gray-700">SSP Phonics Sets (Tap unlocked level to switch):</p>
+              <span className="text-[10px] font-black text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded-full">
+                Active: Level {progress.currentLevelId}
+              </span>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {CURRICULUM_LEVELS.map((lvl) => {
                 const isUnlocked = progress.unlockedLevels.includes(lvl.id);
@@ -145,44 +151,93 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
                 const maxStars = lvl.letterIds.length * 3;
 
                 return (
-                  <div
+                  <button
                     key={lvl.id}
-                    className={`p-2.5 rounded-xl border text-xs flex items-center justify-between ${
+                    disabled={!isUnlocked}
+                    onClick={() => {
+                      if (isUnlocked && !isCurrent) {
+                        audioService.playPop();
+                        progressService.setCurrentLevel(lvl.id);
+                      }
+                    }}
+                    className={`p-3 rounded-2xl border text-xs flex items-center justify-between text-left transition-all ${
                       isCurrent
-                        ? 'bg-amber-100/70 border-amber-300 ring-2 ring-amber-400'
+                        ? 'bg-amber-100/90 border-amber-400 ring-2 ring-amber-400 shadow-xs cursor-default'
                         : isUnlocked
-                        ? 'bg-white border-gray-200'
-                        : 'bg-gray-100/80 border-gray-200 opacity-60'
+                        ? 'bg-white hover:bg-amber-50/80 border-gray-200 hover:border-amber-300 shadow-xs cursor-pointer active:scale-98'
+                        : 'bg-gray-100/70 border-gray-200 opacity-50 cursor-not-allowed'
                     }`}
                   >
-                    <div className="flex items-center gap-2">
-                      <span className="text-base">{lvl.badgeEmoji}</span>
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-xl">{lvl.badgeEmoji}</span>
                       <div>
-                        <p className="font-bold text-gray-900">
-                          L{lvl.id}: {lvl.letterIds.map((l) => l.toUpperCase()).join(' ')}
-                        </p>
-                        <p className="text-[10px] text-gray-500 truncate max-w-[120px]">{lvl.title}</p>
+                        <div className="flex items-center gap-1.5">
+                          <p className="font-black text-gray-900">
+                            L{lvl.id}: {lvl.letterIds.map((l) => l.toUpperCase()).join(' ')}
+                          </p>
+                          {isCurrent && (
+                            <span className="bg-amber-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-md uppercase">
+                              Active
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[10px] text-gray-500 truncate max-w-[130px]">{lvl.title}</p>
                       </div>
                     </div>
 
-                    <div className="text-right">
+                    <div className="text-right shrink-0">
                       {isUnlocked ? (
-                        <span className="font-black text-amber-700 flex items-center gap-0.5 text-[11px]">
-                          ⭐ {lvlStars}/{maxStars}
-                        </span>
+                        <div className="flex flex-col items-end">
+                          <span className="font-black text-amber-700 flex items-center gap-0.5 text-[11px]">
+                            ⭐ {lvlStars}/{maxStars}
+                          </span>
+                          {!isCurrent && (
+                            <span className="text-[9px] font-bold text-amber-600 hover:underline">Tap to play</span>
+                          )}
+                        </div>
                       ) : (
                         <span className="text-[10px] text-gray-400 font-bold">🔒 {lvl.requiredStarsToUnlock}★</span>
                       )}
                     </div>
-                  </div>
+                  </button>
                 );
               })}
             </div>
           </div>
         </div>
 
-        {/* Audio & Narration Pipeline Status */}
+        {/* Master Sound & Volume Control */}
         <div className="space-y-3 mb-6 pt-4 border-t border-gray-100">
+          <div className="flex items-center justify-between p-4 bg-amber-50/80 rounded-2xl border border-amber-200">
+            <div className="flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isMuted ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-700'}`}>
+                {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+              </div>
+              <div>
+                <h4 className="text-xs font-black text-amber-950 uppercase tracking-wider">App Sound & Audio</h4>
+                <p className="text-[11px] text-gray-600">
+                  {isMuted ? 'Audio is currently muted.' : 'British Oxford RP & AI audio active.'}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                const nextMuted = audioService.toggleMute();
+                setIsMuted(nextMuted);
+              }}
+              className={`px-4 py-2 rounded-xl text-xs font-black squish-tap cursor-pointer border transition-colors ${
+                isMuted
+                  ? 'bg-red-500 hover:bg-red-600 text-white border-red-600 shadow-sm'
+                  : 'bg-emerald-500 hover:bg-emerald-600 text-white border-emerald-600 shadow-sm'
+              }`}
+            >
+              {isMuted ? '🔇 Unmute Sound' : '🔊 Sound Active'}
+            </button>
+          </div>
+        </div>
+
+        {/* Audio & Narration Pipeline Status */}
+        <div className="space-y-3 mb-6 pt-2 border-t border-gray-100">
           <h3 className="text-sm font-black text-amber-900 uppercase tracking-wider flex items-center gap-2">
             <Volume2 className="w-4 h-4 text-amber-500" />
             Audio Engine: Oxford-First & AI Cloudinary Pipeline

@@ -86,6 +86,10 @@ class AudioService {
     return this.isMuted;
   }
 
+  public getIsMuted(): boolean {
+    return this.isMuted;
+  }
+
   public onSpeechStart(callback: () => void): () => void {
     this.speechStartListeners.add(callback);
     return () => {

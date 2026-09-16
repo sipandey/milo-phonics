@@ -287,8 +287,36 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     if (currentObjectIndex + 1 < objs.length) {
       setCurrentObjectIndex((prev) => prev + 1);
     } else {
-      // Move to next letter in level
       const currentLetterIdx = activeLevel.letterIds.indexOf(selectedLetterId);
+      const isLastLetterOfLevel = currentLetterIdx === activeLevel.letterIds.length - 1;
+
+      // 🌟 Automatic Level Graduation when final letter of level is completed!
+      if (isLastLetterOfLevel && selectedLevelId < CURRICULUM_LEVELS.length) {
+        const nextLevelId = selectedLevelId + 1;
+        const nextLevel = getLevelById(nextLevelId);
+
+        if (nextLevel && nextLevel.letterIds.length > 0) {
+          audioService.playFanfare();
+          triggerGentleConfetti();
+          setLevelUnlockAlert(nextLevelId);
+
+          progressService.unlockLevel(nextLevelId);
+          progressService.setCurrentLevel(nextLevelId);
+          setSelectedLevelId(nextLevelId);
+          setSelectedLetterId(nextLevel.letterIds[0]);
+          setCurrentObjectIndex(0);
+
+          // In Toddler Focus Mode: auto-dismiss celebration modal after 3.2s
+          if (isToddlerMode) {
+            setTimeout(() => {
+              setLevelUnlockAlert(null);
+            }, 3200);
+          }
+          return;
+        }
+      }
+
+      // Move to next letter in level
       const nextLetterIdx = (currentLetterIdx + 1) % activeLevel.letterIds.length;
       setSelectedLetterId(activeLevel.letterIds[nextLetterIdx]);
       setCurrentObjectIndex(0);
@@ -439,23 +467,33 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
               ))}
             </div>
 
-            <div className="flex gap-3">
+            {isToddlerMode ? (
               <button
                 onClick={() => setLevelUnlockAlert(null)}
-                className="flex-1 py-3 px-4 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-sm cursor-pointer"
+                className="w-full py-4 px-6 rounded-3xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-amber-950 font-black text-lg sm:text-xl shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] squish-tap cursor-pointer animate-bounce-gentle flex items-center justify-center gap-2"
               >
-                Keep Playing
+                <span>Let's Play Level {levelUnlockAlert}!</span>
+                <span className="text-2xl">🚀</span>
               </button>
-              <button
-                onClick={() => {
-                  handleSelectLevel(levelUnlockAlert);
-                  setLevelUnlockAlert(null);
-                }}
-                className="flex-1 py-3 px-4 rounded-2xl bg-bubble-yellow hover:bg-amber-400 text-amber-950 font-black text-sm shadow-md border-2 border-amber-400 squish-tap cursor-pointer"
-              >
-                Jump to Level {levelUnlockAlert} 🚀
-              </button>
-            </div>
+            ) : (
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setLevelUnlockAlert(null)}
+                  className="flex-1 py-3 px-4 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-sm cursor-pointer"
+                >
+                  Keep Playing
+                </button>
+                <button
+                  onClick={() => {
+                    handleSelectLevel(levelUnlockAlert);
+                    setLevelUnlockAlert(null);
+                  }}
+                  className="flex-1 py-3 px-4 rounded-2xl bg-bubble-yellow hover:bg-amber-400 text-amber-950 font-black text-sm shadow-md border-2 border-amber-400 squish-tap cursor-pointer"
+                >
+                  Jump to Level {levelUnlockAlert} 🚀
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -3,7 +3,7 @@ import { CharacterMilo } from '../common/CharacterMilo';
 import { BigButton } from '../common/BigButton';
 import { audioService } from '../../services/audioService';
 import { progressService } from '../../services/progressService';
-import { Settings, Volume2, VolumeX } from 'lucide-react';
+import { Settings, Star } from 'lucide-react';
 
 interface HomeScreenProps {
   onStartPlay: () => void;
@@ -26,7 +26,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenParentGate,
   onTeaserClick: _onTeaserClick,
 }) => {
-  const [isMuted, setIsMuted] = useState(false);
   const [miloSpeech, setMiloSpeech] = useState<string | null>("Hi! Let's play!");
   const [progress, setProgress] = useState(progressService.getProgress());
 
@@ -53,31 +52,24 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     };
   }, []);
 
-  const handleToggleMute = () => {
-    const muted = audioService.toggleMute();
-    setIsMuted(muted);
-  };
-
   return (
     <div className="min-h-screen flex flex-col justify-between p-4 sm:p-6 max-w-4xl mx-auto relative z-10">
-      {/* Top Header: Discreet Parent Gate & Sound Toggle */}
+      {/* Top Header: Star Bank Counter & Discreet Parent Gate */}
       <header className="flex justify-between items-center w-full mb-2">
-        <button
-          onClick={handleToggleMute}
-          aria-label={isMuted ? 'Unmute' : 'Mute'}
-          className="w-14 h-14 rounded-2xl bg-white/90 shadow-md border-2 border-amber-200 flex items-center justify-center text-amber-800 squish-tap"
-        >
-          {isMuted ? <VolumeX className="w-7 h-7 text-red-500" /> : <Volume2 className="w-7 h-7 text-amber-700" />}
-        </button>
+        {/* Child-Friendly Star Bank Badge */}
+        <div className="flex items-center gap-1.5 bg-white/95 px-4 py-2.5 rounded-full border-3 border-amber-200 shadow-[0_4px_0_#FDE68A] shrink-0 font-black text-sm text-amber-700 select-none">
+          <Star className="w-5 h-5 fill-amber-400 text-amber-500" />
+          <span>{progress.totalStars} Stars</span>
+        </div>
 
         {/* Small Discreet Parent Gate */}
         <button
           onClick={onOpenParentGate}
           aria-label="Parents Dashboard"
-          className="px-3 py-2 rounded-2xl bg-white/80 hover:bg-white text-gray-400 hover:text-gray-700 text-xs font-bold border border-gray-200 shadow-sm flex items-center gap-1.5 squish-tap"
+          className="px-3.5 py-2.5 rounded-2xl bg-white/90 hover:bg-white text-gray-500 hover:text-gray-800 text-xs font-bold border-2 border-amber-200 shadow-[0_3px_0_#FDE68A] flex items-center gap-1.5 squish-tap cursor-pointer transition-transform active:scale-95"
         >
-          <Settings className="w-4 h-4" />
-          <span>Parents</span>
+          <Settings className="w-4 h-4 text-amber-600" />
+          <span className="text-amber-950 font-black">Parents</span>
         </button>
       </header>
 

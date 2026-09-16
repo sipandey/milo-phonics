@@ -152,11 +152,28 @@ class ProgressService {
     this.saveProgress();
   }
 
-  public setCurrentLevel(levelId: number) {
-    if (this.progress.unlockedLevels.includes(levelId)) {
-      this.progress.currentLevelId = levelId;
-      this.saveProgress();
+  public unlockLevel(levelId: number) {
+    if (!this.progress.unlockedLevels.includes(levelId)) {
+      this.progress.unlockedLevels.push(levelId);
+      this.progress.unlockedLevels.sort((a, b) => a - b);
     }
+    if (this.progress.levels[levelId]) {
+      this.progress.levels[levelId].unlocked = true;
+    }
+    this.saveProgress();
+  }
+
+  public setCurrentLevel(levelId: number) {
+    if (!this.progress.unlockedLevels.includes(levelId)) {
+      this.unlockLevel(levelId);
+    }
+    this.progress.currentLevelId = levelId;
+    const targetLvl = CURRICULUM_LEVELS.find((lvl) => lvl.id === levelId);
+    if (targetLvl && targetLvl.letterIds.length > 0) {
+      this.progress.lastLetter = targetLvl.letterIds[0];
+      this.progress.lastObjectIndex = 0;
+    }
+    this.saveProgress();
   }
 
   public awardStars(letterId: string, starsEarned: number): { newlyEarned: number; newlyUnlockedLevels: number[] } {
