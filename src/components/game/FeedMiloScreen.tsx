@@ -38,7 +38,6 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
   const [currentRound, setCurrentRound] = useState<number>(0);
   const [roundData, setRoundData] = useState<RoundData | null>(null);
   const [miloState, setMiloState] = useState<MiloVideoState>('hungry');
-  const [miloSpeech, setMiloSpeech] = useState<string | null>(null);
   const [isAudioBusy, setIsAudioBusy] = useState<boolean>(false);
   const [fedItemId, setFedItemId] = useState<string | null>(null);
   const [wobblingItemId, setWobblingItemId] = useState<string | null>(null);
@@ -48,6 +47,8 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
   const [isDragOverMilo, setIsDragOverMilo] = useState<boolean>(false);
 
   const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const advanceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const chewStartTimeRef = useRef<number>(0);
   const activeLevelId = progress.currentLevelId || 1;
   const activeLevel = getLevelById(activeLevelId) || CURRICULUM_LEVELS[0];
 
@@ -153,6 +154,23 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
     }, 1100);
   }, []);
 
+  // Advance to next round or finish session
+  const advanceRound = useCallback(() => {
+    if (advanceTimerRef.current) {
+      clearTimeout(advanceTimerRef.current);
+      advanceTimerRef.current = null;
+    }
+    if (currentRound < 4) {
+      setCurrentRound((prev) => prev + 1);
+    } else {
+      // Micro-session complete! (5 rounds done)
+      setIsSessionComplete(true);
+      setMiloState('full');
+      audioService.playFanfare();
+      triggerGentleConfetti();
+    }
+  }, [currentRound]);
+
   // Setup round
   useEffect(() => {
     if (isSessionComplete) return;
@@ -162,7 +180,6 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
     setFedItemId(null);
     setWobblingItemId(null);
     setMiloState('hungry');
-    setMiloSpeech(`Feed Milo /${newRound.targetLetterId}/! 😋`);
 
     const introTimer = setTimeout(() => {
       playTargetSound(newRound.targetPhonemeAudioId);
@@ -171,17 +188,31 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
 
     return () => {
       clearTimeout(introTimer);
+      if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
       if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
     };
   }, [currentRound, generateRound, isSessionComplete, playTargetSound, resetInactivityTimer]);
 
   // Handle replaying target sound
-  const handleReplay = () => {
+  const handleReplay = useCallback(() => {
     if (isAudioBusy || !roundData) return;
     audioService.playPop();
     playTargetSound(roundData.targetPhonemeAudioId);
     resetInactivityTimer();
-  };
+  }, [isAudioBusy, roundData, playTargetSound, resetInactivityTimer]);
+
+  // Handle tap on Milo (or Yum button) during chewing for instant skip
+  const handleMiloTap = useCallback(() => {
+    if (miloState === 'chewing') {
+      // If child taps Milo after 1.4s (once Oxford phoneme finishes), advance immediately!
+      if (Date.now() - chewStartTimeRef.current >= 1400) {
+        audioService.playPop();
+        advanceRound();
+        return;
+      }
+    }
+    handleReplay();
+  }, [miloState, advanceRound, handleReplay]);
 
   // Handle feeding item (via tap or drop)
   const handleFeed = (choice: FoodChoice) => {
@@ -192,7 +223,7 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
       // 🌟 Correct Food: Milo munches happily!
       setFedItemId(choice.object.id);
       setMiloState('chewing');
-      setMiloSpeech(`Mmm, ${choice.object.name}! 😋`);
+      chewStartTimeRef.current = Date.now();
       audioService.playPop();
 
       // Sound effect matching food (crunch / bite / slurp)
@@ -215,24 +246,15 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
         audioService.playChime();
       }, 500);
 
-      // Advance after delicious chew
-      setTimeout(() => {
-        if (currentRound < 4) {
-          setCurrentRound((prev) => prev + 1);
-        } else {
-          // Micro-session complete! (5 rounds done)
-          setIsSessionComplete(true);
-          setMiloState('full');
-          setMiloSpeech('Tummy is so full! 🦁✨');
-          audioService.playFanfare();
-          triggerGentleConfetti();
-        }
-      }, 1800);
+      // Extended chew window: 3.8 seconds unhurried appreciation
+      if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
+      advanceTimerRef.current = setTimeout(() => {
+        advanceRound();
+      }, 3800);
     } else {
       // 〰️ Wrong Food: Gentle "Hmm" (Zero-Shame design)
       setWobblingItemId(choice.object.id);
       setMiloState('curious');
-      setMiloSpeech(`That's /${choice.letterId}/ ${choice.object.name}! 🐾`);
       audioService.playBoing();
 
       // Softly whisper tapped item's sound for contrast
@@ -240,13 +262,12 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
         audioService.playVoice(`phoneme.${choice.letterId}`, { interrupt: true });
       }, 200);
 
-      // Re-prompt target sound after 1.3s
+      // Re-prompt target sound after 1.4s
       setTimeout(() => {
         setWobblingItemId(null);
         setMiloState('hungry');
         if (roundData) {
           playTargetSound(roundData.targetPhonemeAudioId);
-          setMiloSpeech(`Feed Milo /${roundData.targetLetterId}/! 😋`);
         }
       }, 1400);
     }
@@ -254,6 +275,7 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
 
   // Play session again
   const handlePlayAgain = () => {
+    if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
     audioService.playPop();
     setIsSessionComplete(false);
     setCurrentRound(0);
@@ -328,28 +350,40 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
             <MiloVideoCompanion
               state={miloState}
               size="lg"
-              speechBubble={miloSpeech}
               isListening={isAudioBusy}
               isTargetOver={isDragOverMilo}
-              onTap={handleReplay}
+              onTap={handleMiloTap}
               className="transition-transform"
             />
 
-            {/* Chunky Replay Sound Button */}
+            {/* Chunky Replay Sound / Yum Button */}
             <button
-              onClick={handleReplay}
+              onClick={miloState === 'chewing' ? handleMiloTap : handleReplay}
               disabled={isAudioBusy}
-              aria-label="Listen to sound again"
+              aria-label={miloState === 'chewing' ? 'Feed next sound' : 'Listen to sound again'}
               className={`mt-2 squish-tap w-20 h-20 sm:w-22 sm:h-22 rounded-3xl bg-gradient-to-b from-amber-300 to-amber-400 text-amber-950 border-4 border-amber-200 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex flex-col items-center justify-center cursor-pointer transition-all ${
                 isAudioBusy
                   ? 'opacity-60 ring-6 ring-amber-300 scale-105'
+                  : miloState === 'chewing'
+                  ? 'ring-6 ring-amber-400 scale-105 animate-bounce-gentle'
                   : 'hover:scale-105 animate-bounce-gentle'
               }`}
             >
-              <Volume2 className="w-8 h-8 sm:w-9 sm:h-9" />
-              <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider mt-0.5">
-                {isAudioBusy ? 'Listening...' : 'Hear Sound'}
-              </span>
+              {miloState === 'chewing' ? (
+                <>
+                  <span className="text-2xl animate-bounce">😋</span>
+                  <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider mt-0.5">
+                    Yum!
+                  </span>
+                </>
+              ) : (
+                <>
+                  <Volume2 className="w-8 h-8 sm:w-9 sm:h-9" />
+                  <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider mt-0.5">
+                    {isAudioBusy ? 'Listening...' : 'Hear Sound'}
+                  </span>
+                </>
+              )}
             </button>
           </div>
 
