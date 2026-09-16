@@ -4,7 +4,7 @@ import { triggerGentleConfetti } from '../common/ParticleEffects';
 import { ListenRipple } from '../common/ListenRipple';
 import { audioService } from '../../services/audioService';
 import { progressService } from '../../services/progressService';
-import { BLENDING_WORDS, getWordsForLevel } from '../../data/blendingData';
+import { BLENDING_WORDS, getWordsForLevel, getStrictWordsForLevel } from '../../data/blendingData';
 import { CURRICULUM_LEVELS, getLevelById } from '../../data/curriculumData';
 import { BlendingWord, ChildProgress } from '../../types/phonics';
 import {
@@ -39,9 +39,13 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
     return unsub;
   }, []);
 
-  // Available words for the active level
+  // Available words for the active level: prioritize new target sounds for this level
   const availableWords = useMemo(() => {
-    const words = getWordsForLevel(selectedLevelId);
+    const strictWords = getStrictWordsForLevel(selectedLevelId);
+    const cumulativeWords = getWordsForLevel(selectedLevelId);
+    const words = strictWords.length > 0
+      ? [...strictWords, ...cumulativeWords.filter((w) => w.levelId !== selectedLevelId)]
+      : cumulativeWords;
     return words.length > 0 ? words : BLENDING_WORDS.slice(0, 5);
   }, [selectedLevelId]);
 
