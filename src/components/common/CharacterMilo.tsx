@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { audioService } from '../../services/audioService';
 
 interface CharacterMiloProps {
@@ -19,6 +19,7 @@ export const CharacterMilo: React.FC<CharacterMiloProps> = ({
   const [isTalking, setIsTalking] = useState(false);
   const [isHappy, setIsHappy] = useState(false);
   const [isBlinking, setIsBlinking] = useState(false);
+  const lastTapRef = useRef<number>(0);
 
   // Sync mouth movement with audio service speech events
   useEffect(() => {
@@ -40,12 +41,17 @@ export const CharacterMilo: React.FC<CharacterMiloProps> = ({
   }, []);
 
   const handleTap = () => {
+    const now = Date.now();
+    // 450ms hardware debounce to absorb frantic toddler clicks
+    if (now - lastTapRef.current < 450) return;
+    lastTapRef.current = now;
+
     setIsHappy(true);
-    audioService.playBoing();
     setTimeout(() => setIsHappy(false), 800);
     if (onTap) {
       onTap();
     } else {
+      audioService.playBoing();
       audioService.playVoice('praise.random', { interrupt: false, delayMs: 150 });
     }
   };

@@ -49,9 +49,21 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
   const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
   const advanceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const chewStartTimeRef = useRef<number>(0);
+  const lastTapTimeRef = useRef<number>(0);
+  const hasFedRef = useRef<boolean>(false);
   const activeLevelId = progress.currentLevelId || 1;
   const activeLevel = getLevelById(activeLevelId) || CURRICULUM_LEVELS[0];
   const isToddlerMode = progress.toddlerFocusMode !== false;
+
+  // Debounce guard: absorbs rapid jitter clicks (<400ms) to prevent audio churn
+  const canAct = () => {
+    const now = Date.now();
+    if (now - lastTapTimeRef.current < 400) {
+      return false;
+    }
+    lastTapTimeRef.current = now;
+    return true;
+  };
 
   // Subscribe to progress changes
   useEffect(() => {
@@ -181,6 +193,7 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
     setFedItemId(null);
     setWobblingItemId(null);
     setMiloState('hungry');
+    hasFedRef.current = false;
 
     const introTimer = setTimeout(() => {
       playTargetSound(newRound.targetPhonemeAudioId);
@@ -196,7 +209,7 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
 
   // Handle replaying target sound
   const handleReplay = useCallback(() => {
-    if (isAudioBusy || !roundData) return;
+    if (!canAct() || hasFedRef.current || isAudioBusy || !roundData) return;
     audioService.playPop();
     playTargetSound(roundData.targetPhonemeAudioId);
     resetInactivityTimer();
@@ -217,11 +230,12 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
 
   // Handle feeding item (via tap or drop)
   const handleFeed = (choice: FoodChoice) => {
-    if (isAudioBusy || fedItemId) return;
+    if (!canAct() || hasFedRef.current || isAudioBusy || fedItemId) return;
     resetInactivityTimer();
 
     if (choice.isTarget) {
       // 🌟 Correct Food: Milo munches happily!
+      hasFedRef.current = true;
       setFedItemId(choice.object.id);
       setMiloState('chewing');
       chewStartTimeRef.current = Date.now();

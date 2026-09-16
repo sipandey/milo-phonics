@@ -47,9 +47,54 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
   const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
   const repeatTimerRef = useRef<NodeJS.Timeout | null>(null);
   const autoAdvanceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const correctVoiceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const incorrectVoiceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const incorrectResetTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const audioBusyTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const watchdogTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const lastTapTimeRef = useRef<number>(0);
+  const hasPoppedRef = useRef<boolean>(false);
+  const isAudioBusyRef = useRef<boolean>(false);
+  const isProcessingIncorrectRef = useRef<boolean>(false);
+
   const activeLevelId = progress.currentLevelId || 1;
   const activeLevel = getLevelById(activeLevelId) || CURRICULUM_LEVELS[0];
   const isToddlerMode = progress.toddlerFocusMode !== false;
+
+  // Clear all pending action & speech timers
+  const clearPendingActionTimers = useCallback(() => {
+    if (correctVoiceTimerRef.current) {
+      clearTimeout(correctVoiceTimerRef.current);
+      correctVoiceTimerRef.current = null;
+    }
+    if (incorrectVoiceTimerRef.current) {
+      clearTimeout(incorrectVoiceTimerRef.current);
+      incorrectVoiceTimerRef.current = null;
+    }
+    if (incorrectResetTimerRef.current) {
+      clearTimeout(incorrectResetTimerRef.current);
+      incorrectResetTimerRef.current = null;
+    }
+    if (audioBusyTimerRef.current) {
+      clearTimeout(audioBusyTimerRef.current);
+      audioBusyTimerRef.current = null;
+    }
+    if (watchdogTimerRef.current) {
+      clearTimeout(watchdogTimerRef.current);
+      watchdogTimerRef.current = null;
+    }
+  }, []);
+
+  // Debounce guard: absorbs rapid jitter clicks (<400ms) to prevent audio churn
+  const canAct = () => {
+    const now = Date.now();
+    if (now - lastTapTimeRef.current < 400) {
+      return false;
+    }
+    lastTapTimeRef.current = now;
+    return true;
+  };
 
   // Cleanup timers on unmount
   useEffect(() => {
@@ -57,8 +102,9 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
       if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
       if (repeatTimerRef.current) clearTimeout(repeatTimerRef.current);
       if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
+      clearPendingActionTimers();
     };
-  }, []);
+  }, [clearPendingActionTimers]);
 
   // Subscribe to progress changes
   useEffect(() => {
@@ -130,16 +176,19 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
   const scheduleAuditoryRepeat = useCallback((phonemeAudioId: string) => {
     if (repeatTimerRef.current) clearTimeout(repeatTimerRef.current);
     repeatTimerRef.current = setTimeout(() => {
-      if (poppedLetterId || isSessionComplete || audioService.isBusyPlaying()) return;
+      if (hasPoppedRef.current || poppedLetterId || isSessionComplete || audioService.isBusyPlaying()) return;
       playTargetSound(phonemeAudioId);
     }, 5000);
   }, [poppedLetterId, isSessionComplete]);
 
   // Play target sound
   const playTargetSound = useCallback((phonemeAudioId: string) => {
+    isAudioBusyRef.current = true;
     setIsAudioBusy(true);
     audioService.playVoice(phonemeAudioId, { interrupt: true });
-    setTimeout(() => {
+    if (audioBusyTimerRef.current) clearTimeout(audioBusyTimerRef.current);
+    audioBusyTimerRef.current = setTimeout(() => {
+      isAudioBusyRef.current = false;
       setIsAudioBusy(false);
       scheduleAuditoryRepeat(phonemeAudioId);
     }, 1100);
@@ -153,8 +202,13 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
     setRoundData(newRound);
     setPoppedLetterId(null);
     setWobblingLetterId(null);
+    hasPoppedRef.current = false;
+    isProcessingIncorrectRef.current = false;
+    isAudioBusyRef.current = false;
+    setIsAudioBusy(false);
     if (repeatTimerRef.current) clearTimeout(repeatTimerRef.current);
     if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
+    clearPendingActionTimers();
 
     const introTimer = setTimeout(() => {
       playTargetSound(newRound.targetPhonemeAudioId);
@@ -166,12 +220,13 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
       if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
       if (repeatTimerRef.current) clearTimeout(repeatTimerRef.current);
       if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
+      clearPendingActionTimers();
     };
-  }, [currentRound, generateRound, isSessionComplete, playTargetSound, resetInactivityTimer]);
+  }, [currentRound, generateRound, isSessionComplete, playTargetSound, resetInactivityTimer, clearPendingActionTimers]);
 
   // Handle replaying sound manually
   const handleReplay = () => {
-    if (isAudioBusy || !roundData) return;
+    if (!canAct() || hasPoppedRef.current || isAudioBusyRef.current || isProcessingIncorrectRef.current || !roundData) return;
     audioService.playPop();
     playTargetSound(roundData.targetPhonemeAudioId);
     resetInactivityTimer();
@@ -183,6 +238,12 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
       clearTimeout(autoAdvanceTimerRef.current);
       autoAdvanceTimerRef.current = null;
     }
+    if (watchdogTimerRef.current) {
+      clearTimeout(watchdogTimerRef.current);
+      watchdogTimerRef.current = null;
+    }
+    clearPendingActionTimers();
+
     if (currentRound < 4) {
       setCurrentRound((prev) => prev + 1);
     } else {
@@ -191,18 +252,25 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
       audioService.playFanfare();
       triggerGentleConfetti();
     }
-  }, [currentRound]);
+  }, [currentRound, clearPendingActionTimers]);
 
   // Handle bubble tap
   const handleBubbleTap = (choice: BubbleChoice) => {
-    if (isAudioBusy || poppedLetterId) return;
+    // Synchronous guards: debounce rapid multi-taps & block if popped or busy
+    if (!canAct() || hasPoppedRef.current || isAudioBusyRef.current || isProcessingIncorrectRef.current) return;
     if (repeatTimerRef.current) clearTimeout(repeatTimerRef.current);
     resetInactivityTimer();
 
     if (choice.isTarget) {
-      // 🌟 Correct Tap: POP!
+      // 🌟 Correct Tap: Set synchronous popped guard IMMEDIATELY
+      hasPoppedRef.current = true;
+      isAudioBusyRef.current = true;
+      setIsAudioBusy(true);
       setPoppedLetterId(choice.letterId);
       audioService.playPop();
+
+      // Clear any pending incorrect speech/reset timers
+      clearPendingActionTimers();
 
       // Immediate visual & acoustic celebration
       triggerGentleConfetti();
@@ -212,35 +280,43 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
       progressService.awardStars(choice.letterId, 1);
 
       // Repeat target sound in triumph after pop
-      setTimeout(() => {
+      correctVoiceTimerRef.current = setTimeout(() => {
         audioService.playVoice(choice.letterId ? `phoneme.${choice.letterId}` : '', { interrupt: true });
         audioService.playChime();
       }, 250);
 
       // Fail-safe watchdog: guarantee advance even under audio delay
-      const watchdog = setTimeout(() => {
+      watchdogTimerRef.current = setTimeout(() => {
         advanceRound();
       }, 3500);
 
       // Smooth auto-advance after 1.1s celebration
       autoAdvanceTimerRef.current = setTimeout(() => {
-        clearTimeout(watchdog);
+        if (watchdogTimerRef.current) {
+          clearTimeout(watchdogTimerRef.current);
+          watchdogTimerRef.current = null;
+        }
         advanceRound();
       }, 1100);
     } else {
       // 〰️ Incorrect Tap: Gentle cartoon wobble (No-Shame design)
+      isProcessingIncorrectRef.current = true;
       setWobblingLetterId(choice.letterId);
       audioService.playBoing();
 
+      // Clear any lingering speech timers
+      clearPendingActionTimers();
+
       // Softly whisper tapped letter's sound for acoustic comparison
-      setTimeout(() => {
+      incorrectVoiceTimerRef.current = setTimeout(() => {
         audioService.playVoice(`phoneme.${choice.letterId}`, { interrupt: true });
       }, 150);
 
       // Clear wobble and gently re-prompt target after 1.2s
-      setTimeout(() => {
+      incorrectResetTimerRef.current = setTimeout(() => {
+        isProcessingIncorrectRef.current = false;
         setWobblingLetterId(null);
-        if (roundData) {
+        if (roundData && !hasPoppedRef.current) {
           playTargetSound(roundData.targetPhonemeAudioId);
         }
       }, 1200);
