@@ -16,6 +16,25 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-09-16 — Single-Action Auto-Advancing Loops for Bubble Pop & Sound Train
+
+**Decision:** Simplified the interaction architecture of both Bubble Pop and Sound Train under Toddler Focus Mode (`progress.toddlerFocusMode !== false`):
+- **Bubble Pop Simplification**:
+  - Enforced strictly 2 bubbles across all curriculum levels in Focus Mode for clean binary auditory discrimination (/s/ vs /a/), eliminating visual search fatigue.
+  - Eradicated the redundant yellow "Hear Again" squircle button (companion Milo is the sole, intuitive audio trigger).
+  - Eradicated unreadable footer instruction text.
+  - Scaled bubbles to responsive 160–192px touch targets with specular reflections.
+  - Added a 5.0s auditory repetition loop and 1.1s auto-advance with 3.5s fail-safe watchdog timer.
+- **Sound Train Simplification**:
+  - Eradicated 10-button cognitive overload: removed footer navigation dock ("Again" & "Next" buttons), header level drawer modal button, and complex story sentence card.
+  - Unified blending into an autonomous locomotive journey: 1-tap on Train Engine or Blend button triggers sequential carriage bounce `/s/` -> `/æ/` -> `/t/` -> whistle chime -> "SAT!".
+  - Displays a clean celebratory picture + word card (`🐱 SAT`) with a 1.5s golden pause before automatically chugging to the next word.
+  - Added 5.5s idle whistle prompt and 5.5s fail-safe watchdog timer to guarantee zero hangs.
+- **Parent Dashboard Toggle**: Preserved full multi-button Explorer Mode when Toddler Focus Mode is disabled.
+**Why:** Toddlers aged 24–36 months are easily overwhelmed by multiple UI options and text instructions, resorting to frantic button-mashing rather than phoneme processing. Reducing screens to a single clear action followed by automatic progression transforms the app into an engaging, self-pacing cause-and-effect learning toy.
+**Rejected:** Keeping mandatory "Next" buttons (toddlers don't read or notice them, leading to abandonment), leaving 3+ bubble choices on early levels, or cluttering Sound Train with secondary sentence narration.
+
+
 ### 2026-09-16 — Anti-Deadlock Audio Promise Architecture, Concurrency Tokens & Non-Blocking Visual Aura
 
 **Decision:** Overhauled audio promise lifecycle management and interaction overlays to permanently eliminate deadlocks caused by rapid multi-clicks while audio is speaking:
