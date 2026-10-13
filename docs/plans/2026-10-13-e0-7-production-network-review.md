@@ -25,6 +25,7 @@ Two findings need follow-up before treating this deployment as release-ready:
 The follow-up was run against `https://milo-phonics.vercel.app/` in an isolated Chrome profile. No credentials, production account actions, Sentry events, or raw child-progress values were submitted.
 
 - **Release metadata:** `GET /release.json` returned `200` with `version: 1.0.0`, `commit: 4381d46b03c3fc6423b68cce65a919c716477489`, and `channel: local`. The response exposed `Cache-Control: no-store` and `Strict-Transport-Security`; the commit matches the serving deployment, but the channel mismatch is an E0.7 finding.
+- **Release-channel remediation:** the repository now gives explicit `RELEASE_CHANNEL` precedence and derives the fallback from Vercel `VERCEL_ENV`; a simulated production build for commit `9d4d05e` emitted `channel: production`. The live URL must be rechecked after the deployment of this fix.
 - **Reset:** after one explicit practice interaction produced two stars, the parent-gated reset returned the browser state to `0` stars, Level 1 progress `0/12`, and one unlocked level. This was performed only after explicit confirmation for the disposable local test state.
 - **Induced audio failure:** Chrome DevTools Network Conditions was set to offline. The `word.sun.mp3` media request failed with `net::ERR_INTERNET_DISCONNECTED`; `AudioService` recorded the failure as `NotSupportedError`, and the child flow advanced to the next card without awarding a star or becoming stuck. Network conditions were restored to “No throttling” afterward.
 - **First-visit trace:** a sanitized HAR was exported to `/Users/bhavna_siddharth/Downloads/milo-phonics.vercel.app.har` and retained outside the repository. The trace contained 52 requests, 3.3 MB transferred, 4.6 MB of resources, and timings of 231 ms DOMContentLoaded, 387 ms load, and 832 ms finish. The trace included a Clerk Development asset from `immense-mantis-4627.clerk.accounts.dev`; unrelated Chrome-extension warnings were excluded from application findings.
@@ -82,7 +83,7 @@ The follow-up retained a sanitized HAR from the browser trace. It is outside the
 1. Replace or explicitly configure the Clerk deployment key for a real production instance before enabling parent sync in a release environment. Track the vendor, DPA, retention, deletion, and parent-verification decisions under E1.6/E1.11.
 2. Keep the corrected parent-facing audio labels aligned with the runtime resolver. Do not add a remote fallback or describe Cloudinary as a browser dependency without an approved design and production test.
 3. Add an authenticated, repeatable release-check procedure that captures response headers and a network trace without recording credentials, tokens, nonce values, or child progress.
-4. Correct the deployment channel so the serving build reports `channel: production` (or document and approve an explicit alternative) and re-run the release metadata check.
+4. Redeploy the release-channel remediation and confirm the serving build reports `channel: production` (or document and approve an explicit alternative) with the release metadata check.
 5. Replace or explicitly configure the Clerk key for a real production instance before enabling parent sync; obtain the vendor, DPA, retention, deletion, transfer, and parent-verification decisions under E1.6/E1.11.
 
 ## Acceptance status

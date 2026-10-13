@@ -4,6 +4,14 @@ export interface ReleaseMetadata {
   channel: string;
 }
 
+export type ReleaseEnvironment = Readonly<Record<string, string | undefined>>;
+
+export function resolveReleaseChannel(environment: ReleaseEnvironment): string {
+  return environment.RELEASE_CHANNEL
+    ?? environment.VERCEL_ENV
+    ?? (environment.CI === 'true' ? 'ci' : 'local');
+}
+
 export function createReleaseMetadata(
   version: string,
   commit: string = 'local',

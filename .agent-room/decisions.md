@@ -332,3 +332,9 @@ Project-level server scrubbing, default scrubbers, IP-address storage prevention
 **Decision:** Run the production reset only in the disposable browser profile after explicit confirmation, use Chrome DevTools offline mode to induce the audio failure, export a sanitized network trace outside the repository, and record the serving-build metadata as observed. Keep E0.7 open while `/release.json` reports `channel: local` and the deployed Clerk instance reports Development mode.
 **Why:** The requested checks now provide evidence for reset behavior, offline audio recovery, first-visit request volume, headers, and release identity without submitting credentials or child data. A passing fault-injection flow does not authorize production vendor configuration, and a matching commit is not sufficient when the channel field is wrong.
 **Rejected:** Marking E0.7 complete from the UI pass alone, enabling Clerk production sync without vendor/privacy decisions, hiding the channel mismatch, or committing a HAR that may contain request metadata.
+
+### 2026-10-13 — Derive release channel from the hosting environment
+
+**Decision:** Keep `RELEASE_CHANNEL` as the explicit override, otherwise derive the release channel from Vercel’s `VERCEL_ENV`, with `ci` and `local` fallbacks. Add tests for production, preview, explicit override, CI, and local behavior.
+**Why:** The live deployment had the correct version and commit but emitted `channel: local` because no explicit channel was configured. Deriving the channel at build time removes that deployment drift without making a local build appear production-like.
+**Rejected:** Hardcoding `production`, removing the explicit override, or changing the already-serving deployment’s metadata without a new build and live verification.

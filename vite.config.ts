@@ -3,7 +3,7 @@ import { defineConfig } from 'vite';
 import type { Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
-import { createReleaseMetadata } from './src/release/releaseMetadata';
+import { createReleaseMetadata, resolveReleaseChannel } from './src/release/releaseMetadata';
 
 interface PackageManifest {
   version: string;
@@ -16,7 +16,7 @@ const packageManifest = JSON.parse(
 const releaseMetadata = createReleaseMetadata(
   packageManifest.version,
   process.env.RELEASE_COMMIT ?? process.env.VERCEL_GIT_COMMIT_SHA ?? process.env.GITHUB_SHA ?? 'local',
-  process.env.RELEASE_CHANNEL ?? (process.env.CI === 'true' ? 'ci' : 'local'),
+  resolveReleaseChannel(process.env),
 );
 
 const releaseMetadataPlugin: Plugin = {
