@@ -92,6 +92,7 @@ export interface LevelProgress {
 }
 
 export interface ChildProgress {
+  contentVersion: string;
   currentLevelId: number;
   unlockedLevels: number[];
   letterStars: Record<string, number>; // letterId -> 0..3 stars
@@ -130,4 +131,3 @@ export interface BlendingWord {
 }
 
 export type ScreenType = 'home' | 'lets-play' | 'letters' | 'letter-detail' | 'sound-safari' | 'story' | 'parent' | 'oxford-sounds' | 'sound-train' | 'bubble-pop' | 'feed-milo';
-

@@ -1,5 +1,6 @@
-import { ChildProgress, LevelProgress } from '../types/phonics';
 import { CURRICULUM_LEVELS } from '../data/curriculumContent';
+import { CURRENT_CONTENT_VERSION, migrateProgressContent } from './contentMigration';
+import type { ChildProgress, LevelProgress } from '../types/phonics';
 
 const STORAGE_KEY = 'playful_phonics_progress_v2';
 const LEGACY_STORAGE_KEY = 'playful_phonics_progress_v1';
@@ -18,6 +19,7 @@ function createInitialLevels(): Record<number, LevelProgress> {
 }
 
 const defaultProgress: ChildProgress = {
+  contentVersion: CURRENT_CONTENT_VERSION,
   currentLevelId: 1,
   unlockedLevels: [1],
   letterStars: {},
@@ -56,15 +58,17 @@ class ProgressService {
     try {
       const data = localStorage.getItem(STORAGE_KEY);
       if (data) {
-        const parsed = JSON.parse(data);
-        this.progress = this.sanitizeProgress(parsed);
+        const parsed = JSON.parse(data) as Partial<ChildProgress>;
+        const migration = migrateProgressContent(parsed);
+        this.progress = this.sanitizeProgress(migration.data);
+        if (migration.migrated) this.saveProgress();
         return;
       }
 
       // Check legacy key for migration
       const legacyData = localStorage.getItem(LEGACY_STORAGE_KEY);
       if (legacyData) {
-        const legacyParsed = JSON.parse(legacyData);
+        const legacyParsed = JSON.parse(legacyData) as Partial<ChildProgress>;
         this.progress = this.sanitizeProgress({
           ...defaultProgress,
           exploredLetters: legacyParsed.exploredLetters || {},
@@ -83,12 +87,18 @@ class ProgressService {
   private sanitizeProgress(raw: Partial<ChildProgress>): ChildProgress {
     const initialLevels = createInitialLevels();
     const rawLevels = raw.levels || {};
-    
-    // Ensure all 7 curriculum levels exist in map
-    CURRICULUM_LEVELS.forEach((lvl) => {
-      if (!rawLevels[lvl.id]) {
-        rawLevels[lvl.id] = initialLevels[lvl.id];
-      }
+    const levels = { ...initialLevels };
+    const validLevelIds = new Set(CURRICULUM_LEVELS.map((level) => level.id));
+
+    CURRICULUM_LEVELS.forEach((level) => {
+      const candidate = rawLevels[level.id];
+      if (!candidate) return;
+      levels[level.id] = {
+        levelId: level.id,
+        unlocked: candidate.unlocked === true,
+        starsEarned: Math.min(3 * level.letterIds.length, Math.max(0, candidate.starsEarned || 0)),
+        completed: candidate.completed === true,
+      };
     });
 
     const letterStars = raw.letterStars || {};
@@ -98,23 +108,24 @@ class ProgressService {
     });
 
     // Determine unlocked levels based on total stars
-    const unlockedLevels = new Set<number>(raw.unlockedLevels || [1]);
+    const unlockedLevels = new Set<number>(
+      (raw.unlockedLevels || [1]).filter((levelId) => validLevelIds.has(levelId)),
+    );
     unlockedLevels.add(1);
 
     CURRICULUM_LEVELS.forEach((lvl) => {
       if (totalStars >= lvl.requiredStarsToUnlock) {
         unlockedLevels.add(lvl.id);
-        if (rawLevels[lvl.id]) {
-          rawLevels[lvl.id].unlocked = true;
-        }
+        levels[lvl.id].unlocked = true;
       }
     });
 
     return {
+      contentVersion: raw.contentVersion || CURRENT_CONTENT_VERSION,
       currentLevelId: raw.currentLevelId && unlockedLevels.has(raw.currentLevelId) ? raw.currentLevelId : 1,
       unlockedLevels: Array.from(unlockedLevels).sort((a, b) => a - b),
       letterStars,
-      levels: rawLevels,
+      levels,
       totalStars,
       exploredLetters: raw.exploredLetters || {},
       exploredObjects: raw.exploredObjects || {},
@@ -268,44 +279,45 @@ class ProgressService {
    */
   public syncWithClerk(cloudData?: Partial<ChildProgress>): ChildProgress {
     if (!cloudData) return this.getProgress();
+    const incomingCloudData = migrateProgressContent(cloudData).data;
 
     // Merge letter stars (take highest star rating for each letter)
     const mergedLetterStars = { ...this.progress.letterStars };
-    if (cloudData.letterStars) {
-      Object.entries(cloudData.letterStars).forEach(([l, s]) => {
+    if (incomingCloudData.letterStars) {
+      Object.entries(incomingCloudData.letterStars).forEach(([l, s]) => {
         mergedLetterStars[l] = Math.max(mergedLetterStars[l] || 0, s);
       });
     }
 
     // Merge explored letters & objects (take highest tap count)
     const mergedExploredLetters = { ...this.progress.exploredLetters };
-    if (cloudData.exploredLetters) {
-      Object.entries(cloudData.exploredLetters).forEach(([l, c]) => {
+    if (incomingCloudData.exploredLetters) {
+      Object.entries(incomingCloudData.exploredLetters).forEach(([l, c]) => {
         mergedExploredLetters[l] = Math.max(mergedExploredLetters[l] || 0, c);
       });
     }
 
     const mergedExploredObjects = { ...this.progress.exploredObjects };
-    if (cloudData.exploredObjects) {
-      Object.entries(cloudData.exploredObjects).forEach(([o, c]) => {
+    if (incomingCloudData.exploredObjects) {
+      Object.entries(incomingCloudData.exploredObjects).forEach(([o, c]) => {
         mergedExploredObjects[o] = Math.max(mergedExploredObjects[o] || 0, c);
       });
     }
 
-    const mergedTaps = Math.max(this.progress.totalTaps, cloudData.totalTaps || 0);
+    const mergedTaps = Math.max(this.progress.totalTaps, incomingCloudData.totalTaps || 0);
     const mergedUnlockedLevels = Array.from(
-      new Set([...this.progress.unlockedLevels, ...(cloudData.unlockedLevels || [1])])
+      new Set([...this.progress.unlockedLevels, ...(incomingCloudData.unlockedLevels || [1])])
     ).sort((a, b) => a - b);
 
     this.progress = this.sanitizeProgress({
-      currentLevelId: Math.max(this.progress.currentLevelId, cloudData.currentLevelId || 1),
+      currentLevelId: Math.max(this.progress.currentLevelId, incomingCloudData.currentLevelId || 1),
       unlockedLevels: mergedUnlockedLevels,
       letterStars: mergedLetterStars,
       exploredLetters: mergedExploredLetters,
       exploredObjects: mergedExploredObjects,
       totalTaps: mergedTaps,
       lastPlayed: new Date().toISOString(),
-      lastLetter: this.progress.lastLetter || cloudData.lastLetter || 's',
+      lastLetter: this.progress.lastLetter || incomingCloudData.lastLetter || 's',
       cloudSyncedAt: new Date().toISOString(),
     });
 
@@ -315,6 +327,7 @@ class ProgressService {
 
   public exportForClerk(): Partial<ChildProgress> {
     return {
+      contentVersion: this.progress.contentVersion,
       currentLevelId: this.progress.currentLevelId,
       unlockedLevels: this.progress.unlockedLevels,
       letterStars: this.progress.letterStars,

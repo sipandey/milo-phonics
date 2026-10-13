@@ -82,6 +82,12 @@ Append a new entry every time:
 **Root cause:** A machine-readable manifest can look authoritative even when its entries are only repository facts.
 **Avoid:** Carry explicit item and manifest status, scope exclusions, and versioning in the schema; keep draft extensions visibly unshipped and retain independent content, rights, and specialist validation gates.
 
+### 2026-10-13 — Trusting persisted curriculum IDs across content releases
+
+**What happened:** Progress snapshots can outlive the catalogue that created them, especially when a new sound set is added or an old level is retired.
+**Root cause:** The storage key identified a data shape but not the content release, and sanitization accepted unknown level IDs as if they were still valid.
+**Avoid:** Persist an explicit content version, map stable fields through a named migration helper, filter unknown IDs against the active manifest, and test both upgrade and rollback mappings before changing content.
+
 ### 2026-09-16 — Coupling secondary story narration into the critical interaction path
 
 **What happened:** In Sound Train, after blending /s/ - /æ/ - /t/ $\to$ "Sat!", the UI remained locked for an extra 5 seconds while automatically reciting the example sentence ("The cat sat on the mat."). Toddlers became impatient and tapped frantically.

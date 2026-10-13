@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { CURRENT_CONTENT_VERSION, LEGACY_CONTENT_VERSION } from '../src/services/contentMigration';
 
 const CURRENT_STORAGE_KEY = 'playful_phonics_progress_v2';
 const LEGACY_STORAGE_KEY = 'playful_phonics_progress_v1';
@@ -58,6 +59,27 @@ describe('progress persistence and progression', () => {
     expect(progress.unlockedLevels).toEqual([1, 2]);
     expect(progress.currentLevelId).toBe(2);
     expect(progress.levels[2]?.unlocked).toBe(true);
+  });
+
+  it('upgrades an unversioned snapshot and drops unknown level IDs safely', async () => {
+    const storage = createMemoryStorage({
+      [CURRENT_STORAGE_KEY]: JSON.stringify({
+        contentVersion: LEGACY_CONTENT_VERSION,
+        currentLevelId: 99,
+        unlockedLevels: [1, 99],
+        letterStars: { s: 1 },
+      }),
+    });
+
+    const service = await loadProgressService(storage);
+    const progress = service.getProgress();
+    const migrated = JSON.parse(storage.getItem(CURRENT_STORAGE_KEY) ?? '{}') as Record<string, unknown>;
+
+    expect(progress.contentVersion).toBe(CURRENT_CONTENT_VERSION);
+    expect(progress.currentLevelId).toBe(1);
+    expect(progress.unlockedLevels).toEqual([1]);
+    expect(progress.letterStars).toEqual({ s: 1 });
+    expect(migrated.contentVersion).toBe(CURRENT_CONTENT_VERSION);
   });
 
   it('falls back to safe defaults when current storage contains corrupt JSON', async () => {

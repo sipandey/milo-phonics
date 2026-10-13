@@ -32,4 +32,4 @@ The UI and progress service import level and word lookups from this manifest. Le
 
 ## Change control
 
-Content changes should update `CURRICULUM_CONTENT_VERSION`, add or update a focused schema test, run `npm run verify:curriculum`, and retain the result with release evidence. A content owner must resolve or explicitly approve any validation finding before the manifest can move from `review` to `published`.
+Content changes should update `CURRICULUM_CONTENT_VERSION`, add or update a focused schema test, run `npm run verify:curriculum`, and retain the result with release evidence. Progress snapshots are migrated through `src/services/contentMigration.ts`; the migration must preserve stable progress and explicitly map any removed or reordered level IDs. A content owner must resolve or explicitly approve any validation finding before the manifest can move from `review` to `published`.
