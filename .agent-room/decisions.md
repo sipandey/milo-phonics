@@ -266,3 +266,9 @@ Project-level server scrubbing, default scrubbers, IP-address storage prevention
 **Decision:** Replace the Sentry-only parent notice surface with a typed `PARENT_PRIVACY_NOTICE` draft that covers the currently observed local storage, optional Clerk sync, Google Fonts, bundled audio, OpenAI/Cloudinary generation roles, hosting, Sentry diagnostics, retention, deletion, transfers, and contact gaps. Render it only inside the existing arithmetic-gated Parent Dashboard.
 **Why:** E1.2 needs a single plain-language record aligned with runtime facts, but the controller contact, vendor terms, deletion paths, and public publication location are not approved. A typed model plus a contract test prevents the dashboard and review document from silently omitting a data surface.
 **Rejected:** Publishing a legal-looking notice without a contact, claiming compliance or zero data, describing Cloudinary as a browser fallback, or treating the arithmetic gate as proof of parental responsibility or legal consent.
+
+### 2026-10-13 — Separate observed data flows from unverified vendor evidence
+
+**Decision:** Use `docs/data-flow-inventory.md` as the E1.3 technical source of truth. Record authored runtime/build destinations and observed fields, but leave controller/processor roles, retention, deletion, subprocessors, transfers, hosting logs, and security fields explicitly unknown until an owner attaches evidence.
+**Why:** The E0.7 source/network review identified the browser destinations but could not provide packet-level tracing, credentialed Clerk sync, vendor contract terms, or host-log settings. The inventory must not turn those gaps into privacy claims.
+**Rejected:** Treating a browser SDK import as proof of vendor terms, treating absence of authored analytics as proof of no deployment data collection, or marking E1.3 complete from source inspection alone.
