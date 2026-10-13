@@ -314,3 +314,9 @@ Project-level server scrubbing, default scrubbers, IP-address storage prevention
 **Decision:** Add `contentVersion` to local progress and Clerk export/sync, treat missing versions as `legacy-unversioned`, and map only stable progress fields through `migrateProgressContent`. Sanitization filters unknown level IDs while preserving known stars and exploration history; the helper accepts an explicit target for rollback tests.
 **Why:** A versioned curriculum without a progress migration boundary can strand a child when levels are added, reordered, or retired. Stable progress must survive content changes, but future or removed curriculum IDs must not be trusted blindly.
 **Rejected:** Assuming the storage-key suffix is the curriculum version, silently resetting progress on content updates, copying unknown snapshot fields into rollback targets, or treating migration as approval of the new curriculum.
+
+### 2026-10-13 — Make media production evidence a release checklist
+
+**Decision:** Use `docs/content-media-production-checklist.md` for every new or changed curriculum audio/video asset. Require rights-register linkage, source/generation records, human pronunciation review, loudness/silence checks, bundle/offline/runtime checks, manifest and content-version updates, and a rollback record.
+**Why:** Generation scripts and local files prove only that an asset can be produced and loaded. They do not prove rights, pronunciation acceptance, child-safe content, acceptable media quality, offline behavior, or release recoverability.
+**Rejected:** Treating a generated manifest, public URL, local playback, or vendor metadata as the complete release record; using a technical pass to imply rights or educational approval; and publishing media without a versioned rollback target.

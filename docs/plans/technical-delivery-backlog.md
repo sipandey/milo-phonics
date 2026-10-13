@@ -10,7 +10,7 @@
 
 ## Current execution slice
 
-**Completed:** E0.1 — reproducible Node/npm setup; E0.2 — automated quality gates; E0.3 — focused service tests; E0.4 — current product/architecture record; E2.1 — versioned curriculum content schema and manifest adapter.
+**Completed:** E0.1 — reproducible Node/npm setup; E0.2 — automated quality gates; E0.3 — focused service tests; E0.4 — current product/architecture record; E2.1 — versioned curriculum content schema and manifest adapter; E2.4 — content-version progress migration; E2.5 — media production checklist.
 
 **Active item:** E2.1/E2.2 — curriculum schema and validation remain in review while content, rights, and specialist decisions are outstanding.
 
@@ -98,6 +98,8 @@ flowchart LR
 **E2.1 evidence:** The [curriculum content schema](../curriculum-content-schema.md) and `src/data/curriculumContent.ts` provide a versioned, review-state manifest with typed phoneme, grapheme, word, digraph, reader-page, review-rule, audio, prerequisite, scope, and status fields. The UI and progress service consume manifest-backed level/word lookups. Draft digraph records and empty reader-page records make future content shapes explicit without presenting them as released content.
 
 **E2.4 evidence:** The [content migration design](2026-10-13-e2-4-content-migration.md) and `src/services/contentMigration.ts` add explicit progress upgrade/rollback mapping around `contentVersion`. Local snapshots and incoming Clerk payloads preserve stable progress fields, discard unknown level IDs during sanitisation, and retain the current manifest version in local storage and export. Migration does not change the unresolved E2.2 content findings.
+
+**E2.5 evidence:** The [content media production checklist](../content-media-production-checklist.md) defines the required rights/provenance, pronunciation review, loudness and silence processing, bundle-size, local/offline runtime, manifest, content-version, and rollback evidence for new audio/video. It is a release-control checklist; it does not clear the unresolved asset-register or specialist-review findings.
 | E1.2 | As a parent, I need a plain privacy notice so I understand what is stored locally, what leaves the device, and how to ask for deletion. | P0 | 3 | Notice covers LocalStorage and other storage/access technology, Clerk, Google Fonts, Cloudinary, hosting, telemetry, payments, support, retention, international transfers, and parent contact; it is reachable through the parent area and public site. |
 | E1.3 | As a privacy owner, I need a data-flow inventory so the Data Safety declaration and privacy notice stay accurate. | P0 | 3 | Inventory lists fields, purpose, controller/processor, subprocessors, storage location, transfer mechanism, security, retention, and deletion path for every SDK/service; it is reconciled with E0.7 before each new vendor. |
 | E1.4 | As a child, I need all account, consent, support, and payment actions protected by a robust parent gate. | P0 | 5 | The child experience works with no account; an adult gate protects cloud sync, external links, purchase, account deletion, and consent changes; gate has rate limiting and a non-predictable challenge. The gate is not represented as parental-responsibility verification or a complete legal-consent mechanism. |

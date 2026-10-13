@@ -88,6 +88,12 @@ Append a new entry every time:
 **Root cause:** The storage key identified a data shape but not the content release, and sanitization accepted unknown level IDs as if they were still valid.
 **Avoid:** Persist an explicit content version, map stable fields through a named migration helper, filter unknown IDs against the active manifest, and test both upgrade and rollback mappings before changing content.
 
+### 2026-10-13 — Treating generated media as production-ready evidence
+
+**What happened:** The repository has generation, trimming, normalization, local bundling, and optional CDN publishing scripts, but those mechanics do not capture rights, human review, offline behavior, bundle impact, or rollback ownership.
+**Root cause:** A successful generation or upload was treated as the finish line for a child-facing media release.
+**Avoid:** Complete the media checklist and attach the rights, reviewer, quality, runtime, size, version, and rollback evidence before promoting an asset; keep unresolved gates visible.
+
 ### 2026-09-16 — Coupling secondary story narration into the critical interaction path
 
 **What happened:** In Sound Train, after blending /s/ - /æ/ - /t/ $\to$ "Sat!", the UI remained locked for an extra 5 seconds while automatically reciting the example sentence ("The cat sat on the mat."). Toddlers became impatient and tapped frantically.
