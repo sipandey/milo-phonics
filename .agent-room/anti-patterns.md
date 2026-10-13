@@ -135,3 +135,9 @@ Append a new entry every time:
 **What happened:** Fresh repository initialization or tool switches can silently inherit incorrect global git author credentials.
 **Root cause:** Relying on global git configuration rather than repo-level explicit identity.
 **Avoid:** Always run `git config user.name "Siddharth Pandey"` and `git config user.email "siddharth.pandey06@gmail.com"` immediately before every commit and verify with `git log -1 --format='%an <%ae>'`.
+
+### 2026-10-13 — Treating serving identity or fault injection as complete release approval
+
+**What happened:** The production endpoint served the expected version and commit, and the app recovered from an induced offline audio request. The same endpoint still reported `channel: local`, and Clerk still loaded Development-mode assets.
+**Root cause:** Release checks can prove a build identity and a client recovery path without proving that deployment configuration, vendor environment, retention, or privacy acceptance is correct.
+**Avoid:** Record the exact metadata and fault-injection evidence, then keep the release item open until the channel and vendor decisions are explicitly resolved. Keep sanitized traces outside the repository and never treat browser-extension diagnostics as application evidence.
