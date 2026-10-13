@@ -260,3 +260,9 @@ Project-level server scrubbing, default scrubbers, IP-address storage prevention
 **Decision:** Add `npm run sbom:spdx` as the reproducible SPDX 2.3 generation command and record its 410-package licence snapshot in `docs/third-party-notices.md`. Retain the generated JSON and full notice text with release evidence; do not treat the checked-in summary as a complete legal notice bundle.
 **Why:** The lockfile contains exact versions, integrity values, dependency relationships, and declared licences. The snapshot also exposes FSL-1.1-MIT, CC-BY-4.0, and BlueOak-1.0.0 entries that require explicit review rather than an unsafe MIT-only summary.
 **Rejected:** Installing an unpinned licence tool, relying on direct dependencies only, normalizing non-MIT identifiers to MIT, or claiming E1.1 complete before the generated release artifact and notice text are retained.
+
+### 2026-10-13 — Keep E1.2 as a typed, parent-gated draft
+
+**Decision:** Replace the Sentry-only parent notice surface with a typed `PARENT_PRIVACY_NOTICE` draft that covers the currently observed local storage, optional Clerk sync, Google Fonts, bundled audio, OpenAI/Cloudinary generation roles, hosting, Sentry diagnostics, retention, deletion, transfers, and contact gaps. Render it only inside the existing arithmetic-gated Parent Dashboard.
+**Why:** E1.2 needs a single plain-language record aligned with runtime facts, but the controller contact, vendor terms, deletion paths, and public publication location are not approved. A typed model plus a contract test prevents the dashboard and review document from silently omitting a data surface.
+**Rejected:** Publishing a legal-looking notice without a contact, claiming compliance or zero data, describing Cloudinary as a browser fallback, or treating the arithmetic gate as proof of parental responsibility or legal consent.

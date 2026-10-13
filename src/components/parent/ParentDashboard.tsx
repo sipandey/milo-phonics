@@ -6,7 +6,7 @@ import { ParentClerkSync } from './ParentClerkSync';
 import { AUDIO_RUNTIME_STATUS } from './audioRuntimeStatus';
 import { initializeSentry } from '../../observability/sentry';
 import { getSentryConsent, setSentryConsent } from '../../observability/sentryConsent';
-import { SENTRY_PARENT_PRIVACY_NOTICE } from '../../observability/sentryNotice';
+import { PARENT_PRIVACY_NOTICE } from '../../observability/parentPrivacyNotice';
 import { X, Volume2, VolumeX, RotateCcw, Sparkles, Star, Award, BookOpen } from 'lucide-react';
 
 interface ParentDashboardProps {
@@ -105,15 +105,21 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
         <details className="mb-6 rounded-3xl border-2 border-slate-200 bg-slate-50/90 p-4 shadow-sm">
           <summary className="cursor-pointer list-none text-sm font-black text-slate-900">
             <span className="mr-2" aria-hidden="true">🔒</span>
-            {SENTRY_PARENT_PRIVACY_NOTICE.title}
+            {PARENT_PRIVACY_NOTICE.title}
             <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-black uppercase text-amber-800">
               Draft — review pending
             </span>
           </summary>
-          <div className="mt-3 space-y-2 text-xs leading-relaxed text-slate-700" role="note">
-            {SENTRY_PARENT_PRIVACY_NOTICE.paragraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
+          <div className="mt-3 space-y-4 text-xs leading-relaxed text-slate-700" role="note">
+            {PARENT_PRIVACY_NOTICE.sections.map((section) => (
+              <section key={section.heading}>
+                <h3 className="font-black text-slate-900">{section.heading}</h3>
+                {section.paragraphs.map((paragraph) => (
+                  <p className="mt-1" key={paragraph}>{paragraph}</p>
+                ))}
+              </section>
             ))}
+            <p className="border-t border-slate-200 pt-3 font-semibold text-slate-800">{PARENT_PRIVACY_NOTICE.contact}</p>
           </div>
         </details>
 

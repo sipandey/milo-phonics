@@ -22,7 +22,7 @@ The Sentry project security settings have also been configured for new events wi
 
 The consent control is a technical product safeguard, not legal sign-off. Do not set `VITE_SENTRY_DSN` in Production until parent consent, event scrubbing/data minimization, retention, privacy notice, and the Sentry vendor data-flow review are approved. Preview or local verification must use synthetic interactions only.
 
-The arithmetic-gated Parent Dashboard displays the same information as a clearly marked draft notice in `docs/privacy-notice-draft.md`. It is not an approved production privacy policy and still requires an owner-supplied contact and privacy/legal review.
+The arithmetic-gated Parent Dashboard displays the broader, clearly marked draft notice from `src/observability/parentPrivacyNotice.ts`, documented in `docs/privacy-notice-draft.md`. The Sentry details are one section of that notice. It is not an approved production privacy policy and still requires an owner-supplied contact and privacy/legal review.
 
 ## Source maps and releases
 
