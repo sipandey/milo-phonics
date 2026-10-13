@@ -206,6 +206,12 @@ npm run agent-room:metrics
 
 ---
 
+## 🚢 Releases and Rollback
+
+The versioned release process, serving-build identity check, changelog, and five-minute rollback procedure are documented in [`docs/releases-and-rollback.md`](docs/releases-and-rollback.md). A Vite build emits `dist/release.json`; E0.5 establishes this process but does not authorize a production tag while the audit and security gates remain open.
+
+---
+
 ## 🗺️ Roadmap & Status
 
 * [x] **Phase 1: Core Foundation & MVP**

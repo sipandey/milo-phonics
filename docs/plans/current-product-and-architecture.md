@@ -85,7 +85,7 @@ Use this description instead:
 | E0.2 automated lint, test, build, and CI gates | Complete |
 | E0.3 focused progress, audio, and parent-gate tests | Complete |
 | E0.4 current product/architecture record | Complete |
-| E0.5 versioned releases and rollback instructions | Next |
+| E0.5 versioned releases and rollback instructions | Complete; production tag still gated |
 | E0.6 privacy-preserving error reporting | Planned |
 | E0.7 production network/dependency verification | Planned |
 | E1 rights, privacy, claims, and parent-safety foundation | Planned; P0 release hold |

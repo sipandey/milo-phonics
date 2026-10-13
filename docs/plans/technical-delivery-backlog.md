@@ -10,13 +10,13 @@
 
 ## Current execution slice
 
-**Completed:** E0.1 — reproducible Node/npm setup; E0.2 — automated quality gates; E0.3 — focused service tests.
+**Completed:** E0.1 — reproducible Node/npm setup; E0.2 — automated quality gates; E0.3 — focused service tests; E0.4 — current product/architecture record.
 
-**Active item:** E0.4 — consolidate the current product and architecture record.
+**Active item:** E0.5 — versioned releases and rollback instructions.
 
-**Status:** Complete (13 October 2026). One current product/architecture record now describes implemented runtime behavior, local-first audio resolution, data-flow caveats, claims holds, and roadmap status. README and audio-generation guidance agree with the resolver, while older roadmaps are explicitly strategic, aspirational, or historical. The approved design and implementation boundary are recorded in [the E0.4 design](2026-10-13-e0-4-current-product-architecture-design.md).
+**Status:** Complete (13 October 2026). Builds now emit and verify `release.json` with app version, source commit, and channel metadata. Changelog and five-minute rollback instructions are documented; runtime audit is clean, while six high-severity development-tree findings and the P0 claims/release holds keep production tagging gated. The approved design and implementation boundary are recorded in [the E0.5 design](2026-10-13-e0-5-release-versioning-rollback-design.md).
 
-**Next item:** E0.5 — versioned releases and rollback instructions.
+**Next item:** E0.6 — privacy-preserving structured client error reporting.
 
 ## Audit integration and release holds
 

@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "verify:release": "tsx scripts/verify-release.ts",
     "lint": "eslint src vite.config.ts vitest.config.ts",
     "preview": "vite preview",
     "test": "vitest run",

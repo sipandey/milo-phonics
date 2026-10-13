@@ -23,7 +23,7 @@ Make every future build identify its application version and source commit, prov
 
 ## Release readiness boundary
 
-E0.5 establishes the process and artifact, not a release. The current repository remains blocked from broad production/marketing release by the audit’s rights, privacy, educational, claims, and AI-audio disclosure findings, plus any unresolved high/critical dependency findings. A future release owner must re-run those checks at tag time.
+E0.5 establishes the process and artifact, not a release. The current repository remains blocked from broad production/marketing release by the audit’s rights, privacy, educational, claims, and AI-audio disclosure findings, plus the full-audit development-tree findings recorded in the runbook. A future release owner must re-run those checks at tag time.
 
 ## Non-goals
 
