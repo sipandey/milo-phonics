@@ -96,7 +96,7 @@ Use this description instead:
 | E0.5 versioned releases and rollback instructions | Complete; production tag still gated |
 | E0.6 privacy-preserving error reporting | In progress; consent gate and scrubbers verified, vendor/privacy acceptance gated |
 | E0.7 production network/dependency verification | In progress; safe flow review recorded, full acceptance open |
-| E1 rights, privacy, claims, and parent-safety foundation | Planned; P0 release hold |
+| E1 rights, privacy, claims, and parent-safety foundation | In progress; E1.1 register created, rights evidence missing; P0 release hold |
 | E2 curriculum specification and validation | Planned; depends on E1.1 and E0.3 |
 
 For ordered acceptance criteria, use the [technical delivery backlog](technical-delivery-backlog.md). For pricing, research, PWA, and Android hypotheses, use the [strategic product roadmap](product-roadmap-and-android-strategy.md), not this status table.
@@ -113,6 +113,6 @@ For ordered acceptance criteria, use the [technical delivery backlog](technical-
 | `README.md` | User-facing setup and concise verified capability summary |
 | `docs/audio-generation.md` | Developer pipeline guide; must agree with this audio section |
 
-The [E0.7 production network review](2026-10-13-e0-7-production-network-review.md) records the current deployment observations. The deployed parent sign-in modal reports Clerk Development mode and remains a release follow-up. The parent audio panel was corrected in `1661e42` to describe the verified bundled-local runtime; Cloudinary metadata is not an approved browser dependency or claim.
+The [E0.7 production network review](2026-10-13-e0-7-production-network-review.md) records the current deployment observations. The deployed parent sign-in modal reports Clerk Development mode and remains a release follow-up. The parent audio panel was corrected in `1661e42` to describe the verified bundled-local runtime; Cloudinary metadata is not an approved browser dependency or claim. The [asset rights register](../asset-rights-register.md) is the current inventory for E1.1; its rights evidence is not yet complete.
 
 Last reviewed against the code, deployment, and audit: 13 October 2026.

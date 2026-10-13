@@ -21,6 +21,12 @@ Append a new entry every time:
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-10-13 — Treating generated assets and vendor metadata as rights evidence
+
+**What happened:** The repository contained generated audio, committed Milo videos, source-dataset/Oxford wording, and Cloudinary/OpenAI metadata, but no retained owner, licence, contract, territory, term, or modification records. The same audit found two video paths referenced by runtime code but absent from `public/`.
+**Root cause:** File presence, a generation manifest, or a vendor URL was treated as proof of commercial clearance and runtime completeness.
+**Avoid:** Maintain a per-family rights evidence ledger with named owners and retained proof; keep unresolved rows blocked, and reconcile every referenced media path against the shipped asset inventory before release.
+
 ### 2026-10-13 — Assuming every semantic word ID has a one-letter prefix
 
 **What happened:** The audio fallback for an unlisted ID such as `word.unlisted` produced `nlisted`, silently dropping the first character.
