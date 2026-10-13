@@ -14,9 +14,9 @@
 
 **Active item:** E0.6 — privacy-preserving structured client error reporting.
 
-**Status:** In progress (13 October 2026). The `milo-phonics` Sentry project, opt-in React error/tracing SDK, release metadata, and conditional source-map upload path are implemented and verified end-to-end in development. The E0.6 acceptance criteria remain open: parent consent, event scrubbing/data minimization, retention, vendor data-flow review, and release-version dashboard checks must be completed before a production DSN is enabled. The approved implementation boundary is recorded in [the Sentry design](2026-10-13-sentry-react-instrumentation-design.md).
+**Status:** In progress (13 October 2026). The `milo-phonics` Sentry project, default-off parent consent control, opt-in React error/tracing SDK, release metadata, event/span scrubbers, and conditional source-map upload path are implemented and tested. The E0.6 acceptance criteria remain open: retention, privacy notice, vendor data-flow review, and release-version dashboard checks must be completed before a production DSN is enabled. The approved implementation boundary is recorded in [the Sentry design](2026-10-13-sentry-react-instrumentation-design.md).
 
-**Next acceptance step:** Define and implement the parent-consent and event-scrubbing contract, then verify it against the Sentry data-flow and retention configuration.
+**Next acceptance step:** Complete the Sentry vendor/data-flow and retention review, then verify a consented production-like event against the release-version dashboard without child data.
 
 ## Audit integration and release holds
 

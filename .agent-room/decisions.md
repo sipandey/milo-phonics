@@ -16,6 +16,14 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-10-13 — Gate Sentry errors and traces behind parent consent and scrub events
+
+**Decision:** Keep Sentry default-off until a parent enables Optional Technical Diagnostics behind the arithmetic gate. Store a versioned local decision, fail closed when storage is unavailable, drop future events after revocation, and scrub user/account data, request URLs, breadcrumbs, contexts, tags, extras, transaction names, span attributes, and free-text exception messages. Retain only minimal release/environment metadata and sanitized stack structure; keep replay, logging, and metrics disabled.
+**Why:** The app is likely to be used by children and has no prior consent or telemetry policy. A parent-controlled, reversible opt-in is the smallest repository-native boundary while preserving useful synthetic crash diagnostics. Sentry’s standard ingestion/network metadata and retention still require vendor/privacy review.
+**Rejected:** Enabling Sentry whenever a DSN exists, using a deployment-only flag as a substitute for parent consent, transmitting raw exception messages or browser spans, and claiming E0.6 complete before retention/data-flow review.
+
+Project-level server scrubbing, default scrubbers, IP-address storage prevention, and additional `user`/`geo` sensitive-field matches were enabled for new events. A consented synthetic event confirmed message/URL/content scrubbing and a readable stack, but Sentry still exposed an inferred geography context; that unresolved enrichment is retained as a vendor/privacy review item.
+
 ### 2026-10-13 — Add an opt-in, privacy-gated Sentry foundation
 
 **Decision:** Provision the `milo-phonics` Sentry project, initialize `@sentry/react` only when `VITE_SENTRY_DSN` is configured, enable browser errors and 10% tracing by default, and activate Vite source-map upload only with the secret `SENTRY_AUTH_TOKEN`. Keep Session Replay, client logging, and application metrics disabled.

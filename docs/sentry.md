@@ -4,7 +4,7 @@ The Sentry project for this application is `milo-phonics` in the `personal-df4` 
 
 ## Runtime monitoring
 
-The browser initializes `@sentry/react` before the React root mounts. It captures unhandled browser errors and tracing transactions when `VITE_SENTRY_DSN` is set. Tracing defaults to a 10% sample rate and can be changed with `VITE_SENTRY_TRACES_SAMPLE_RATE` between `0` and `1`.
+The browser initializes `@sentry/react` before the React root mounts only when both `VITE_SENTRY_DSN` is set and a parent has enabled Optional Technical Diagnostics in the arithmetic-gated Parent Dashboard. It captures minimized browser errors and tracing transactions after consent. Tracing defaults to a 10% sample rate and can be changed with `VITE_SENTRY_TRACES_SAMPLE_RATE` between `0` and `1`.
 
 Set these Vercel environment variables for Preview and Production:
 
@@ -16,7 +16,11 @@ VITE_SENTRY_TRACES_SAMPLE_RATE=0.1
 
 The DSN is intended for browser use, but keep it in deployment configuration rather than committing a project-specific value. Session Replay, client logging, and application metrics are intentionally disabled because this is a child-facing product; enabling them needs an explicit privacy/data-minimization decision.
 
-This repository currently provides the technical foundation, not the completed E0.6 privacy acceptance. Do not set `VITE_SENTRY_DSN` in Production until parent consent, event scrubbing/data minimization, retention, and the Sentry vendor data-flow review are approved. Preview or local verification must use synthetic interactions only.
+Events are scrubbed before sending: account/user data, request URLs, breadcrumbs, contexts, tags, extras, transaction names, span attributes, and free-text exception messages are removed. Only minimal release/environment metadata and sanitized exception stack structure are retained. Consent is stored as a versioned local decision, defaults to off, and can be revoked from the Parent Dashboard; revocation drops future error events and trace sampling. Standard network metadata that Sentry may infer at ingestion remains subject to the vendor retention and data-flow review.
+
+The Sentry project security settings have also been configured for new events with server-side data scrubbing, default scrubbers, IP-address storage prevention, and additional sensitive-field matches for `user` and `geo`. A consented synthetic browser event was verified in the project: the error message, request URL, tags beyond release/environment, and content-bearing fields were absent while the stack frame remained readable. Sentry still displayed an inferred geography context on that event, so ingestion enrichment and retention remain open vendor/privacy review items rather than an app-level privacy claim.
+
+The consent control is a technical product safeguard, not legal sign-off. Do not set `VITE_SENTRY_DSN` in Production until parent consent, event scrubbing/data minimization, retention, privacy notice, and the Sentry vendor data-flow review are approved. Preview or local verification must use synthetic interactions only.
 
 ## Source maps and releases
 

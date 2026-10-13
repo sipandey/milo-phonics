@@ -24,3 +24,15 @@
 
 - Session replay, logging, metrics, uptime monitors, alerts, or release automation beyond source-map upload configuration.
 - Deploying to Vercel or changing Vercel environment variables through an external dashboard.
+
+## Approved E0.6 privacy follow-up
+
+The first implementation exposed the technical Sentry path but correctly left production enablement gated. The approved follow-up adds a default-off, parent-controlled consent boundary:
+
+- Store a versioned local consent decision; no decision means no Sentry client initialization.
+- Expose the decision only in the existing arithmetic-gated Parent Dashboard, with a reversible toggle.
+- Keep Sentry errors and tracing disabled until consent is granted. Revocation prevents future error and trace events from being sent.
+- Rely on the SDK's default browser PII behavior, keep the app from setting a user scope, remove breadcrumbs, user, request, contexts, tags, extras, transaction data, and free-text exception messages before sending, and retain only release/environment and a sanitized exception stack where applicable. The installed SDK version does not expose a `sendDefaultPii` browser option.
+- Keep replay, logging, and application metrics disabled. Parent consent is a product control, not legal sign-off; vendor retention, connection metadata, privacy notice, and data-flow review remain release gates.
+
+Tests cover consent storage defaults and failure behavior plus the event scrubber’s removal of identifiers and content-bearing fields.

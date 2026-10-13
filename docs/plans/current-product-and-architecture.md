@@ -43,9 +43,9 @@ Bundled files in public/audio/ and browser storage
 
 ### Observability
 
-The optional Sentry project is `milo-phonics` in the `personal-df4` organization. `src/observability/sentry.ts` initializes `@sentry/react` before the React root only when `VITE_SENTRY_DSN` is present. The current integration captures browser errors and sampled tracing, defaults to a 0.1 trace rate, and carries the build release into Sentry. `@sentry/vite-plugin` uploads hidden source maps only for builds with the secret `SENTRY_AUTH_TOKEN`.
+The optional Sentry project is `milo-phonics` in the `personal-df4` organization. `src/observability/sentry.ts` initializes `@sentry/react` before the React root only when `VITE_SENTRY_DSN` is present and the parent has enabled Optional Technical Diagnostics in the arithmetic-gated Parent Dashboard. The current integration captures consent-gated browser errors and sampled tracing, defaults to a 0.1 trace rate, and carries the build release into Sentry. `@sentry/vite-plugin` uploads hidden source maps only for builds with the secret `SENTRY_AUTH_TOKEN`.
 
-Session Replay, client logging, and application metrics are disabled. The SDK foundation is not the E0.6 acceptance claim: production enablement remains gated on parent consent, event scrubbing/data minimization, retention, and vendor data-flow review. Do not set a production DSN until those controls are approved.
+Session Replay, client logging, and application metrics are disabled. Event and span scrubbers remove account/user data, request URLs, breadcrumbs, contexts, tags, extras, transaction names, span attributes, and free-text exception messages. The Sentry project also has server-side scrubbing, default scrubbers, IP-address storage prevention, and additional `user`/`geo` sensitive-field matches enabled for new events. A synthetic event retained a Sentry-inferred geography context, so consent and scrubbing are technical controls, not the E0.6 acceptance claim: production enablement remains gated on retention, privacy notice, and vendor data-flow review. Do not set a production DSN until those controls are approved.
 
 ### Progress
 
@@ -94,7 +94,7 @@ Use this description instead:
 | E0.3 focused progress, audio, and parent-gate tests | Complete |
 | E0.4 current product/architecture record | Complete |
 | E0.5 versioned releases and rollback instructions | Complete; production tag still gated |
-| E0.6 privacy-preserving error reporting | In progress; Sentry foundation verified, privacy acceptance gated |
+| E0.6 privacy-preserving error reporting | In progress; consent gate and scrubbers verified, vendor/privacy acceptance gated |
 | E0.7 production network/dependency verification | Planned |
 | E1 rights, privacy, claims, and parent-safety foundation | Planned; P0 release hold |
 | E2 curriculum specification and validation | Planned; depends on E1.1 and E0.3 |

@@ -3,6 +3,8 @@ import { progressService } from '../../services/progressService';
 import { audioService } from '../../services/audioService';
 import { CURRICULUM_LEVELS } from '../../data/curriculumData';
 import { ParentClerkSync } from './ParentClerkSync';
+import { initializeSentry } from '../../observability/sentry';
+import { getSentryConsent, setSentryConsent } from '../../observability/sentryConsent';
 import { X, Volume2, VolumeX, RotateCcw, Sparkles, Star, Award, BookOpen } from 'lucide-react';
 
 interface ParentDashboardProps {
@@ -12,6 +14,7 @@ interface ParentDashboardProps {
 export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => {
   const [progress, setProgress] = useState(progressService.getProgress());
   const [isMuted, setIsMuted] = useState(audioService.getIsMuted());
+  const [isSentryConsentGranted, setIsSentryConsentGranted] = useState(getSentryConsent());
 
   useEffect(() => {
     const unsubscribe = progressService.subscribe((updated) => {
@@ -53,7 +56,51 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
           <ParentClerkSync />
         </div>
 
-        {/* Section 2: Toddler Focus Mode (Single-Action Pacing) */}
+        {/* Section 2: Consent-aware technical diagnostics */}
+        <div className="mb-6 p-4 sm:p-5 rounded-3xl bg-sky-50/90 border-2 border-sky-200 shadow-sm">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <span className="text-3xl">🛠️</span>
+              <div>
+                <h3 className="text-base font-black text-sky-950">Optional Technical Diagnostics</h3>
+                <p className="text-xs text-sky-800/90 mt-1 leading-relaxed">
+                  Share minimized browser error reports to help repair broken sessions. Reports exclude child progress,
+                  audio, free text, account identifiers, and breadcrumbs. This choice is optional and can be changed here.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              role="switch"
+              aria-label="Share optional technical diagnostics"
+              aria-checked={isSentryConsentGranted}
+              onClick={() => {
+                const nextConsent = !isSentryConsentGranted;
+                const didPersist = setSentryConsent(nextConsent);
+                setIsSentryConsentGranted(didPersist ? nextConsent : false);
+                if (didPersist && nextConsent) {
+                  initializeSentry();
+                }
+                audioService.playPop();
+              }}
+              className={`w-14 h-8 rounded-full p-1 transition-colors cursor-pointer shrink-0 ${
+                isSentryConsentGranted ? 'bg-sky-500' : 'bg-gray-300'
+              }`}
+            >
+              <div
+                className={`w-6 h-6 rounded-full bg-white shadow-md transform transition-transform duration-200 ${
+                  isSentryConsentGranted ? 'translate-x-6' : 'translate-x-0'
+                }`}
+              />
+            </button>
+          </div>
+          <p className="text-[11px] text-sky-700 mt-3">
+            {isSentryConsentGranted ? 'Technical diagnostics are enabled on this device.' : 'Technical diagnostics are off by default.'}
+          </p>
+        </div>
+
+        {/* Section 3: Toddler Focus Mode (Single-Action Pacing) */}
         <div className="mb-6 p-4 sm:p-5 rounded-3xl bg-amber-50/90 border-2 border-amber-300 shadow-sm">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-start gap-3">
