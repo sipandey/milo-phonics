@@ -58,6 +58,12 @@ Append a new entry every time:
 **Root cause:** OpenAI TTS endpoints append 1.5s to 3.5s of digital silence after spoken words. Awaiting the HTML `<audio>` `ended` event forced the app to wait through dead silence before initiating the next step or releasing UI locks (`cvc.sat.mp3` was 3.89s with only 0.5s of speech).
 **Avoid:** Always run automated silence removal via `ffmpeg -af silenceremove=stop_periods=-1:stop_duration=0.1:stop_threshold=-45dB` on all TTS audio assets before bundling or uploading to CDN.
 
+### 2026-10-13 — Treating partial production exploration as a complete network check
+
+**What happened:** The production app could be exercised in an authenticated browser, but reset, induced audio failure, complete resource tracing, and release metadata could not all be completed in the same environment.
+**Root cause:** A safe UI smoke path does not provide packet-level dependency evidence, and cleanup/fault injection can be destructive or require browser controls that are unavailable in a constrained release-check session.
+**Avoid:** Keep E0.7 open until the missing evidence is explicitly captured. Record the limitation and use an isolated profile or a dedicated test deployment for destructive and failure-path checks.
+
 ### 2026-09-16 — Coupling secondary story narration into the critical interaction path
 
 **What happened:** In Sound Train, after blending /s/ - /æ/ - /t/ $\to$ "Sat!", the UI remained locked for an extra 5 seconds while automatically reciting the example sentence ("The cat sat on the mat."). Toddlers became impatient and tapped frantically.

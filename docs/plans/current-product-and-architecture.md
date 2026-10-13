@@ -95,7 +95,7 @@ Use this description instead:
 | E0.4 current product/architecture record | Complete |
 | E0.5 versioned releases and rollback instructions | Complete; production tag still gated |
 | E0.6 privacy-preserving error reporting | In progress; consent gate and scrubbers verified, vendor/privacy acceptance gated |
-| E0.7 production network/dependency verification | Planned |
+| E0.7 production network/dependency verification | In progress; safe flow review recorded, full acceptance open |
 | E1 rights, privacy, claims, and parent-safety foundation | Planned; P0 release hold |
 | E2 curriculum specification and validation | Planned; depends on E1.1 and E0.3 |
 
@@ -113,4 +113,6 @@ For ordered acceptance criteria, use the [technical delivery backlog](technical-
 | `README.md` | User-facing setup and concise verified capability summary |
 | `docs/audio-generation.md` | Developer pipeline guide; must agree with this audio section |
 
-Last reviewed against the code and audit: 13 October 2026.
+The [E0.7 production network review](2026-10-13-e0-7-production-network-review.md) records the current deployment observations. In particular, the deployed parent sign-in modal reports Clerk Development mode, while the runtime audio resolver selects bundled local assets despite dashboard wording that presents Cloudinary as active. These are release follow-ups, not approved production dependencies or claims.
+
+Last reviewed against the code, deployment, and audit: 13 October 2026.

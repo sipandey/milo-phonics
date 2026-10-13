@@ -12,11 +12,11 @@
 
 **Completed:** E0.1 — reproducible Node/npm setup; E0.2 — automated quality gates; E0.3 — focused service tests; E0.4 — current product/architecture record.
 
-**Active item:** E0.6 — privacy-preserving structured client error reporting.
+**Active item:** E0.7 — production network and dependency verification.
 
-**Status:** In progress (13 October 2026). The `milo-phonics` Sentry project, default-off parent consent control, opt-in React error/tracing SDK, release metadata, event/span scrubbers, conditional source-map upload path, vendor-retention evidence, release-version dashboard verification, and parent-area draft notice are complete. E0.6 acceptance remains open because the privacy notice is not approved for production, authorized DPA/data-flow review is incomplete, deletion/retention decisions remain open, and inferred-geography treatment must be accepted before a production DSN is enabled. Evidence is recorded in [the Sentry vendor review](2026-10-13-sentry-vendor-data-flow-review.md), [the privacy-notice draft](../privacy-notice-draft.md), and the [Sentry design](2026-10-13-sentry-react-instrumentation-design.md).
+**Status:** In progress (13 October 2026). E0.7 has a production review record covering the safe first visit, local mode, parent gate, sign-in inspection, and mobile smoke path. Its full acceptance remains open because reset and induced audio-failure checks were not authorized/available, the browser surface did not expose a full network trace, and `/release.json` was blocked by the browser client. E0.6 remains blocked on authorized privacy/DPA, retention, deletion, and inferred-geography decisions; its evidence is recorded in [the Sentry vendor review](2026-10-13-sentry-vendor-data-flow-review.md), [the privacy-notice draft](../privacy-notice-draft.md), and the [Sentry design](2026-10-13-sentry-react-instrumentation-design.md).
 
-**Next acceptance step:** Obtain authorized privacy-owner review/acceptance of Sentry’s DPA and data-flow terms, approve and publish the parent-facing privacy/retention notice with a real contact, decide the inferred-geography treatment, and clean up the synthetic verification issue under an approved deletion policy.
+**Next acceptance step:** Complete E0.7’s isolated reset/audio-failure and network-trace checks, reconcile `/release.json` with the deployed commit, and remediate the observed Clerk Development mode and Cloudinary wording findings. In parallel, obtain authorized privacy-owner review/acceptance of E0.6’s DPA and data-flow terms, approve and publish the parent-facing privacy/retention notice with a real contact, decide the inferred-geography treatment, and clean up the synthetic verification issue under an approved deletion policy.
 
 ## Audit integration and release holds
 
@@ -70,6 +70,8 @@ flowchart LR
 | E0.5 | As a release owner, I need versioned releases and rollback instructions so a bad content or web release can be recovered quickly. | P1 | 3 | Build has an app version; release notes and rollback steps exist; production deployment identifies the serving build. |
 | E0.6 | As an engineer, I need structured client error reporting that does not collect child data so we can repair broken sessions. | P1 | 5 | Parent-consented error events exclude free text, audio, identifiers, and child content; error rate dashboard can be queried by release version. |
 | E0.7 | As a release owner, I need a repeatable production network and dependency check so repository assumptions are verified against the deployed app. | P0 | 3 | Capture and review first visit, local mode, parent-gate, sign-in/sync, reset, audio failure, and mobile sessions; record all network destinations, headers, cookies/storage, injected scripts, and third-party dependencies. |
+
+**E0.7 evidence:** The 13 October production review is recorded in [the E0.7 network review](2026-10-13-e0-7-production-network-review.md). It is intentionally still in progress: the safe flow checks passed, while destructive reset, induced audio failure, full network tracing, and release metadata verification remain open.
 
 ## E1 — Rights, privacy, and child-safe account foundation
 

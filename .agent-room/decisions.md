@@ -242,3 +242,9 @@ Project-level server scrubbing, default scrubbers, IP-address storage prevention
 **Decision:** Built using React 18, Vite, TypeScript, Tailwind CSS with procedural Web Audio SFX and toddler-calibrated SpeechSynthesis API.
 **Why:** Zero latency on touches, 100% offline functionality, full COPPA compliance (no toddler data leaves device), and procedural audio synthesis eliminating missing audio asset failures.
 **Rejected:** Server-side streaming audio or heavy external audio asset CDNs that cause buffering delays for toddlers.
+
+### 2026-10-13 — E0.7 production review boundaries and observed runtime state
+
+**Decision:** Treat E0.7 as in progress until an authenticated release check can capture a complete network trace and safely cover reset, induced audio failure, and release metadata. Record the current production Clerk Development-mode surface and the dashboard’s Cloudinary wording as findings rather than silently changing authentication or audio behavior in an audit slice.
+**Why:** The browser review verified first visit, local progress, the arithmetic parent gate, sign-in inspection, and a 390×844 smoke session, but the available tooling could not provide HAR/resource timing, `/release.json` was blocked by the browser client, reset would delete local test progress, and production fault injection was unavailable. Authentication changes are approval-sensitive, and the runtime resolver currently prefers bundled local audio even though generated metadata retains Cloudinary URLs.
+**Rejected:** Marking E0.7 complete from source inspection alone, accepting the destructive reset without explicit confirmation, or changing Clerk/audio implementation while the release dependency and privacy decisions remain open.
