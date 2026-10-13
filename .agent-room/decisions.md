@@ -16,6 +16,12 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-10-13 — Standardize the Node/npm baseline for E0.1
+
+**Decision:** Support Node.js 20.x LTS and npm 10.x. Declare the contract in `package.json`, provide `.nvmrc` with the Node 20 major line, and document `npm ci` as the clean-install path.
+**Why:** CI already runs on Node 20, while the README permits Node 18+ and npm 9+ and the repository has no machine-readable local runtime contract. Aligning local setup with CI reduces environment drift without changing protected workflow configuration.
+**Rejected:** Keeping the broad Node 18/npm 9 guidance because it does not match the existing CI baseline, and changing CI because `.github/workflows/**` is protected and already uses the target Node major.
+
 ### 2026-09-16 — Automatic Level Graduation, Home Mute Protection & Parent Level Selector
 
 **Decision:** Addressed three high-impact P0 product findings across curriculum progression, sensory stability, and parent agency:
