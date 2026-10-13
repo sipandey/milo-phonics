@@ -14,9 +14,9 @@
 
 **Active item:** E0.6 — privacy-preserving structured client error reporting.
 
-**Status:** In progress (13 October 2026). The `milo-phonics` Sentry project, default-off parent consent control, opt-in React error/tracing SDK, release metadata, event/span scrubbers, conditional source-map upload path, vendor-retention evidence, and release-version dashboard verification are complete. E0.6 acceptance remains open because the privacy notice, authorized DPA/data-flow review, deletion/retention decision, and inferred-geography treatment must be accepted before a production DSN is enabled. Evidence is recorded in [the Sentry vendor review](2026-10-13-sentry-vendor-data-flow-review.md) and the [Sentry design](2026-10-13-sentry-react-instrumentation-design.md).
+**Status:** In progress (13 October 2026). The `milo-phonics` Sentry project, default-off parent consent control, opt-in React error/tracing SDK, release metadata, event/span scrubbers, conditional source-map upload path, vendor-retention evidence, release-version dashboard verification, and parent-area draft notice are complete. E0.6 acceptance remains open because the privacy notice is not approved for production, authorized DPA/data-flow review is incomplete, deletion/retention decisions remain open, and inferred-geography treatment must be accepted before a production DSN is enabled. Evidence is recorded in [the Sentry vendor review](2026-10-13-sentry-vendor-data-flow-review.md), [the privacy-notice draft](../privacy-notice-draft.md), and the [Sentry design](2026-10-13-sentry-react-instrumentation-design.md).
 
-**Next acceptance step:** Obtain authorized privacy-owner review/acceptance of Sentry’s DPA and data-flow terms, publish the parent-facing privacy/retention notice, decide the inferred-geography treatment, and clean up the synthetic verification issue under an approved deletion policy.
+**Next acceptance step:** Obtain authorized privacy-owner review/acceptance of Sentry’s DPA and data-flow terms, approve and publish the parent-facing privacy/retention notice with a real contact, decide the inferred-geography treatment, and clean up the synthetic verification issue under an approved deletion policy.
 
 ## Audit integration and release holds
 

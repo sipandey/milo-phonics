@@ -44,6 +44,6 @@ Using synthetic consented browser activity only, Sentry’s release explorer sho
 
 ## Acceptance decision
 
-E0.6 remains **in progress**. The implementation and release-dashboard verification are complete, but production DSN enablement remains blocked until an authorized privacy owner reviews and accepts the Sentry DPA/data-flow terms, documents the privacy notice and retention/deletion behavior, and decides whether inferred geography is acceptable or must be eliminated through a different architecture.
+E0.6 remains **in progress**. The implementation and release-dashboard verification are complete, and the parent area now displays a clearly marked draft privacy notice. Production DSN enablement remains blocked until an authorized privacy owner reviews and accepts the Sentry DPA/data-flow terms, approves a privacy notice with a real contact and retention/deletion behavior, and decides whether inferred geography is acceptable or must be eliminated through a different architecture.
 
 No legal or contractual acceptance was made by Codex. The synthetic Sentry issue remains non-production verification data and should be deleted by an authorized owner when the project’s cleanup policy is agreed.

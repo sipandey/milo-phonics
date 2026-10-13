@@ -5,6 +5,7 @@ import { CURRICULUM_LEVELS } from '../../data/curriculumData';
 import { ParentClerkSync } from './ParentClerkSync';
 import { initializeSentry } from '../../observability/sentry';
 import { getSentryConsent, setSentryConsent } from '../../observability/sentryConsent';
+import { SENTRY_PARENT_PRIVACY_NOTICE } from '../../observability/sentryNotice';
 import { X, Volume2, VolumeX, RotateCcw, Sparkles, Star, Award, BookOpen } from 'lucide-react';
 
 interface ParentDashboardProps {
@@ -99,6 +100,21 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
             {isSentryConsentGranted ? 'Technical diagnostics are enabled on this device.' : 'Technical diagnostics are off by default.'}
           </p>
         </div>
+
+        <details className="mb-6 rounded-3xl border-2 border-slate-200 bg-slate-50/90 p-4 shadow-sm">
+          <summary className="cursor-pointer list-none text-sm font-black text-slate-900">
+            <span className="mr-2" aria-hidden="true">🔒</span>
+            {SENTRY_PARENT_PRIVACY_NOTICE.title}
+            <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-black uppercase text-amber-800">
+              Draft — review pending
+            </span>
+          </summary>
+          <div className="mt-3 space-y-2 text-xs leading-relaxed text-slate-700" role="note">
+            {SENTRY_PARENT_PRIVACY_NOTICE.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+        </details>
 
         {/* Section 3: Toddler Focus Mode (Single-Action Pacing) */}
         <div className="mb-6 p-4 sm:p-5 rounded-3xl bg-amber-50/90 border-2 border-amber-300 shadow-sm">

@@ -30,6 +30,12 @@ Project-level server scrubbing, default scrubbers, IP-address storage prevention
 **Why:** The release dashboard is usable without child data, but the Sentry DPA still needs authorized review/acceptance, the privacy notice and deletion/backup/subprocessor behavior are undocumented, and Sentry-derived geography remained visible after IP redaction.
 **Rejected:** Treating a free-plan retention period as complete privacy acceptance, accepting contractual terms on behalf of the product owner, or claiming that client-side scrubbing eliminates vendor-generated metadata.
 
+### 2026-10-13 — Expose a review-marked parent privacy notice draft
+
+**Decision:** Add a typed, arithmetic-gated Parent Dashboard notice that explains the Sentry opt-in, data categories, current retention evidence, revocation behavior, inferred geography, and pending approvals. Keep the notice explicitly marked as a draft until a privacy owner supplies a contact and accepts the DPA/data-flow wording.
+**Why:** Parents need understandable information at the consent decision, while the repository does not have authority to publish legal terms or invent a deletion contact. A draft preserves truthful transparency without implying compliance approval.
+**Rejected:** Hiding the data-flow caveats behind the toggle, presenting the Sentry runbook as a parent notice, or claiming E1.2/E0.6 acceptance from a technical implementation alone.
+
 ### 2026-10-13 — Add an opt-in, privacy-gated Sentry foundation
 
 **Decision:** Provision the `milo-phonics` Sentry project, initialize `@sentry/react` only when `VITE_SENTRY_DSN` is configured, enable browser errors and 10% tracing by default, and activate Vite source-map upload only with the secret `SENTRY_AUTH_TOKEN`. Keep Session Replay, client logging, and application metrics disabled.
