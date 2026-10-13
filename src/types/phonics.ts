@@ -91,6 +91,25 @@ export interface LevelProgress {
   completed: boolean;
 }
 
+export type PracticeActivity = 'blend' | 'identify';
+
+export interface PracticeAttempt {
+  itemId: string;
+  activity: PracticeActivity;
+  correct: boolean;
+  firstAttempt: boolean;
+  isReview: boolean;
+}
+
+export interface PracticeEvidence {
+  attempts: number;
+  correctAttempts: number;
+  correctFirstAttempts: number;
+  reviewAttempts: number;
+  correctReviewAttempts: number;
+  lastPracticed: string;
+}
+
 export interface ChildProgress {
   contentVersion: string;
   currentLevelId: number;
@@ -100,6 +119,7 @@ export interface ChildProgress {
   totalStars: number;
   exploredLetters: Record<string, number>;
   exploredObjects: Record<string, number>;
+  practiceEvidence: Record<string, PracticeEvidence>;
   totalTaps: number;
   lastPlayed: string;
   lastLetter: string;

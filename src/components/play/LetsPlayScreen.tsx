@@ -189,7 +189,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     };
   }, [currentObject.id, currentLetter.id, cleanPhoneme, activeLevel.id]);
 
-  // Tap Object interaction: plays sound blend, awards stars, checks unlock
+  // Tap Object interaction: records exploration and plays the sound blend.
   const handleTapObject = async () => {
     if (!canAct() || hasTappedCardRef.current) return;
     hasTappedCardRef.current = true;
@@ -203,7 +203,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     audioService.playSoundEffect(currentObject.soundType);
     setMiloSpeech("Listen closely! 👂🎶");
 
-    const { newlyEarned, newlyUnlockedLevels } = progressService.recordObjectInteraction(
+    progressService.recordObjectInteraction(
       currentObject.id,
       currentObject.letterId
     );
@@ -222,17 +222,6 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
         currentObject.name
       );
 
-      if (newlyEarned > 0) {
-        triggerGentleConfetti();
-        audioService.playChime();
-      }
-
-      if (newlyUnlockedLevels.length > 0) {
-        const nextLvl = newlyUnlockedLevels[0];
-        setLevelUnlockAlert(nextLvl);
-        audioService.playFanfare();
-        triggerGentleConfetti();
-      }
     } catch (err) {
       console.warn('[LetsPlayScreen] Error during card blend audio:', err);
     } finally {
@@ -256,18 +245,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     setMiloSpeech(`/${cleanPhoneme}/`);
     audioService.playVoice(currentLetter.phonemeAudioId);
 
-    const { newlyEarned, newlyUnlockedLevels } = progressService.recordLetterInteraction(currentLetter.id);
-
-    if (newlyEarned > 0) {
-      audioService.playChime();
-      triggerGentleConfetti();
-    }
-
-    if (newlyUnlockedLevels.length > 0) {
-      setLevelUnlockAlert(newlyUnlockedLevels[0]);
-      audioService.playFanfare();
-      triggerGentleConfetti();
-    }
+    progressService.recordLetterInteraction(currentLetter.id);
 
     setTimeout(() => {
       setIsLetterAnimating(false);
@@ -285,17 +263,17 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
       const currentLetterIdx = activeLevel.letterIds.indexOf(selectedLetterId);
       const isLastLetterOfLevel = currentLetterIdx === activeLevel.letterIds.length - 1;
 
-      // 🌟 Automatic Level Graduation when final letter of level is completed!
+      // Advance only into a level that practice evidence has already unlocked.
       if (isLastLetterOfLevel && selectedLevelId < CURRICULUM_LEVELS.length) {
         const nextLevelId = selectedLevelId + 1;
         const nextLevel = getLevelById(nextLevelId);
+        const nextLevelIsUnlocked = progressService.getProgress().unlockedLevels.includes(nextLevelId);
 
-        if (nextLevel && nextLevel.letterIds.length > 0) {
+        if (nextLevel && nextLevel.letterIds.length > 0 && nextLevelIsUnlocked) {
           audioService.playFanfare();
           triggerGentleConfetti();
           setLevelUnlockAlert(nextLevelId);
 
-          progressService.unlockLevel(nextLevelId);
           progressService.setCurrentLevel(nextLevelId);
           setSelectedLevelId(nextLevelId);
           setSelectedLetterId(nextLevel.letterIds[0]);

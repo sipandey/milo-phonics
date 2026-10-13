@@ -10,6 +10,16 @@ describe('content-version progress migration', () => {
     const result = migrateProgressContent({
       letterStars: { s: 3 },
       exploredLetters: { s: 5 },
+      practiceEvidence: {
+        s: {
+          attempts: 2,
+          correctAttempts: 1,
+          correctFirstAttempts: 1,
+          reviewAttempts: 1,
+          correctReviewAttempts: 0,
+          lastPracticed: '2026-10-13T00:00:00.000Z',
+        },
+      },
       currentLevelId: 2,
       lastLetter: 's',
     });
@@ -20,6 +30,7 @@ describe('content-version progress migration', () => {
     expect(result.data.contentVersion).toBe(CURRENT_CONTENT_VERSION);
     expect(result.data.letterStars).toEqual({ s: 3 });
     expect(result.data.exploredLetters).toEqual({ s: 5 });
+    expect(result.data.practiceEvidence?.s?.correctFirstAttempts).toBe(1);
     expect(result.data.currentLevelId).toBe(2);
   });
 

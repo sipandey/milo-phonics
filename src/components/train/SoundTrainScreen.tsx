@@ -197,8 +197,14 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
         }
       );
 
-      // Award star & trigger confetti
-      progressService.awardStars(currentWord.letters[0] || 's', 1);
+      // Record an explicit blending attempt; exploration taps do not award stars.
+      progressService.recordPracticeAttempt(currentWord.letters[0] || 's', {
+        itemId: currentWord.id,
+        activity: 'blend',
+        correct: true,
+        firstAttempt: true,
+        isReview: currentWord.levelId < selectedLevelId,
+      });
       triggerGentleConfetti();
       audioService.playChime();
       setIsWordRevealed(true);

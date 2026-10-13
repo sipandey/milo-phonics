@@ -30,6 +30,10 @@ The review status is deliberate. The manifest does not approve pronunciation, ri
 
 The UI and progress service import level and word lookups from this manifest. Legacy data modules remain available for compatibility and as the source records used by the adapter; screens do not add their own curriculum ordering or word catalogue.
 
+## Practice progression boundary
+
+Exploration and practice are separate progress signals. Letter/object exploration is retained as activity history but does not award new stars or unlock levels. Explicit blending and identification activities submit aggregate practice evidence through `progressService.recordPracticeAttempt`; the current policy awards one star after a correct attempt, two after a correct first attempt, and three after a later correct review when a correct first-attempt result already exists. Existing stars are preserved. These signals describe observed interaction evidence only and are not a mastery or diagnostic assessment.
+
 ## Change control
 
 Content changes should update `CURRICULUM_CONTENT_VERSION`, add or update a focused schema test, run `npm run verify:curriculum`, and retain the result with release evidence. Progress snapshots are migrated through `src/services/contentMigration.ts`; the migration must preserve stable progress and explicitly map any removed or reordered level IDs. A content owner must resolve or explicitly approve any validation finding before the manifest can move from `review` to `published`.

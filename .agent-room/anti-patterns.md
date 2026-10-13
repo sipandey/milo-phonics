@@ -94,6 +94,12 @@ Append a new entry every time:
 **Root cause:** A successful generation or upload was treated as the finish line for a child-facing media release.
 **Avoid:** Complete the media checklist and attach the rights, reviewer, quality, runtime, size, version, and rollback evidence before promoting an asset; keep unresolved gates visible.
 
+### 2026-10-13 — Letting exploration taps unlock curriculum
+
+**What happened:** The exploration screen awarded stars for tapping letters/objects and automatically unlocked the next level after the final card, so repeated or passive exploration could look like demonstrated practice.
+**Root cause:** Exploration and practice were routed through the same star-award path, and the screen contained a direct level-unlock shortcut.
+**Avoid:** Persist exploration separately, award progression only from explicit practice evidence, preserve existing stars during migration, and require the next level to be unlocked by the practice progression service before advancing into it.
+
 ### 2026-09-16 — Coupling secondary story narration into the critical interaction path
 
 **What happened:** In Sound Train, after blending /s/ - /æ/ - /t/ $\to$ "Sat!", the UI remained locked for an extra 5 seconds while automatically reciting the example sentence ("The cat sat on the mat."). Toddlers became impatient and tapped frantically.

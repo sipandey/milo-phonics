@@ -33,6 +33,7 @@ function mapStableProgressFields(raw: Partial<ChildProgress>, targetVersion: str
     totalStars: raw.totalStars,
     exploredLetters: raw.exploredLetters,
     exploredObjects: raw.exploredObjects,
+    practiceEvidence: raw.practiceEvidence,
     totalTaps: raw.totalTaps,
     lastPlayed: raw.lastPlayed,
     lastLetter: raw.lastLetter,

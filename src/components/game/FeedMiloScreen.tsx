@@ -51,6 +51,7 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
   const chewStartTimeRef = useRef<number>(0);
   const lastTapTimeRef = useRef<number>(0);
   const hasFedRef = useRef<boolean>(false);
+  const hasAttemptedRoundRef = useRef<boolean>(false);
   const activeLevelId = progress.currentLevelId || 1;
   const activeLevel = getLevelById(activeLevelId) || CURRICULUM_LEVELS[0];
   const isToddlerMode = progress.toddlerFocusMode !== false;
@@ -194,6 +195,7 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
     setWobblingItemId(null);
     setMiloState('hungry');
     hasFedRef.current = false;
+    hasAttemptedRoundRef.current = false;
 
     const introTimer = setTimeout(() => {
       playTargetSound(newRound.targetPhonemeAudioId);
@@ -253,7 +255,14 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
       // Visual reward: confetti & star increment
       triggerGentleConfetti();
       setSessionStarsEarned((prev) => prev + 1);
-      progressService.awardStars(choice.letterId, 1);
+      const latestProgress = progressService.getProgress();
+      progressService.recordPracticeAttempt(choice.letterId, {
+        itemId: `feed-milo:${roundData?.targetLetterId ?? choice.letterId}:${currentRound}`,
+        activity: 'identify',
+        correct: true,
+        firstAttempt: !hasAttemptedRoundRef.current,
+        isReview: (latestProgress.practiceEvidence[choice.letterId]?.correctAttempts ?? 0) > 0,
+      });
 
       // Reiterate target phoneme in triumph
       setTimeout(() => {
@@ -268,6 +277,7 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
       }, 3800);
     } else {
       // 〰️ Wrong Food: Gentle "Hmm" (Zero-Shame design)
+      hasAttemptedRoundRef.current = true;
       setWobblingItemId(choice.object.id);
       setMiloState('curious');
       audioService.playBoing();

@@ -55,6 +55,7 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
 
   const lastTapTimeRef = useRef<number>(0);
   const hasPoppedRef = useRef<boolean>(false);
+  const hasAttemptedRoundRef = useRef<boolean>(false);
   const isAudioBusyRef = useRef<boolean>(false);
   const isProcessingIncorrectRef = useRef<boolean>(false);
 
@@ -203,6 +204,7 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
     setPoppedLetterId(null);
     setWobblingLetterId(null);
     hasPoppedRef.current = false;
+    hasAttemptedRoundRef.current = false;
     isProcessingIncorrectRef.current = false;
     isAudioBusyRef.current = false;
     setIsAudioBusy(false);
@@ -276,8 +278,14 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
       triggerGentleConfetti();
       setSessionStarsEarned((prev) => prev + 1);
 
-      // Award star in progress service
-      progressService.awardStars(choice.letterId, 1);
+      const latestProgress = progressService.getProgress();
+      progressService.recordPracticeAttempt(choice.letterId, {
+        itemId: `bubble-pop:${roundData?.targetLetterId ?? choice.letterId}:${currentRound}`,
+        activity: 'identify',
+        correct: true,
+        firstAttempt: !hasAttemptedRoundRef.current,
+        isReview: (latestProgress.practiceEvidence[choice.letterId]?.correctAttempts ?? 0) > 0,
+      });
 
       // Repeat target sound in triumph after pop
       correctVoiceTimerRef.current = setTimeout(() => {
@@ -300,6 +308,7 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
       }, 1100);
     } else {
       // 〰️ Incorrect Tap: Gentle cartoon wobble (No-Shame design)
+      hasAttemptedRoundRef.current = true;
       isProcessingIncorrectRef.current = true;
       setWobblingLetterId(choice.letterId);
       audioService.playBoing();

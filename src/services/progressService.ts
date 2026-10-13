@@ -1,6 +1,11 @@
 import { CURRICULUM_LEVELS } from '../data/curriculumContent';
 import { CURRENT_CONTENT_VERSION, migrateProgressContent } from './contentMigration';
-import type { ChildProgress, LevelProgress } from '../types/phonics';
+import type {
+  ChildProgress,
+  LevelProgress,
+  PracticeAttempt,
+  PracticeEvidence,
+} from '../types/phonics';
 
 const STORAGE_KEY = 'playful_phonics_progress_v2';
 const LEGACY_STORAGE_KEY = 'playful_phonics_progress_v1';
@@ -18,6 +23,61 @@ function createInitialLevels(): Record<number, LevelProgress> {
   return map;
 }
 
+function emptyPracticeEvidence(): PracticeEvidence {
+  return {
+    attempts: 0,
+    correctAttempts: 0,
+    correctFirstAttempts: 0,
+    reviewAttempts: 0,
+    correctReviewAttempts: 0,
+    lastPracticed: '',
+  };
+}
+
+function sanitizePracticeEvidence(
+  raw: Record<string, PracticeEvidence> | undefined,
+): Record<string, PracticeEvidence> {
+  const sanitized: Record<string, PracticeEvidence> = {};
+  Object.entries(raw || {}).forEach(([letterId, evidence]) => {
+    const base = emptyPracticeEvidence();
+    sanitized[letterId] = {
+      attempts: Math.max(0, evidence?.attempts || base.attempts),
+      correctAttempts: Math.max(0, evidence?.correctAttempts || base.correctAttempts),
+      correctFirstAttempts: Math.max(0, evidence?.correctFirstAttempts || base.correctFirstAttempts),
+      reviewAttempts: Math.max(0, evidence?.reviewAttempts || base.reviewAttempts),
+      correctReviewAttempts: Math.max(0, evidence?.correctReviewAttempts || base.correctReviewAttempts),
+      lastPracticed: evidence?.lastPracticed || base.lastPracticed,
+    };
+  });
+  return sanitized;
+}
+
+function mergePracticeEvidence(
+  local: Record<string, PracticeEvidence>,
+  incoming: Record<string, PracticeEvidence> | undefined,
+): Record<string, PracticeEvidence> {
+  const merged = sanitizePracticeEvidence(local);
+  Object.entries(sanitizePracticeEvidence(incoming)).forEach(([letterId, evidence]) => {
+    const current = merged[letterId] || emptyPracticeEvidence();
+    merged[letterId] = {
+      attempts: Math.max(current.attempts, evidence.attempts),
+      correctAttempts: Math.max(current.correctAttempts, evidence.correctAttempts),
+      correctFirstAttempts: Math.max(current.correctFirstAttempts, evidence.correctFirstAttempts),
+      reviewAttempts: Math.max(current.reviewAttempts, evidence.reviewAttempts),
+      correctReviewAttempts: Math.max(current.correctReviewAttempts, evidence.correctReviewAttempts),
+      lastPracticed: current.lastPracticed > evidence.lastPracticed ? current.lastPracticed : evidence.lastPracticed,
+    };
+  });
+  return merged;
+}
+
+function practiceStarsForEvidence(evidence: PracticeEvidence): number {
+  if (evidence.correctReviewAttempts > 0 && evidence.correctFirstAttempts > 0) return 3;
+  if (evidence.correctFirstAttempts > 0) return 2;
+  if (evidence.correctAttempts > 0) return 1;
+  return 0;
+}
+
 const defaultProgress: ChildProgress = {
   contentVersion: CURRENT_CONTENT_VERSION,
   currentLevelId: 1,
@@ -27,6 +87,7 @@ const defaultProgress: ChildProgress = {
   totalStars: 0,
   exploredLetters: {},
   exploredObjects: {},
+  practiceEvidence: {},
   totalTaps: 0,
   lastPlayed: new Date().toISOString(),
   lastLetter: 's',
@@ -73,6 +134,7 @@ class ProgressService {
           ...defaultProgress,
           exploredLetters: legacyParsed.exploredLetters || {},
           exploredObjects: legacyParsed.exploredObjects || {},
+          practiceEvidence: legacyParsed.practiceEvidence || {},
           totalTaps: legacyParsed.totalTaps || 0,
           lastPlayed: legacyParsed.lastPlayed || new Date().toISOString(),
           lastLetter: legacyParsed.lastLetter || 's',
@@ -129,6 +191,7 @@ class ProgressService {
       totalStars,
       exploredLetters: raw.exploredLetters || {},
       exploredObjects: raw.exploredObjects || {},
+      practiceEvidence: sanitizePracticeEvidence(raw.practiceEvidence),
       totalTaps: raw.totalTaps || 0,
       lastPlayed: raw.lastPlayed || new Date().toISOString(),
       lastLetter: raw.lastLetter || 's',
@@ -211,21 +274,35 @@ class ProgressService {
     this.progress.lastPlayed = new Date().toISOString();
     this.progress.lastLetter = id;
 
-    // Automatic star progression: 1 tap = 1 star, 3 taps = 2 stars, 5 taps = 3 stars
-    const taps = this.progress.exploredLetters[id];
-    let targetStars = 1;
-    if (taps >= 5) {
-      targetStars = 3;
-    } else if (taps >= 3) {
-      targetStars = 2;
-    }
-
-    return this.awardStars(id, targetStars);
+    this.saveProgress();
+    return { newlyEarned: 0, newlyUnlockedLevels: [] };
   }
 
   public recordObjectInteraction(objectId: string, letterId: string): { newlyEarned: number; newlyUnlockedLevels: number[] } {
     this.progress.exploredObjects[objectId] = (this.progress.exploredObjects[objectId] || 0) + 1;
     return this.recordLetterInteraction(letterId);
+  }
+
+  public recordPracticeAttempt(
+    letterId: string,
+    attempt: PracticeAttempt,
+  ): { newlyEarned: number; newlyUnlockedLevels: number[] } {
+    const id = letterId.toLowerCase();
+    const current = this.progress.practiceEvidence[id] || emptyPracticeEvidence();
+    const now = new Date().toISOString();
+    const updated: PracticeEvidence = {
+      attempts: current.attempts + 1,
+      correctAttempts: current.correctAttempts + (attempt.correct ? 1 : 0),
+      correctFirstAttempts: current.correctFirstAttempts + (attempt.correct && attempt.firstAttempt ? 1 : 0),
+      reviewAttempts: current.reviewAttempts + (attempt.isReview ? 1 : 0),
+      correctReviewAttempts: current.correctReviewAttempts + (attempt.correct && attempt.isReview ? 1 : 0),
+      lastPracticed: now,
+    };
+    this.progress.practiceEvidence[id] = updated;
+    this.progress.lastPlayed = now;
+    this.progress.lastLetter = id;
+
+    return this.awardStars(id, practiceStarsForEvidence(updated));
   }
 
   private recalculateTotals() {
@@ -304,6 +381,11 @@ class ProgressService {
       });
     }
 
+    const mergedPracticeEvidence = mergePracticeEvidence(
+      this.progress.practiceEvidence,
+      incomingCloudData.practiceEvidence,
+    );
+
     const mergedTaps = Math.max(this.progress.totalTaps, incomingCloudData.totalTaps || 0);
     const mergedUnlockedLevels = Array.from(
       new Set([...this.progress.unlockedLevels, ...(incomingCloudData.unlockedLevels || [1])])
@@ -315,6 +397,7 @@ class ProgressService {
       letterStars: mergedLetterStars,
       exploredLetters: mergedExploredLetters,
       exploredObjects: mergedExploredObjects,
+      practiceEvidence: mergedPracticeEvidence,
       totalTaps: mergedTaps,
       lastPlayed: new Date().toISOString(),
       lastLetter: this.progress.lastLetter || incomingCloudData.lastLetter || 's',
@@ -334,6 +417,7 @@ class ProgressService {
       totalStars: this.progress.totalStars,
       exploredLetters: this.progress.exploredLetters,
       exploredObjects: this.progress.exploredObjects,
+      practiceEvidence: this.progress.practiceEvidence,
       totalTaps: this.progress.totalTaps,
       lastPlayed: this.progress.lastPlayed,
       lastLetter: this.progress.lastLetter,
@@ -349,6 +433,7 @@ class ProgressService {
       letterStars: {},
       exploredLetters: {},
       exploredObjects: {},
+      practiceEvidence: {},
       totalStars: 0,
       totalTaps: 0,
       currentLevelId: 1,

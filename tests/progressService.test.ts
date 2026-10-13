@@ -124,6 +124,60 @@ describe('progress persistence and progression', () => {
     expect(service.getProgress().letterStars.s).toBe(3);
   });
 
+  it('records exploration without awarding progression stars', async () => {
+    const service = await loadProgressService(createMemoryStorage());
+
+    const result = service.recordLetterInteraction('s');
+    const progress = service.getProgress();
+
+    expect(result).toEqual({ newlyEarned: 0, newlyUnlockedLevels: [] });
+    expect(progress.exploredLetters).toEqual({ s: 1 });
+    expect(progress.letterStars).toEqual({});
+    expect(progress.totalStars).toBe(0);
+    expect(progress.practiceEvidence).toEqual({});
+  });
+
+  it('awards practice stars from first-attempt and later-review evidence', async () => {
+    const service = await loadProgressService(createMemoryStorage());
+
+    const firstAttempt = service.recordPracticeAttempt('s', {
+      itemId: 'sat',
+      activity: 'blend',
+      correct: true,
+      firstAttempt: true,
+      isReview: false,
+    });
+    expect(firstAttempt.newlyEarned).toBe(2);
+    expect(service.getProgress().practiceEvidence.s).toMatchObject({
+      attempts: 1,
+      correctAttempts: 1,
+      correctFirstAttempts: 1,
+      reviewAttempts: 0,
+      correctReviewAttempts: 0,
+    });
+
+    const incorrectReview = service.recordPracticeAttempt('s', {
+      itemId: 'sat',
+      activity: 'identify',
+      correct: false,
+      firstAttempt: false,
+      isReview: true,
+    });
+    expect(incorrectReview.newlyEarned).toBe(0);
+    expect(service.getProgress().letterStars.s).toBe(2);
+
+    const correctReview = service.recordPracticeAttempt('s', {
+      itemId: 'sat',
+      activity: 'identify',
+      correct: true,
+      firstAttempt: false,
+      isReview: true,
+    });
+    expect(correctReview.newlyEarned).toBe(1);
+    expect(service.getProgress().letterStars.s).toBe(3);
+    expect(service.getProgress().practiceEvidence.s?.correctReviewAttempts).toBe(1);
+  });
+
   it('unlocks level two when the configured six-star threshold is reached', async () => {
     const service = await loadProgressService(createMemoryStorage());
 

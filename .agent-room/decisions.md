@@ -320,3 +320,9 @@ Project-level server scrubbing, default scrubbers, IP-address storage prevention
 **Decision:** Use `docs/content-media-production-checklist.md` for every new or changed curriculum audio/video asset. Require rights-register linkage, source/generation records, human pronunciation review, loudness/silence checks, bundle/offline/runtime checks, manifest and content-version updates, and a rollback record.
 **Why:** Generation scripts and local files prove only that an asset can be produced and loaded. They do not prove rights, pronunciation acceptance, child-safe content, acceptable media quality, offline behavior, or release recoverability.
 **Rejected:** Treating a generated manifest, public URL, local playback, or vendor metadata as the complete release record; using a technical pass to imply rights or educational approval; and publishing media without a versioned rollback target.
+
+### 2026-10-13 — Separate exploration from practice progression
+
+**Decision:** Keep exploration counts for activity history but stop exploration taps from awarding new stars or unlocking levels. Route Sound Train blending and correct Bubble Pop/Feed Milo identification through aggregate practice evidence: one star after a correct attempt, two after a correct first attempt, and three after a later successful review. Preserve existing stars and migrate the evidence field with progress snapshots.
+**Why:** E2.3 requires progression to reflect demonstrated practice rather than repeated tapping, while preserving the existing positive reward model and avoiding a destructive reset for current families. The counters are intentionally an observed-interaction signal, not a mastery or diagnostic claim.
+**Rejected:** Awarding stars from every exploration tap, unlocking the next level after the final exploration card, downgrading existing stars, or presenting the thresholds as educational assessment.
