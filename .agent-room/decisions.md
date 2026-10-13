@@ -296,3 +296,9 @@ Project-level server scrubbing, default scrubbers, IP-address storage prevention
 **Decision:** Record E1.6 in `docs/plans/2026-10-13-e1-6-vendor-review.md` with one matrix for Clerk, Google Fonts, Cloudinary, OpenAI, Vercel hosting, and Sentry. Keep each configuration decision conditional until current contracts/DPAs, subprocessors, regions/transfers, retention/deletion, security, and owner sign-offs are attached.
 **Why:** Source and deployment review establish where a service is referenced and what the app intends to send, but they cannot accept vendor terms or prove host logs, deletion, or production configuration. The inventory needs a repeatable evidence request and an explicit “do not accept” boundary.
 **Rejected:** Treating package installation or an environment variable as vendor approval, treating a public URL as a cleared CDN dependency, or enabling Clerk Development mode/Sentry production DSN while privacy and data-flow decisions remain open.
+
+### 2026-10-13 — Fail curriculum validation before content changes are approved
+
+**Decision:** Add `npm run verify:curriculum` as a separate release-control command. It reports duplicate IDs, invalid levels, non-CVC shape, taught-letter prerequisite gaps, phoneme alignment, missing audio IDs, and missing local assets. Keep it out of the general build while the current findings (`at`, `bed`, `box`) require curriculum-owner decisions.
+**Why:** E2.2 needs deterministic checks, but changing word classification or sequence without a curriculum/pronunciation owner would silently alter the learning programme. A failing report preserves the defect and blocks release without making an unreviewed content change.
+**Rejected:** Moving/removing words to make the checker green, treating three-letter shape as educational approval, or suppressing the validator until rights and specialist review are complete.
