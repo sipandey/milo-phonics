@@ -254,3 +254,9 @@ Project-level server scrubbing, default scrubbers, IP-address storage prevention
 **Decision:** Use `docs/asset-rights-register.md` as the single inventory for shipped media, referenced media, fonts, inline visuals, and direct libraries. Keep each row blocked until creator/source, licence or contract, markets, term, modification rights, attribution, expiry/review date, and retained evidence are recorded.
 **Why:** Repository presence, generated metadata, a vendor URL, or an installed package licence field does not prove commercial rights, provenance, or service-term acceptance. The inventory also exposed two video paths referenced by code but absent from `public/`, which must be resolved before treating the video surface as complete.
 **Rejected:** Inferring rights from file presence, treating Cloudinary/OpenAI metadata as ownership evidence, or marking E1.1 complete with a catalogue that lacks owner evidence.
+
+### 2026-10-13 — Use npm's lockfile SBOM as the dependency evidence source
+
+**Decision:** Add `npm run sbom:spdx` as the reproducible SPDX 2.3 generation command and record its 410-package licence snapshot in `docs/third-party-notices.md`. Retain the generated JSON and full notice text with release evidence; do not treat the checked-in summary as a complete legal notice bundle.
+**Why:** The lockfile contains exact versions, integrity values, dependency relationships, and declared licences. The snapshot also exposes FSL-1.1-MIT, CC-BY-4.0, and BlueOak-1.0.0 entries that require explicit review rather than an unsafe MIT-only summary.
+**Rejected:** Installing an unpinned licence tool, relying on direct dependencies only, normalizing non-MIT identifiers to MIT, or claiming E1.1 complete before the generated release artifact and notice text are retained.
