@@ -1,4 +1,4 @@
-import { createClerkProxyRequest } from '../src/server/clerkProxy';
+import { createClerkProxyRequest } from '../src/server/clerkProxy.js';
 
 interface RuntimeProcess {
   env: Record<string, string | undefined>;
