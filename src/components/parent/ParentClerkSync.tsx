@@ -5,6 +5,9 @@ import { ChildProgress } from '../../types/phonics';
 import { Cloud, CheckCircle2, RefreshCw, LogIn } from 'lucide-react';
 
 export const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY as string | undefined;
+export const CLERK_PROXY_URL =
+  (import.meta.env.VITE_CLERK_PROXY_URL as string | undefined) ??
+  (CLERK_PUBLISHABLE_KEY?.startsWith('pk_live_') ? '/__clerk' : undefined);
 
 export const isClerkEnabled = Boolean(
   CLERK_PUBLISHABLE_KEY &&
