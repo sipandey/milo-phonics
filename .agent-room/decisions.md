@@ -24,6 +24,12 @@ have to re-derive it from scratch by reading git history.
 
 Project-level server scrubbing, default scrubbers, IP-address storage prevention, and additional `user`/`geo` sensitive-field matches were enabled for new events. A consented synthetic event confirmed message/URL/content scrubbing and a readable stack, but Sentry still exposed an inferred geography context; that unresolved enrichment is retained as a vendor/privacy review item.
 
+### 2026-10-13 — Keep Sentry production enablement blocked after vendor review
+
+**Decision:** Record the Sentry Developer-plan/EU-storage/30-day-retention configuration and successful release `1.0.0` synthetic verification, but do not enable a production DSN yet. Keep the parent consent control and project scrubbers as the implementation boundary.
+**Why:** The release dashboard is usable without child data, but the Sentry DPA still needs authorized review/acceptance, the privacy notice and deletion/backup/subprocessor behavior are undocumented, and Sentry-derived geography remained visible after IP redaction.
+**Rejected:** Treating a free-plan retention period as complete privacy acceptance, accepting contractual terms on behalf of the product owner, or claiming that client-side scrubbing eliminates vendor-generated metadata.
+
 ### 2026-10-13 — Add an opt-in, privacy-gated Sentry foundation
 
 **Decision:** Provision the `milo-phonics` Sentry project, initialize `@sentry/react` only when `VITE_SENTRY_DSN` is configured, enable browser errors and 10% tracing by default, and activate Vite source-map upload only with the secret `SENTRY_AUTH_TOKEN`. Keep Session Replay, client logging, and application metrics disabled.
