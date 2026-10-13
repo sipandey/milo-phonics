@@ -18,7 +18,7 @@ const HOP_BY_HOP_HEADERS = new Set([
 ]);
 
 const getClerkPath = (requestUrl: string): { path: string; query: string } => {
-  const url = new URL(requestUrl);
+  const url = new URL(requestUrl, 'https://milo-phonics.vercel.app');
   const proxyIndex = url.pathname.indexOf(CLERK_PROXY_PATH);
   const path = proxyIndex >= 0 ? url.pathname.slice(proxyIndex + CLERK_PROXY_PATH.length) || '/' : url.searchParams.get('path') || '/';
   const queryParams = new URLSearchParams(url.searchParams);
@@ -39,7 +39,7 @@ const getForwardedHeaders = (request: Request): Record<string, string> => {
   return headers;
 };
 
-const handler = async (request: Request): Promise<Response> => {
+const proxyRequest = async (request: Request): Promise<Response> => {
   const secretKey = process.env.CLERK_SECRET_KEY;
   if (!secretKey) {
     return new Response('Clerk proxy is not configured', { status: 500 });
@@ -72,6 +72,15 @@ const handler = async (request: Request): Promise<Response> => {
     statusText: upstreamResponse.statusText,
     headers: responseHeaders,
   });
+};
+
+const handler = async (request: Request): Promise<Response> => {
+  try {
+    return await proxyRequest(request);
+  } catch (error) {
+    console.error('Clerk proxy request failed', error instanceof Error ? error.message : 'unknown error');
+    return new Response('Clerk proxy request failed', { status: 502 });
+  }
 };
 
 export default { fetch: handler };
