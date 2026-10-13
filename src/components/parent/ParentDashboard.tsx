@@ -3,6 +3,7 @@ import { progressService } from '../../services/progressService';
 import { audioService } from '../../services/audioService';
 import { CURRICULUM_LEVELS } from '../../data/curriculumData';
 import { ParentClerkSync } from './ParentClerkSync';
+import { AUDIO_RUNTIME_STATUS } from './audioRuntimeStatus';
 import { initializeSentry } from '../../observability/sentry';
 import { getSentryConsent, setSentryConsent } from '../../observability/sentryConsent';
 import { SENTRY_PARENT_PRIVACY_NOTICE } from '../../observability/sentryNotice';
@@ -279,7 +280,7 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
               <div>
                 <h4 className="text-xs font-black text-amber-950 uppercase tracking-wider">App Sound & Audio</h4>
                 <p className="text-[11px] text-gray-600">
-                  {isMuted ? 'Audio is currently muted.' : 'British Oxford RP & AI audio active.'}
+                  {isMuted ? 'Audio is currently muted.' : AUDIO_RUNTIME_STATUS.summary}
                 </p>
               </div>
             </div>
@@ -303,29 +304,29 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
         <div className="space-y-3 mb-6 pt-2 border-t border-gray-100">
           <h3 className="text-sm font-black text-amber-900 uppercase tracking-wider flex items-center gap-2">
             <Volume2 className="w-4 h-4 text-amber-500" />
-            Audio Engine: Oxford-First & AI Cloudinary Pipeline
+            {AUDIO_RUNTIME_STATUS.heading}
           </h3>
 
           <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 text-xs space-y-2">
             <div className="flex items-center justify-between">
-              <span className="font-bold text-gray-800">1. Oxford Dictionary Authentic Audio:</span>
-              <span className="font-black text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-lg">Active (Top Precedence)</span>
+              <span className="font-bold text-gray-800">{AUDIO_RUNTIME_STATUS.phonemeLabel}</span>
+              <span className="font-black text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-lg">{AUDIO_RUNTIME_STATUS.phonemeStatus}</span>
             </div>
             <p className="text-[11px] text-gray-600">
-              Authentic British English human recordings for all 26 letter phonemes and Oxford sound catalog.
+              {AUDIO_RUNTIME_STATUS.phonemeDescription}
             </p>
 
             <div className="flex items-center justify-between pt-1 border-t border-amber-100">
-              <span className="font-bold text-gray-800">2. Pre-Recorded British AI (Coral):</span>
-              <span className="font-black text-blue-700 bg-blue-100 px-2 py-0.5 rounded-lg">Active (Cloudinary CDN)</span>
+              <span className="font-bold text-gray-800">{AUDIO_RUNTIME_STATUS.curriculumLabel}</span>
+              <span className="font-black text-blue-700 bg-blue-100 px-2 py-0.5 rounded-lg">{AUDIO_RUNTIME_STATUS.curriculumStatus}</span>
             </div>
             <p className="text-[11px] text-gray-600">
-              Calm toddler pacing (~0.75x) matching Oxford tone. 84 words, 38 CVC blends, letters, & story sentences.
+              {AUDIO_RUNTIME_STATUS.curriculumDescription}
             </p>
 
             <div className="flex items-center justify-between pt-1 border-t border-amber-100">
-              <span className="font-bold text-gray-800">3. Browser SpeechSynthesis:</span>
-              <span className="font-bold text-gray-500 bg-gray-200 px-2 py-0.5 rounded-lg">Disabled (Zero Native Speech)</span>
+              <span className="font-bold text-gray-800">{AUDIO_RUNTIME_STATUS.nativeSpeechLabel}</span>
+              <span className="font-bold text-gray-500 bg-gray-200 px-2 py-0.5 rounded-lg">{AUDIO_RUNTIME_STATUS.nativeSpeechStatus}</span>
             </div>
           </div>
 
@@ -337,7 +338,7 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
               className="flex-1 py-2.5 px-4 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold squish-tap cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
             >
               <Volume2 className="w-4 h-4" />
-              <span>Test Oxford Sound & Coral Word Blend (/s/... Sun!)</span>
+                <span>{AUDIO_RUNTIME_STATUS.blendTestLabel}</span>
             </button>
 
             <button

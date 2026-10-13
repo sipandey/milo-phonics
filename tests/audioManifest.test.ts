@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { getAudioEntry } from '../src/data/audioManifest';
+import { AUDIO_RUNTIME_STATUS } from '../src/components/parent/audioRuntimeStatus';
 
 describe('semantic audio URL resolution', () => {
   it('resolves phonemes to the local Oxford asset path', () => {
@@ -33,5 +34,15 @@ describe('semantic audio URL resolution', () => {
 
   it('returns undefined for an unknown non-word ID', () => {
     expect(getAudioEntry('unknown.audio')).toBeUndefined();
+  });
+});
+
+describe('parent audio runtime status', () => {
+  it('describes bundled local playback rather than an unimplemented CDN fallback', () => {
+    const statusText = Object.values(AUDIO_RUNTIME_STATUS).join(' ');
+
+    expect(statusText).toContain('bundled local assets');
+    expect(statusText).not.toContain('Cloudinary CDN');
+    expect(statusText).not.toContain('Oxford-First');
   });
 });
