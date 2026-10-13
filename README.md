@@ -153,8 +153,8 @@ phonics/
 ## 💻 Getting Started
 
 ### Prerequisites
-* Node.js 20.19+ LTS
-* npm 10.x (bundled with the supported Node.js line)
+* Node.js 24.x LTS
+* npm 11.x (bundled with the supported Node.js line)
 * (Optional for audio regeneration) `ffmpeg` and OpenAI / Cloudinary API keys in `.env`
 
 ### Installation
@@ -168,8 +168,8 @@ nvm install
 nvm use
 
 # Confirm the supported runtime before installing
-node --version  # v20.19+
-npm --version   # 10.x
+node --version  # v24.x
+npm --version   # 11.x
 
 # Install exactly from package-lock.json
 npm ci

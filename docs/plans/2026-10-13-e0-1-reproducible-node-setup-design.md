@@ -1,5 +1,7 @@
 # E0.1 Reproducible Node/npm Setup
 
+> Historical design note: the original Node 20 baseline was superseded on 13 October 2026 by the Vercel Node 24.x runtime requirement. The current contract is recorded in `package.json`, `.nvmrc`, CI, the README, and the current product/architecture record.
+
 **Goal:** Establish one supported Node.js/npm baseline so a fresh contributor can install and build Milo Phonics using documented steps.
 
 **Architecture:** The repository will declare the supported runtime in `package.json` and pin the minimum compatible Node.js 20 release in `.nvmrc`. `README.md` will reference those same versions and use `npm ci` for lockfile-based installation. The existing GitHub Actions workflow already runs on the Node 20 channel and is protected by AgentRoom guardrails, so it remains unchanged.

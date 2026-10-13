@@ -26,6 +26,8 @@ The configured curriculum and audio labels are repository facts, not evidence of
 
 ## Runtime architecture
 
+The supported build and deployment runtime is Node.js 24.x LTS with npm 11.x. The package engine contract, `.nvmrc`, GitHub Actions workflow, and Vercel build all target this same major line.
+
 ```text
 React UI and game screens
         ↓ semantic IDs and progress commands

@@ -16,6 +16,12 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-10-13 — Align the supported runtime with Vercel Node 24.x
+
+**Decision:** Set the supported runtime to Node.js 24.x and npm 11.x in `package.json` and `package-lock.json`, pin `.nvmrc` to the Node 24 line, run CI on Node 24.x, and update setup documentation.
+**Why:** Vercel discontinued the Node 20.x build runtime and rejects deployments using the previous contract. Keeping the package, local version hint, CI, current architecture record, and README aligned prevents another deployment/runtime mismatch.
+**Rejected:** Changing only the Vercel project setting, which would leave local and CI drift; retaining Node 20 because the E0.1 baseline is superseded by the platform requirement.
+
 ### 2026-10-13 — E0.3 uses production-boundary unit tests with a pure parent-gate seam
 
 **Decision:** Test progress persistence through an in-memory `Storage` implementation, test audio URL resolution through `getAudioEntry`, and extract only the arithmetic challenge generation/comparison from `ParentGateModal` into a pure helper.
