@@ -278,3 +278,9 @@ Project-level server scrubbing, default scrubbers, IP-address storage prevention
 **Decision:** Keep the arithmetic gate as a UX safeguard and add browser-crypto-backed challenge randomness when available, unbiased answer shuffling, and an in-memory five-failure/60-second window followed by a 30-second lockout. Reset failures after a correct answer; do not persist a bypass token.
 **Why:** E1.4 requires a non-predictable challenge and rate limiting for parent-only actions. The existing helper used `Math.random()` and the modal regenerated indefinitely after wrong answers. A bounded client-only tracker improves accidental/brute-force resistance without pretending to establish identity or legal consent.
 **Rejected:** Persisting a parent unlock token in LocalStorage, treating the challenge as parental verification, or adding server-side claims where the current app has no account-gated authorization endpoint.
+
+### 2026-10-13 — Add scoped AI-audio disclosure without overclaiming provenance
+
+**Decision:** Disclose in the parent audio panel and README that some bundled curriculum voice audio was generated with OpenAI TTS. Keep the statement scoped and separate from phoneme-source, Oxford, accent, rights, vendor-term, and quality claims.
+**Why:** E1.9 requires clear disclosure where the repository evidences OpenAI TTS generation. The register does not establish that every audio file has the same origin, nor does it contain complete generation/rights records.
+**Rejected:** Calling all audio AI-generated, describing OpenAI or Cloudinary as browser runtime dependencies, or using the disclosure as proof of rights, pronunciation quality, or legal compliance.

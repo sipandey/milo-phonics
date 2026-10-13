@@ -9,6 +9,7 @@ export interface AudioRuntimeStatus {
   readonly curriculumDescription: string;
   readonly nativeSpeechLabel: string;
   readonly nativeSpeechStatus: string;
+  readonly aiAudioDisclosure: string;
   readonly blendTestLabel: string;
 }
 
@@ -23,5 +24,6 @@ export const AUDIO_RUNTIME_STATUS: AudioRuntimeStatus = {
   curriculumDescription: 'Bundled audio is selected at runtime; CDN URLs remain generation metadata only.',
   nativeSpeechLabel: '3. Browser SpeechSynthesis:',
   nativeSpeechStatus: 'Disabled (zero native speech)',
+  aiAudioDisclosure: 'AI-generated audio disclosure: Some bundled curriculum voice audio was generated with OpenAI TTS; phoneme-source provenance remains under review.',
   blendTestLabel: 'Test Phoneme and Word Blend (/s/... Sun!)',
 };

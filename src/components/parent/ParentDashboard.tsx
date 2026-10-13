@@ -334,6 +334,9 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
               <span className="font-bold text-gray-800">{AUDIO_RUNTIME_STATUS.nativeSpeechLabel}</span>
               <span className="font-bold text-gray-500 bg-gray-200 px-2 py-0.5 rounded-lg">{AUDIO_RUNTIME_STATUS.nativeSpeechStatus}</span>
             </div>
+            <p className="pt-1 border-t border-amber-100 text-[11px] text-gray-600">
+              {AUDIO_RUNTIME_STATUS.aiAudioDisclosure}
+            </p>
           </div>
 
           <div className="flex gap-2 items-center">

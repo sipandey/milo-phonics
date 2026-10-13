@@ -71,7 +71,7 @@ Some code and filenames use Oxford or British/RP labels inherited from earlier a
 | --- | --- | --- |
 | Local progress | Browser LocalStorage stores stars, interaction counts, levels, timestamps, last position, and focus mode | Explain storage and deletion to parents; local reset does not delete any cloud record |
 | Parent sync | Optional Clerk-related code can export/sync progress metadata | Controller/processor roles, lawful basis, retention, deletion, transfers, security, and parent verification require review |
-| Audio generation | Development scripts send fixed educational text to OpenAI TTS and upload generated assets to Cloudinary | Keep secrets server-side; disclose AI-generated audio where required; retain generation and acceptance records |
+| Audio generation | Development scripts send fixed educational text to OpenAI TTS and upload generated assets to Cloudinary | Parent panel and README disclose the evidenced AI-generated curriculum scope; keep secrets server-side and retain generation, rights, vendor-term, and acceptance records |
 | Browser audio | Local static assets are selected first; third-party CDN URLs remain in manifests | No runtime CDN fallback is currently implemented |
 | Fonts/hosting | The app references external font/hosting surfaces | Review requests, logs, retention, transfers, headers, and deployment configuration before release |
 

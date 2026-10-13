@@ -42,6 +42,8 @@ describe('parent audio runtime status', () => {
     const statusText = Object.values(AUDIO_RUNTIME_STATUS).join(' ');
 
     expect(statusText).toContain('bundled local assets');
+    expect(statusText).toContain('AI-generated');
+    expect(statusText).toContain('OpenAI TTS');
     expect(statusText).not.toContain('Cloudinary CDN');
     expect(statusText).not.toContain('Oxford-First');
   });

@@ -17,6 +17,7 @@ The implemented experience provides audio-led letter–sound exploration and sim
 * **Fail-Safe Play**: No timers, no lives, no scores, no leaderboards, no failure screens, and no advertisements.
 * **Tactile & Responsive**: Touch targets ≥ 88px with squash-and-stretch micro-animations, bubble pop sound effects, and attention spotlighting on every touch.
 * **Local progress by default**: Core progress is stored in browser LocalStorage. Optional parent-account sync and third-party services are present in the repository and require the privacy/data-flow review described in the audit.
+* **Audio disclosure**: Some bundled curriculum voice audio was generated with OpenAI TTS. The parent dashboard identifies the bundled-local runtime; phoneme-source provenance, generation records, and vendor terms remain under review.
 
 ---
 
