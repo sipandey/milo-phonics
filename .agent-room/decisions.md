@@ -22,6 +22,12 @@ have to re-derive it from scratch by reading git history.
 **Why:** This covers the backlog’s normal, corrupt, migration, fallback, and gate-rule cases headlessly while preserving the current singleton, manifest, and modal behavior. It avoids introducing a DOM test dependency for rules that are inherently pure.
 **Rejected:** Rendering the modal with a new jsdom/testing-library stack for E0.3, or duplicating resolver and gate logic inside tests.
 
+### 2026-10-13 — E0.4 establishes a canonical current product and architecture record
+
+**Decision:** Use `docs/plans/current-product-and-architecture.md` as the source of truth for implemented facts, runtime architecture, data-flow caveats, claims status, and current status. Keep the technical backlog as execution control, the product roadmap as strategy, and older roadmaps as explicitly non-authoritative.
+**Why:** README, audio guidance, and older roadmaps had drifted from the local-first audio resolver and the audit’s privacy/rights findings. A hierarchy with one current record prevents sales, compliance, and engineering from treating planned or unsupported claims as shipped behavior.
+**Rejected:** Updating only README, which leaves developer guidance stale; rewriting the backlog into a product document, which mixes acceptance tracking with product facts; deleting older plans, which loses useful historical and strategic context.
+
 ### 2026-10-13 — Raise the Node 20 minimum for the E0.2 toolchain
 
 **Decision:** Set the supported Node range to `>=20.19.0 <21` and pin `.nvmrc` to `20.19.0`.
