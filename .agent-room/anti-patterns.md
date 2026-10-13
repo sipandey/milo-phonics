@@ -27,6 +27,12 @@ Append a new entry every time:
 **Root cause:** File presence, a generation manifest, or a vendor URL was treated as proof of commercial clearance and runtime completeness.
 **Avoid:** Maintain a per-family rights evidence ledger with named owners and retained proof; keep unresolved rows blocked, and reconcile every referenced media path against the shipped asset inventory before release.
 
+### 2026-10-13 — Letting historical claims leak into user-facing surfaces
+
+**What happened:** The pre-marketing audit had already marked Oxford, accent, curriculum, privacy, age, and outcome claims as unsupported, but several remained in the HTML title/description and React screens. No build check prevented them from returning.
+**Root cause:** Historical product wording and implementation-era labels were treated as harmless copy even though parents and distribution systems can see them as claims.
+**Avoid:** Keep paused wording in the claims register/audit only, use the modest approved baseline in user-facing surfaces, and run the claims guard as part of every production build.
+
 ### 2026-10-13 — Assuming every semantic word ID has a one-letter prefix
 
 **What happened:** The audio fallback for an unlisted ID such as `word.unlisted` produced `nlisted`, silently dropping the first character.

@@ -129,10 +129,10 @@ export const OxfordSoundsScreen: React.FC<OxfordSoundsScreenProps> = ({ onGoHome
 
         <div className="text-center">
           <h1 className="text-2xl sm:text-4xl font-black text-amber-900 tracking-wide flex items-center justify-center gap-2">
-            British Sounds 🇬🇧
+            Sound Explorer
           </h1>
           <p className="text-xs sm:text-sm font-bold text-amber-700/80 mt-0.5">
-            Oxford Dictionary Authentic Audio
+            Pre-recorded sound reference audio
           </p>
         </div>
 
@@ -212,7 +212,7 @@ export const OxfordSoundsScreen: React.FC<OxfordSoundsScreenProps> = ({ onGoHome
                       <Volume2 className={`w-4 h-4 ${isIsoPlaying ? 'animate-pulse' : 'opacity-60'}`} />
                     </button>
 
-                    {/* Example Word Button (Tap for Oxford spoken word) */}
+                    {/* Example Word Button */}
                     <button
                       onClick={() => handlePlaySound(item.symbol, 'words')}
                       className={`squish-tap w-full mt-2 py-2 px-3 rounded-2xl text-center border-2 transition-all flex items-center justify-between ${
@@ -239,9 +239,7 @@ export const OxfordSoundsScreen: React.FC<OxfordSoundsScreenProps> = ({ onGoHome
       {/* Footer */}
       <footer className="text-center py-4 bg-white/60 backdrop-blur-sm rounded-3xl border border-amber-200/60 mt-4">
         <p className="text-xs sm:text-sm font-semibold text-amber-900/70">
-          Audio recordings directly from the{' '}
-          <span className="font-black text-amber-900">Oxford Advanced Learner's Dictionary</span>.
-          Tap a phonetic symbol for the isolated sound, or tap the word for the spoken word.
+          Bundled sound reference audio. Tap a phonetic symbol for the isolated sound, or tap the word for the spoken word.
         </p>
       </footer>
     </div>

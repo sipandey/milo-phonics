@@ -134,7 +134,7 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
                     Toddler Focus Mode
                   </h3>
                   <span className="text-[10px] bg-emerald-500 text-white font-extrabold px-2 py-0.5 rounded-full">
-                    Recommended (Ages 2–3)
+                    Single-Action Play
                   </span>
                 </div>
                 <p className="text-xs text-amber-800/90 mt-1 leading-relaxed">
@@ -166,11 +166,11 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
           </div>
         </div>
 
-        {/* Section 3: Systematic Synthetic Phonics (SSP) Progress */}
+        {/* Section 3: Curriculum Progress */}
         <div className="space-y-4 mb-6">
           <h3 className="text-sm font-black text-amber-900 uppercase tracking-wider flex items-center gap-2">
             <Award className="w-4 h-4 text-amber-500" />
-            Curriculum Mastery (British Phonics Progression)
+            Curriculum Progress
           </h3>
 
           <div className="grid grid-cols-3 gap-2.5">

@@ -284,3 +284,9 @@ Project-level server scrubbing, default scrubbers, IP-address storage prevention
 **Decision:** Disclose in the parent audio panel and README that some bundled curriculum voice audio was generated with OpenAI TTS. Keep the statement scoped and separate from phoneme-source, Oxford, accent, rights, vendor-term, and quality claims.
 **Why:** E1.9 requires clear disclosure where the repository evidences OpenAI TTS generation. The register does not establish that every audio file has the same origin, nor does it contain complete generation/rights records.
 **Rejected:** Calling all audio AI-generated, describing OpenAI or Cloudinary as browser runtime dependencies, or using the disclosure as proof of rights, pronunciation quality, or legal compliance.
+
+### 2026-10-13 — Enforce paused claims at the production build boundary
+
+**Decision:** Maintain `docs/claims-register.md` as the claims authority and run `npm run verify:claims` from `npm run build` over the checked-in README, HTML shell, and selected React user-facing surfaces. Keep historical/audit records outside the automated scan and require human review for new distribution copy.
+**Why:** The audit found unsupported Oxford, accent, curriculum, privacy, age/outcome, and offline claims still present in the app shell and parent/sound surfaces. A narrow build guard catches their reintroduction while preserving explanatory historical records.
+**Rejected:** Treating a regex guard as legal approval, scanning only README, deleting historical audit evidence, or allowing paused claims because they appear in comments or generated metadata without a reviewed owner decision.

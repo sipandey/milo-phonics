@@ -81,7 +81,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <span className="text-3xl sm:text-4xl">🇬🇧</span>
           </h1>
           <p className="text-xs sm:text-sm font-extrabold text-amber-800/80 mt-0.5">
-            Pure British Sounds for Little Learners
+            Audio-Led Letter &amp; Word Play
           </p>
         </div>
 
