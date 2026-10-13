@@ -11,7 +11,13 @@ The deployed candidate is reachable in the authenticated Chrome session and the 
 Two findings need follow-up before treating this deployment as release-ready:
 
 1. The parent sign-in modal is enabled and identifies itself as **Development mode**. No credentials were submitted, but the production deployment should not rely on a development Clerk instance for a release candidate.
-2. The parent dashboard says the audio engine is an “Oxford-First & AI Cloudinary Pipeline” and labels pre-recorded AI audio as “Active (Cloudinary CDN)”. The repository’s runtime resolver actually selects bundled local assets and does not implement a Cloudinary fallback. The UI wording is therefore not a reliable runtime dependency statement.
+2. The parent dashboard in the reviewed `979d300` deployment said the audio engine was an “Oxford-First & AI Cloudinary Pipeline” and labeled pre-recorded AI audio as “Active (Cloudinary CDN)”. The repository’s runtime resolver actually selects bundled local assets and does not implement a Cloudinary fallback. This wording was corrected in `1661e42` and verified in its Ready deployment; the Cloudinary runtime-dependency mismatch is closed, while the Clerk environment finding remains open.
+
+### Follow-up verification
+
+- Vercel reported the `1661e42` production deployment as **Ready**.
+- The authenticated parent dashboard now shows `Audio Engine: Bundled Pre-Recorded Audio`, `Active (bundled local assets)`, and `CDN URLs remain generation metadata only.`
+- The corrected copy no longer presents Cloudinary as an active browser dependency or repeats the unsupported Oxford-First label.
 
 ## Research: repository and deployment evidence
 
@@ -63,11 +69,11 @@ The browser automation surface did not expose a resource-timing or HAR capture. 
 ## Findings and follow-up
 
 1. Replace or explicitly configure the Clerk deployment key for a real production instance before enabling parent sync in a release environment. Track the vendor, DPA, retention, deletion, and parent-verification decisions under E1.6/E1.11.
-2. Align parent-facing audio labels with the runtime truth, or implement and test an approved remote fallback. Do not use the dashboard copy as evidence of a Cloudinary runtime dependency.
+2. Keep the corrected parent-facing audio labels aligned with the runtime resolver. Do not add a remote fallback or describe Cloudinary as a browser dependency without an approved design and production test.
 3. Add an authenticated, repeatable release-check procedure that captures response headers and a network trace without recording credentials, tokens, nonce values, or child progress.
 4. Complete reset and audio-failure checks in an isolated test profile/browser context after explicit authorization for the destructive reset step; leave production release status open until those checks are recorded.
 5. Re-run `/release.json` verification outside the browser-client block and reconcile its version/commit with the deployment shown in Vercel.
 
 ## Acceptance status
 
-E0.7 remains **in progress**. The safe first-visit, local-mode, parent-gate, sign-in inspection, and mobile smoke checks are recorded. Reset, induced audio failure, full resource trace, and release metadata verification remain open.
+E0.7 remains **in progress**. The safe first-visit, local-mode, parent-gate, sign-in inspection, mobile smoke check, and correction of the Cloudinary wording mismatch are recorded. Reset, induced audio failure, full resource trace, Clerk production-mode decision, and release metadata verification remain open.
