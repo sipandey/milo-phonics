@@ -8,13 +8,13 @@
 
 ## Current execution slice
 
-**Completed:** E0.1 — reproducible Node/npm setup.
+**Completed:** E0.1 — reproducible Node/npm setup; E0.2 — automated quality gates.
 
-**Active item:** E0.2 — automated quality gates.
+**Active item:** E0.3 — focused tests for progress migration, level unlocking, audio URL resolution, and parent-gate rules.
 
-**Status:** Complete (13 October 2026). `npm ci`, `npm run lint`, `npm test`, `npm run build`, and AgentRoom validation passed. The pull-request workflow now installs dependencies and runs lint, unit tests, and the production build on Node 20.19+. The approved design and implementation boundary are recorded in [the E0.2 design](2026-10-13-e0-2-quality-gates-design.md).
+**Status:** Complete (13 October 2026). The focused E0.3 suite covers current and corrupt progress storage, legacy migration, star monotonicity, level unlocking, local audio URL fallback, and parent-gate success/failure rules. All 13 tests run headlessly; lint and the production build also pass. The approved design and implementation boundary are recorded in [the E0.3 design](2026-10-13-e0-3-focused-service-tests-design.md).
 
-**Next item:** E0.3 — focused tests for progress migration, level unlocking, audio URL resolution, and parent-gate rules.
+**Next item:** E0.4 — consolidate the current product and architecture record.
 
 ## Audit integration and release holds
 

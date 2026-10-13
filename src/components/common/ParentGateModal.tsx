@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { audioService } from '../../services/audioService';
+import { createParentGateChallenge, isParentGateAnswer } from '../../services/parentGate';
 import { X, Lock } from 'lucide-react';
 
 interface ParentGateModalProps {
@@ -24,25 +25,14 @@ export const ParentGateModal: React.FC<ParentGateModalProps> = ({
   }, [isOpen]);
 
   const generateMathProblem = () => {
-    const a = Math.floor(Math.random() * 5) + 3;
-    const b = Math.floor(Math.random() * 5) + 2;
-    const answer = a + b;
-    setNum1(a);
-    setNum2(b);
-
-    // Generate 3 random decoy answers
-    const decoys = new Set<number>([answer]);
-    while (decoys.size < 4) {
-      const offset = (Math.random() > 0.5 ? 1 : -1) * (Math.floor(Math.random() * 3) + 1);
-      const val = answer + offset;
-      if (val > 0) decoys.add(val);
-    }
-    const shuffled = Array.from(decoys).sort(() => Math.random() - 0.5);
-    setOptions(shuffled);
+    const challenge = createParentGateChallenge();
+    setNum1(challenge.num1);
+    setNum2(challenge.num2);
+    setOptions(challenge.options);
   };
 
   const handleSelectOption = (num: number) => {
-    if (num === num1 + num2) {
+    if (isParentGateAnswer({ num1, num2 }, num)) {
       audioService.playChime();
       onUnlock();
     } else {

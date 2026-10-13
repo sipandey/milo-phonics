@@ -439,12 +439,13 @@ export const getAudioEntry = (audioId: string): AudioEntry | undefined => {
   if (audioId.startsWith('word.')) {
     const base = audioManifest[audioId];
     const generated = generatedAudioManifest[audioId];
+    const fallbackWord = audioId.replace(/^word\./, '').replace(/^[a-z]-/, '');
     return {
       id: audioId,
       type: 'word',
       source: 'local',
       url: generated?.localUrl || `/audio/words/${audioId}.mp3`,
-      fallbackText: base?.fallbackText || generated?.text || audioId.replace(/^word\.[a-z]-?/, ''),
+      fallbackText: base?.fallbackText || generated?.text || fallbackWord,
       version: 1,
       description: base?.description || 'Curriculum word audio',
     };

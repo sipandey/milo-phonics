@@ -21,6 +21,12 @@ Append a new entry every time:
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-10-13 — Assuming every semantic word ID has a one-letter prefix
+
+**What happened:** The audio fallback for an unlisted ID such as `word.unlisted` produced `nlisted`, silently dropping the first character.
+**Root cause:** A regex written for IDs shaped like `word.a-apple` was also applied to ordinary `word.<word>` IDs.
+**Avoid:** Strip the semantic `word.` namespace first, then remove an optional one-letter prefix only when it is followed by a hyphen; keep a regression test for both ID shapes.
+
 ### 2026-09-16 — Relying on asynchronous React state to block rapid multi-tap audio triggers
 
 **What happened:** Rapid double-clicks on bubbles or Milo caused sound effects (procedural oscillator pops) and Oxford phoneme audio to fire twice in immediate succession ("P-Pop! /t/ - /t/!"), creating an unpleasant stutter echo.
