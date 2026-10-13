@@ -1,6 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { audioService } from '../../services/audioService';
-import { createParentGateChallenge, isParentGateAnswer } from '../../services/parentGate';
+import {
+  createParentGateAttemptTracker,
+  createParentGateChallenge,
+  isParentGateAnswer,
+  type ParentGateAttemptStatus,
+  type ParentGateAttemptTracker,
+} from '../../services/parentGate';
 import { X, Lock } from 'lucide-react';
 
 interface ParentGateModalProps {
@@ -14,15 +20,41 @@ export const ParentGateModal: React.FC<ParentGateModalProps> = ({
   onClose,
   onUnlock,
 }) => {
+  const attemptTrackerRef = useRef<ParentGateAttemptTracker | null>(null);
+  if (attemptTrackerRef.current === null) {
+    attemptTrackerRef.current = createParentGateAttemptTracker();
+  }
+  const attemptTracker = attemptTrackerRef.current;
   const [num1, setNum1] = useState(3);
   const [num2, setNum2] = useState(4);
   const [options, setOptions] = useState<number[]>([]);
+  const [attemptStatus, setAttemptStatus] = useState<ParentGateAttemptStatus>(() => attemptTracker.getStatus());
+  const [gateMessage, setGateMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
       generateMathProblem();
+      setAttemptStatus(attemptTracker.getStatus());
+      setGateMessage(null);
     }
-  }, [isOpen]);
+  }, [attemptTracker, isOpen]);
+
+  useEffect(() => {
+    if (!isOpen || attemptStatus.lockedUntil === null) {
+      return undefined;
+    }
+
+    const waitMs = Math.max(0, attemptStatus.lockedUntil - Date.now());
+    const timeoutId = window.setTimeout(() => {
+      const nextStatus = attemptTracker.getStatus();
+      setAttemptStatus(nextStatus);
+      if (nextStatus.allowed) {
+        setGateMessage(null);
+      }
+    }, waitMs + 1);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [attemptStatus.lockedUntil, attemptTracker, isOpen]);
 
   const generateMathProblem = () => {
     const challenge = createParentGateChallenge();
@@ -32,12 +64,25 @@ export const ParentGateModal: React.FC<ParentGateModalProps> = ({
   };
 
   const handleSelectOption = (num: number) => {
+    if (!attemptStatus.allowed) {
+      return;
+    }
+
     if (isParentGateAnswer({ num1, num2 }, num)) {
+      attemptTracker.recordSuccess();
+      setAttemptStatus(attemptTracker.getStatus());
+      setGateMessage(null);
       audioService.playChime();
       onUnlock();
     } else {
+      const nextStatus = attemptTracker.recordFailure();
+      setAttemptStatus(nextStatus);
       audioService.playBoing();
-      generateMathProblem();
+      if (nextStatus.allowed) {
+        generateMathProblem();
+      } else {
+        setGateMessage('Too many incorrect answers. Please wait 30 seconds before trying again.');
+      }
     }
   };
 
@@ -75,12 +120,19 @@ export const ParentGateModal: React.FC<ParentGateModalProps> = ({
             <button
               key={opt}
               onClick={() => handleSelectOption(opt)}
+              disabled={!attemptStatus.allowed}
               className="py-3 px-4 bg-gray-100 hover:bg-bubble-yellow hover:text-amber-950 font-black text-xl rounded-2xl border-2 border-gray-200 squish-tap transition-colors"
             >
               {opt}
             </button>
           ))}
         </div>
+
+        {gateMessage && (
+          <p className="mt-4 text-center text-xs font-bold text-red-700" role="alert">
+            {gateMessage}
+          </p>
+        )}
       </div>
     </div>
   );

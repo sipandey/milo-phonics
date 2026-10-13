@@ -17,7 +17,7 @@ The core child flow is designed to work without an account. Parent-only settings
 | Word blending | CVC/VC blending entries and sequential audio interaction | Implemented, content review pending |
 | Games | Let's Play, Sound Train, Bubble Pop, and Feed Milo flows are present | Implemented surface; release evidence pending |
 | Progress | LocalStorage persistence, v1 migration, star tracking, level unlocking, and resume position | Implemented |
-| Parent controls | Arithmetic gate, dashboard, reset, and optional parent sync path | Partially implemented; robust parent-safety review pending |
+| Parent controls | Arithmetic gate, dashboard, reset, optional parent sync, and optional diagnostics | Gate now uses browser crypto randomness when available and a bounded retry lockout; identity, legal-consent, account deletion, and future purchase/support protections remain open |
 | Audio runtime | Local pre-recorded assets through semantic IDs; Web Audio procedural SFX; HTML audio playback | Implemented |
 | PWA/offline install | No shipped manifest/service worker acceptance path in this repository | Planned |
 | Android | No native Android project or Play release | Planned |
@@ -75,7 +75,7 @@ Some code and filenames use Oxford or British/RP labels inherited from earlier a
 | Browser audio | Local static assets are selected first; third-party CDN URLs remain in manifests | No runtime CDN fallback is currently implemented |
 | Fonts/hosting | The app references external font/hosting surfaces | Review requests, logs, retention, transfers, headers, and deployment configuration before release |
 
-The arithmetic parent gate is an interaction safeguard, not proof of parental responsibility, consent, or legal compliance. The app has no approved claim of COPPA compliance, UK Children’s Code compliance, or zero data collection.
+The arithmetic parent gate is an interaction safeguard, not proof of parental responsibility, consent, or legal compliance. It uses a browser-crypto-backed challenge source when available, unbiased answer-option shuffling, and an in-memory five-failure/60-second window with a 30-second lockout. The app has no approved claim of COPPA compliance, UK Children’s Code compliance, or zero data collection. Account deletion, purchases, support links, and external navigation are not implemented as parent-gated flows yet; they must use this gate before being added.
 
 ## Claims currently on hold
 

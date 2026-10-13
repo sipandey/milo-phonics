@@ -272,3 +272,9 @@ Project-level server scrubbing, default scrubbers, IP-address storage prevention
 **Decision:** Use `docs/data-flow-inventory.md` as the E1.3 technical source of truth. Record authored runtime/build destinations and observed fields, but leave controller/processor roles, retention, deletion, subprocessors, transfers, hosting logs, and security fields explicitly unknown until an owner attaches evidence.
 **Why:** The E0.7 source/network review identified the browser destinations but could not provide packet-level tracing, credentialed Clerk sync, vendor contract terms, or host-log settings. The inventory must not turn those gaps into privacy claims.
 **Rejected:** Treating a browser SDK import as proof of vendor terms, treating absence of authored analytics as proof of no deployment data collection, or marking E1.3 complete from source inspection alone.
+
+### 2026-10-13 — Add bounded retry protection to the parent gate
+
+**Decision:** Keep the arithmetic gate as a UX safeguard and add browser-crypto-backed challenge randomness when available, unbiased answer shuffling, and an in-memory five-failure/60-second window followed by a 30-second lockout. Reset failures after a correct answer; do not persist a bypass token.
+**Why:** E1.4 requires a non-predictable challenge and rate limiting for parent-only actions. The existing helper used `Math.random()` and the modal regenerated indefinitely after wrong answers. A bounded client-only tracker improves accidental/brute-force resistance without pretending to establish identity or legal consent.
+**Rejected:** Persisting a parent unlock token in LocalStorage, treating the challenge as parental verification, or adding server-side claims where the current app has no account-gated authorization endpoint.
