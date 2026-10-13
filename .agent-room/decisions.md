@@ -16,6 +16,12 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-10-13 — E0.3 uses production-boundary unit tests with a pure parent-gate seam
+
+**Decision:** Test progress persistence through an in-memory `Storage` implementation, test audio URL resolution through `getAudioEntry`, and extract only the arithmetic challenge generation/comparison from `ParentGateModal` into a pure helper.
+**Why:** This covers the backlog’s normal, corrupt, migration, fallback, and gate-rule cases headlessly while preserving the current singleton, manifest, and modal behavior. It avoids introducing a DOM test dependency for rules that are inherently pure.
+**Rejected:** Rendering the modal with a new jsdom/testing-library stack for E0.3, or duplicating resolver and gate logic inside tests.
+
 ### 2026-10-13 — Raise the Node 20 minimum for the E0.2 toolchain
 
 **Decision:** Set the supported Node range to `>=20.19.0 <21` and pin `.nvmrc` to `20.19.0`.
