@@ -290,3 +290,9 @@ Project-level server scrubbing, default scrubbers, IP-address storage prevention
 **Decision:** Maintain `docs/claims-register.md` as the claims authority and run `npm run verify:claims` from `npm run build` over the checked-in README, HTML shell, and selected React user-facing surfaces. Keep historical/audit records outside the automated scan and require human review for new distribution copy.
 **Why:** The audit found unsupported Oxford, accent, curriculum, privacy, age/outcome, and offline claims still present in the app shell and parent/sound surfaces. A narrow build guard catches their reintroduction while preserving explanatory historical records.
 **Rejected:** Treating a regex guard as legal approval, scanning only README, deleting historical audit evidence, or allowing paused claims because they appear in comments or generated metadata without a reviewed owner decision.
+
+### 2026-10-13 — Separate technical vendor assessment from vendor acceptance
+
+**Decision:** Record E1.6 in `docs/plans/2026-10-13-e1-6-vendor-review.md` with one matrix for Clerk, Google Fonts, Cloudinary, OpenAI, Vercel hosting, and Sentry. Keep each configuration decision conditional until current contracts/DPAs, subprocessors, regions/transfers, retention/deletion, security, and owner sign-offs are attached.
+**Why:** Source and deployment review establish where a service is referenced and what the app intends to send, but they cannot accept vendor terms or prove host logs, deletion, or production configuration. The inventory needs a repeatable evidence request and an explicit “do not accept” boundary.
+**Rejected:** Treating package installation or an environment variable as vendor approval, treating a public URL as a cleared CDN dependency, or enabling Clerk Development mode/Sentry production DSN while privacy and data-flow decisions remain open.
