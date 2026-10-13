@@ -156,6 +156,7 @@ phonics/
 * Node.js 24.x LTS
 * npm 11.x (bundled with the supported Node.js line)
 * (Optional for audio regeneration) `ffmpeg` and OpenAI / Cloudinary API keys in `.env`
+* (Optional monitoring) Sentry deployment variables described in [`docs/sentry.md`](docs/sentry.md)
 
 ### Installation
 ```bash

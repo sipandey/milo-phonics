@@ -16,6 +16,12 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-10-13 — Add an opt-in, privacy-gated Sentry foundation
+
+**Decision:** Provision the `milo-phonics` Sentry project, initialize `@sentry/react` only when `VITE_SENTRY_DSN` is configured, enable browser errors and 10% tracing by default, and activate Vite source-map upload only with the secret `SENTRY_AUTH_TOKEN`. Keep Session Replay, client logging, and application metrics disabled.
+**Why:** Release-versioned browser errors and readable production stack traces are useful engineering signals, while the child-facing product requires telemetry minimization. DSN opt-in keeps contributors and deployments without an approved monitoring configuration unaffected.
+**Rejected:** Enabling replay, logging, or metrics by default; hardcoding a DSN or token; and treating the base SDK wiring as completion of E0.6 before parent consent, event scrubbing, retention, and vendor data-flow review are accepted.
+
 ### 2026-10-13 — Align the supported runtime with Vercel Node 24.x
 
 **Decision:** Set the supported runtime to Node.js 24.x and npm 11.x in `package.json` and `package-lock.json`, pin `.nvmrc` to the Node 24 line, run CI on Node 24.x, and update setup documentation.

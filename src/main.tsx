@@ -4,6 +4,9 @@ import { ClerkProvider } from '@clerk/clerk-react';
 import App from './App';
 import './index.css';
 import { isClerkEnabled, CLERK_PUBLISHABLE_KEY } from './components/parent/ParentClerkSync';
+import { initializeSentry } from './observability/sentry';
+
+initializeSentry();
 
 const rootElement = document.getElementById('root')!;
 

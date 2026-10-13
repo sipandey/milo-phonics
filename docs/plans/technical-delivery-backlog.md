@@ -12,11 +12,11 @@
 
 **Completed:** E0.1 — reproducible Node/npm setup; E0.2 — automated quality gates; E0.3 — focused service tests; E0.4 — current product/architecture record.
 
-**Active item:** E0.5 — versioned releases and rollback instructions.
+**Active item:** E0.6 — privacy-preserving structured client error reporting.
 
-**Status:** Complete (13 October 2026). Builds now emit and verify `release.json` with app version, source commit, and channel metadata. Changelog and five-minute rollback instructions are documented; runtime audit is clean, while six high-severity development-tree findings and the P0 claims/release holds keep production tagging gated. The approved design and implementation boundary are recorded in [the E0.5 design](2026-10-13-e0-5-release-versioning-rollback-design.md).
+**Status:** In progress (13 October 2026). The `milo-phonics` Sentry project, opt-in React error/tracing SDK, release metadata, and conditional source-map upload path are implemented and verified end-to-end in development. The E0.6 acceptance criteria remain open: parent consent, event scrubbing/data minimization, retention, vendor data-flow review, and release-version dashboard checks must be completed before a production DSN is enabled. The approved implementation boundary is recorded in [the Sentry design](2026-10-13-sentry-react-instrumentation-design.md).
 
-**Next item:** E0.6 — privacy-preserving structured client error reporting.
+**Next acceptance step:** Define and implement the parent-consent and event-scrubbing contract, then verify it against the Sentry data-flow and retention configuration.
 
 ## Audit integration and release holds
 
