@@ -28,6 +28,12 @@ have to re-derive it from scratch by reading git history.
 **Why:** README, audio guidance, and older roadmaps had drifted from the local-first audio resolver and the audit’s privacy/rights findings. A hierarchy with one current record prevents sales, compliance, and engineering from treating planned or unsupported claims as shipped behavior.
 **Rejected:** Updating only README, which leaves developer guidance stale; rewriting the backlog into a product document, which mixes acceptance tracking with product facts; deleting older plans, which loses useful historical and strategic context.
 
+### 2026-10-13 — E0.5 emits a no-store release identity without authorizing a production tag
+
+**Decision:** Derive build version from `package.json`, emit `dist/release.json` with version, commit, and channel metadata, verify it mechanically after build, and document operator-led tagging/deployment/rollback steps. Do not bump or tag a production release in E0.5.
+**Why:** The repository already has a package version but no serving-build identity or rollback runbook. The current audit and release gates still contain P0 holds, so release traceability must be implemented without implying production readiness.
+**Rejected:** Maintaining a manually edited public version file, embedding only a compile-time UI label without a deployment smoke endpoint, or tagging `v1.0.0` before rights/privacy/security gates close.
+
 ### 2026-10-13 — Raise the Node 20 minimum for the E0.2 toolchain
 
 **Decision:** Set the supported Node range to `>=20.19.0 <21` and pin `.nvmrc` to `20.19.0`.
