@@ -1,18 +1,17 @@
 # E0.7 Production Network and Dependency Review
 
 **Date:** 13 October 2026
-**Scope:** Production deployment serving commit `4381d46` (follow-up to the earlier `979d300` and `1661e42` reviews)
-**Status:** In progress — the requested production flow and fault-injection checks are complete; deployment-channel and Clerk production configuration decisions remain open.
+**Scope:** Production deployment serving commit `282ed50` (follow-up to the earlier `4381d46`, `979d300`, and `1661e42` reviews)
+**Status:** In progress — the requested production flow and fault-injection checks are complete; the Clerk production configuration and vendor-acceptance decision remains open.
 
 ## Result
 
-The deployed candidate is reachable in the authenticated Chrome session and the core local journey works. The follow-up review completed the isolated reset, induced audio-failure, release-metadata, and first-visit network-trace checks. E0.7 remains open because the serving metadata reports `channel: local` and the production browser still loads Clerk Development-mode assets; these are deployment/vendor configuration findings, not reasons to change the child-facing runtime during this audit slice.
+The deployed candidate is reachable in the authenticated Chrome session and the core local journey works. The follow-up review completed the isolated reset, induced audio-failure, release-metadata, and first-visit network-trace checks. The release-channel remediation was redeployed and verified live; E0.7 remains open because the production browser still loads Clerk Development-mode assets and the associated vendor/privacy decisions are not accepted.
 
-Two findings need follow-up before treating this deployment as release-ready:
+One finding needs follow-up before treating this deployment as release-ready:
 
 1. The parent sign-in modal is enabled and identifies itself as **Development mode**. No credentials were submitted, but the production deployment should not rely on a development Clerk instance for a release candidate.
-2. `GET /release.json` returned `200` for version `1.0.0` and serving commit `4381d46`, but its channel field was `local`. The release environment is not publishing the intended `production` channel metadata.
-3. The parent dashboard in the reviewed `979d300` deployment said the audio engine was an “Oxford-First & AI Cloudinary Pipeline” and labeled pre-recorded AI audio as “Active (Cloudinary CDN)”. The repository’s runtime resolver actually selects bundled local assets and does not implement a Cloudinary fallback. This wording was corrected in `1661e42` and verified in its Ready deployment; the Cloudinary runtime-dependency mismatch is closed, while the Clerk environment finding remains open.
+The earlier `channel: local` finding was corrected by the release-channel remediation in `282ed50`; the live endpoint now returns `channel: production` with the serving commit. The parent dashboard in the reviewed `979d300` deployment said the audio engine was an “Oxford-First & AI Cloudinary Pipeline” and labeled pre-recorded AI audio as “Active (Cloudinary CDN)”. The repository’s runtime resolver actually selects bundled local assets and does not implement a Cloudinary fallback. This wording was corrected in `1661e42` and verified in its Ready deployment; the Cloudinary runtime-dependency mismatch is closed.
 
 ### Follow-up verification
 
@@ -25,7 +24,8 @@ Two findings need follow-up before treating this deployment as release-ready:
 The follow-up was run against `https://milo-phonics.vercel.app/` in an isolated Chrome profile. No credentials, production account actions, Sentry events, or raw child-progress values were submitted.
 
 - **Release metadata:** `GET /release.json` returned `200` with `version: 1.0.0`, `commit: 4381d46b03c3fc6423b68cce65a919c716477489`, and `channel: local`. The response exposed `Cache-Control: no-store` and `Strict-Transport-Security`; the commit matches the serving deployment, but the channel mismatch is an E0.7 finding.
-- **Release-channel remediation:** the repository now gives explicit `RELEASE_CHANNEL` precedence and derives the fallback from Vercel `VERCEL_ENV`; a simulated production build for commit `9d4d05e` emitted `channel: production`. The live URL must be rechecked after the deployment of this fix.
+- **Release-channel remediation:** the repository now gives explicit `RELEASE_CHANNEL` precedence and derives the fallback from Vercel `VERCEL_ENV`; a simulated production build for commit `9d4d05e` emitted `channel: production`, followed by the live verification recorded below.
+- **Live release-channel recheck:** after redeployment of `282ed50`, `GET /release.json` returned `200` with version `1.0.0`, the full serving commit `282ed501c23ee383e53e5a69fdf3c22a1b41b72d`, and `channel: production`. The channel finding is closed.
 - **Reset:** after one explicit practice interaction produced two stars, the parent-gated reset returned the browser state to `0` stars, Level 1 progress `0/12`, and one unlocked level. This was performed only after explicit confirmation for the disposable local test state.
 - **Induced audio failure:** Chrome DevTools Network Conditions was set to offline. The `word.sun.mp3` media request failed with `net::ERR_INTERNET_DISCONNECTED`; `AudioService` recorded the failure as `NotSupportedError`, and the child flow advanced to the next card without awarding a star or becoming stuck. Network conditions were restored to “No throttling” afterward.
 - **First-visit trace:** a sanitized HAR was exported to `/Users/bhavna_siddharth/Downloads/milo-phonics.vercel.app.har` and retained outside the repository. The trace contained 52 requests, 3.3 MB transferred, 4.6 MB of resources, and timings of 231 ms DOMContentLoaded, 387 ms load, and 832 ms finish. The trace included a Clerk Development asset from `immense-mantis-4627.clerk.accounts.dev`; unrelated Chrome-extension warnings were excluded from application findings.
@@ -68,7 +68,7 @@ The follow-up retained a sanitized HAR from the browser trace. It is outside the
 | Audio success | Pass for exercised local asset | Tapping `Sun` completed and awarded a star. The source resolver selected a bundled `/audio/` path. An initial automatic prompt also logged a browser autoplay `NotAllowedError` before user interaction; this did not prevent the post-gesture local audio flow. |
 | Audio failure | Pass under induced offline condition | `word.sun.mp3` failed with `net::ERR_INTERNET_DISCONNECTED`; the AudioService logged the failure and the child flow advanced without a stuck state or reward. |
 | Mobile session | Pass for smoke layout | Applied a temporary `390×844` viewport, inspected the parent surface, and restored the default viewport. No overflow or missing primary controls was observed in the DOM snapshot. This is not a device matrix or touch-hardware certification. |
-| Release metadata | Pass with configuration finding | Direct HTTP verification returned 200 and matched commit `4381d46`; `channel: local` must be corrected for a production serving build. The browser’s direct endpoint view remained blocked by the client, so the release check uses the authenticated-safe HTTP result. |
+| Release metadata | Pass; channel remediation verified | Direct HTTP verification returned 200 and matched the deployed commit `282ed50`; the redeployed endpoint now reports `channel: production`. The browser’s direct endpoint view remained blocked by the client, so the release check uses the authenticated-safe HTTP result. |
 
 ## Headers, cookies, storage, and injected code
 
@@ -83,9 +83,9 @@ The follow-up retained a sanitized HAR from the browser trace. It is outside the
 1. Replace or explicitly configure the Clerk deployment key for a real production instance before enabling parent sync in a release environment. Track the vendor, DPA, retention, deletion, and parent-verification decisions under E1.6/E1.11.
 2. Keep the corrected parent-facing audio labels aligned with the runtime resolver. Do not add a remote fallback or describe Cloudinary as a browser dependency without an approved design and production test.
 3. Add an authenticated, repeatable release-check procedure that captures response headers and a network trace without recording credentials, tokens, nonce values, or child progress.
-4. Redeploy the release-channel remediation and confirm the serving build reports `channel: production` (or document and approve an explicit alternative) with the release metadata check.
+4. Keep the release metadata check in the deployment checklist so future serving builds continue to report the intended channel and commit.
 5. Replace or explicitly configure the Clerk key for a real production instance before enabling parent sync; obtain the vendor, DPA, retention, deletion, transfer, and parent-verification decisions under E1.6/E1.11.
 
 ## Acceptance status
 
-E0.7 remains **in progress**. First visit, local mode, parent gate, sign-in inspection, reset, induced audio failure, mobile smoke, sanitized trace, and release metadata identity checks are recorded. Completion is blocked by the `channel: local` serving metadata, the unresolved Clerk Development-mode decision, and the need for owner acceptance of the remaining vendor/dependency evidence; no production credentials or child data were used.
+E0.7 remains **in progress**. First visit, local mode, parent gate, sign-in inspection, reset, induced audio failure, mobile smoke, sanitized trace, and release metadata identity/channel checks are recorded. Completion is blocked by the unresolved Clerk Development-mode decision and owner acceptance of the remaining vendor/dependency evidence; no production credentials or child data were used.

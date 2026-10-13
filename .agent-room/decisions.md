@@ -338,3 +338,9 @@ Project-level server scrubbing, default scrubbers, IP-address storage prevention
 **Decision:** Keep `RELEASE_CHANNEL` as the explicit override, otherwise derive the release channel from Vercel’s `VERCEL_ENV`, with `ci` and `local` fallbacks. Add tests for production, preview, explicit override, CI, and local behavior.
 **Why:** The live deployment had the correct version and commit but emitted `channel: local` because no explicit channel was configured. Deriving the channel at build time removes that deployment drift without making a local build appear production-like.
 **Rejected:** Hardcoding `production`, removing the explicit override, or changing the already-serving deployment’s metadata without a new build and live verification.
+
+### 2026-10-13 — Close the E0.7 release-channel mismatch after live verification
+
+**Decision:** Close the `channel: local` deployment finding after pushing the typed Vercel-aware resolver and verifying that the live serving endpoint for `282ed50` returns `channel: production`. Keep the Clerk Development-mode and vendor/privacy findings open.
+**Why:** The source fix was tested in isolation and the serving URL now identifies the intended production channel, so the release metadata evidence is complete for this deployment. The result does not authorize Clerk sync or imply vendor acceptance.
+**Rejected:** Treating the simulated local build as live proof, closing E0.7 solely because the channel is correct, or changing Clerk configuration without the required owner decision.
