@@ -14,6 +14,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
+      - name: Install application dependencies
+        run: npm ci
+      - name: Lint TypeScript source
+        run: npm run lint
+      - name: Run unit tests
+        run: npm test
+      - name: Build production bundle
+        run: npm run build
       # Pinned to the create-agent-room version active when this workflow was
       # scaffolded, so CI results stay reproducible across runs. To pick up
       # fixes from a newer release, re-run `create-agent-room init --force`

@@ -24,7 +24,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenLetters,
   onOpenOxfordSounds,
   onOpenParentGate,
-  onTeaserClick: _onTeaserClick,
 }) => {
   const [miloSpeech, setMiloSpeech] = useState<string | null>("Hi! Let's play!");
   const [progress, setProgress] = useState(progressService.getProgress());

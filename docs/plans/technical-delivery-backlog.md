@@ -8,11 +8,13 @@
 
 ## Current execution slice
 
-**Active item:** E0.1 — reproducible Node/npm setup.
+**Completed:** E0.1 — reproducible Node/npm setup.
 
-**Status:** Complete (13 October 2026). The repository standard is Node.js 20.x LTS with npm 10.x, matching the existing CI workflow. `npm ci --ignore-scripts`, `npm run build`, and AgentRoom validation passed; the build was executed on the host’s Node 25/npm 11 runtime and emitted the expected engine warning. The approved design and implementation boundary are recorded in [the E0.1 design](2026-10-13-e0-1-reproducible-node-setup-design.md).
+**Active item:** E0.2 — automated quality gates.
 
-**Next item:** E0.2 — automated type, lint, unit-test, and production-build checks. Keep it separate because this repository does not yet have test or lint tooling and CI changes are protected by AgentRoom guardrails.
+**Status:** Complete (13 October 2026). `npm ci`, `npm run lint`, `npm test`, `npm run build`, and AgentRoom validation passed. The pull-request workflow now installs dependencies and runs lint, unit tests, and the production build on Node 20.19+. The approved design and implementation boundary are recorded in [the E0.2 design](2026-10-13-e0-2-quality-gates-design.md).
+
+**Next item:** E0.3 — focused tests for progress migration, level unlocking, audio URL resolution, and parent-gate rules.
 
 ## Audit integration and release holds
 

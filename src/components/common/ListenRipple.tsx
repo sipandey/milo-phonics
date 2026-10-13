@@ -13,11 +13,7 @@ interface ListenRippleProps {
   hintText?: string;
 }
 
-export const ListenRipple: React.FC<ListenRippleProps> = ({
-  isActive,
-  onTap: _onTap,
-  hintText: _hintText = "Shh... Listen! 👂🎶",
-}) => {
+export const ListenRipple: React.FC<ListenRippleProps> = ({ isActive }) => {
   const [particles] = useState<RippleParticle[]>([]);
 
   if (!isActive) return null;

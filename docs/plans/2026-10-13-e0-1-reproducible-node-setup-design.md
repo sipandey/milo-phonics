@@ -2,9 +2,9 @@
 
 **Goal:** Establish one supported Node.js/npm baseline so a fresh contributor can install and build Milo Phonics using documented steps.
 
-**Architecture:** The repository will declare the supported runtime in `package.json` and pin the major Node.js line in `.nvmrc`. `README.md` will reference those same versions and use `npm ci` for lockfile-based installation. The existing GitHub Actions workflow already runs on Node 20 and is protected by AgentRoom guardrails, so it remains unchanged.
+**Architecture:** The repository will declare the supported runtime in `package.json` and pin the minimum compatible Node.js 20 release in `.nvmrc`. `README.md` will reference those same versions and use `npm ci` for lockfile-based installation. The existing GitHub Actions workflow already runs on the Node 20 channel and is protected by AgentRoom guardrails, so it remains unchanged.
 
-**Tech stack:** Node.js 20.x LTS, npm 10.x, TypeScript, Vite, React, npm lockfile v3.
+**Tech stack:** Node.js 20.19+ LTS, npm 10.x, TypeScript, Vite, React, npm lockfile v3.
 
 ---
 
@@ -19,7 +19,7 @@
 
 ## Approved decision
 
-Support Node.js 20.x LTS and npm 10.x. Use `package.json` `engines` as the machine-readable contract, `.nvmrc` as the version-manager hint, and `npm ci` as the documented clean-install command.
+Support Node.js `>=20.19.0 <21` and npm 10.x. Use `package.json` `engines` as the machine-readable contract, `.nvmrc` as the version-manager hint, and `npm ci` as the documented clean-install command.
 
 ## Scope
 

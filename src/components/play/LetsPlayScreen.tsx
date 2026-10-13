@@ -26,8 +26,6 @@ interface LetsPlayScreenProps {
 
 export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
   onGoHome,
-  onExploreLetter: _onExploreLetter,
-  onOpenSoundTrain: _onOpenSoundTrain,
 }) => {
   const [progress, setProgress] = useState<ChildProgress>(progressService.getProgress());
   const [selectedLevelId, setSelectedLevelId] = useState<number>(progress.currentLevelId || 1);
@@ -211,7 +209,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     );
 
     // Watchdog timer: failsafe advance in 4.5s in case audio playback stalls or takes too long
-    let watchdogTimer: NodeJS.Timeout | null = setTimeout(() => {
+    const watchdogTimer = setTimeout(() => {
       if (isToddlerMode) {
         advanceToNext();
       }
@@ -238,10 +236,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     } catch (err) {
       console.warn('[LetsPlayScreen] Error during card blend audio:', err);
     } finally {
-      if (watchdogTimer) {
-        clearTimeout(watchdogTimer);
-        watchdogTimer = null;
-      }
+      clearTimeout(watchdogTimer);
       setIsObjectAnimating(false);
 
       // In Toddler Focus Mode: automatically advance smoothly to next sound/card

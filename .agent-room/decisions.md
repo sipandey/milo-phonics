@@ -16,10 +16,16 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-10-13 — Raise the Node 20 minimum for the E0.2 toolchain
+
+**Decision:** Set the supported Node range to `>=20.19.0 <21` and pin `.nvmrc` to `20.19.0`.
+**Why:** The resolved ESLint 10 toolchain requires Node 20.19.0 or newer. Keeping a generic Node 20.x contract would advertise versions that cannot run the configured lint gate reliably.
+**Rejected:** Pinning an older ESLint major solely to retain compatibility with earlier Node 20 patch releases; the current flat-config toolchain is the approved E0.2 baseline and the existing CI Node 20 channel resolves to a compatible release.
+
 ### 2026-10-13 — Use Vitest and ESLint flat config for E0.2 quality gates
 
-**Decision:** Use Vitest for the unit-test command, ESLint 9 with `typescript-eslint` flat config for linting, and extend the existing AgentRoom pull-request workflow with `npm ci`, `npm run lint`, `npm test`, and `npm run build`.
-**Why:** Vitest shares the Vite/TypeScript module model already used by the application, while the flat ESLint configuration is the current native configuration path. One workflow keeps the existing AgentRoom checks and application gates together without duplicating CI setup.
+**Decision:** Use Vitest for the unit-test command, ESLint 10 with `typescript-eslint` flat config for linting, and extend the existing AgentRoom pull-request workflow with `npm ci`, `npm run lint`, `npm test`, and `npm run build`.
+**Why:** Vitest shares the Vite/TypeScript module model already used by the application, while the flat ESLint configuration is the current native configuration path. Npm resolved the current compatible ESLint 10 and Vitest 4 releases under the Node 20 contract. One workflow keeps the existing AgentRoom checks and application gates together without duplicating CI setup.
 **Rejected:** Jest plus `ts-jest` because it adds a second transform model, lint/build-only because E0.2 requires a unit-test gate, and a second workflow because it would duplicate checkout and Node setup.
 
 ### 2026-10-13 — Standardize the Node/npm baseline for E0.1

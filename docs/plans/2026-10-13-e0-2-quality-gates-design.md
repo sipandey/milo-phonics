@@ -2,9 +2,9 @@
 
 **Goal:** Add repeatable lint, unit-test, type-check, and production-build gates that run locally and on pull requests.
 
-**Architecture:** Use Vitest because the application already uses Vite and TypeScript, keeping module transformation close to the production toolchain. Use ESLint 9’s flat configuration with `typescript-eslint` for the TypeScript source and Vite config. Extend the existing AgentRoom workflow so one required pull-request job installs the lockfile dependencies, runs lint, runs the unit suite, and builds the production bundle.
+**Architecture:** Use Vitest because the application already uses Vite and TypeScript, keeping module transformation close to the production toolchain. Use ESLint 10’s flat configuration with `typescript-eslint` for the TypeScript source and Vite/test configs. Extend the existing AgentRoom workflow so one required pull-request job installs the lockfile dependencies, runs lint, runs the unit suite, and builds the production bundle.
 
-**Tech stack:** Node.js 20.x LTS, npm 10.x, TypeScript, Vite, Vitest, ESLint 9, `typescript-eslint`.
+**Tech stack:** Node.js 20.19+ LTS, npm 10.x, TypeScript, Vite, Vitest, ESLint 10, `typescript-eslint`.
 
 ---
 
@@ -22,13 +22,13 @@
 
 - Add `vitest`, `eslint`, `@eslint/js`, and `typescript-eslint` as development dependencies. Let npm resolve compatible current versions and commit the resulting lockfile.
 - Add `vitest.config.ts` with a Node test environment and an explicit `tests/**/*.test.ts` include pattern.
-- Add `eslint.config.js` using the flat-config API, ignoring generated/dependency directories and linting `src` plus `vite.config.ts`.
+- Add `eslint.config.js` using the flat-config API, ignoring generated/dependency directories and linting `src`, `vite.config.ts`, and `vitest.config.ts`.
 - Add `tests/curriculumData.test.ts` with a small contract assertion against the existing curriculum data.
 
 ### Scripts
 
 - `npm test` → `vitest run`
-- `npm run lint` → `eslint src vite.config.ts`
+- `npm run lint` → `eslint src vite.config.ts vitest.config.ts`
 - Keep `npm run build` as the type-check plus production-build gate.
 
 ### CI
