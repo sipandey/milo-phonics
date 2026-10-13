@@ -4,6 +4,8 @@
 **Pedagogical Advisory:** UK DfE Systematic Synthetic Phonics (SSP) Standards & International British Schools (COBIS / CIS / Cambridge Early Years)  
 **Target Audience:** Engineering, Design, Pedagogical Advisory Board, School Auditors, Investors  
 
+> **Status: aspirational strategy, not shipped-state evidence.** The current implemented product and claims status are recorded in the [current product and architecture record](current-product-and-architecture.md). Educational, rights, privacy, and marketing claims in this proposal require the specialist reviews listed in the audit before external use.
+
 ---
 
 ## Executive Summary

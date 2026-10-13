@@ -1,5 +1,7 @@
 # Milo Phonics: Product Roadmap and Android Strategy
 
+> **Status: strategic roadmap, not the current implementation record.** Use the [current product and architecture record](current-product-and-architecture.md) for shipped facts and the [technical delivery backlog](technical-delivery-backlog.md) for ordered engineering work. This document contains hypotheses, release gates, and future investment options.
+
 **Decision owner:** Product
 
 **Assessment date:** 13 October 2026
@@ -47,7 +49,7 @@ The particular defensible combination is pure phoneme modelling, systematic soun
 | Incomplete reading journey | The app reaches CVC blending, but lacks a connected path through digraphs, controlled text, review, and a parent-facing next step. | Complete the beginner pathway before a subscription launch. |
 | No product analytics or payment system | There is no way to measure acquisition, learning engagement, conversion, or retained revenue. | Add privacy-first, parent-consented measurement and entitlement management. |
 | PWA is planned but absent | There is no web manifest or service worker, so reliable offline installation is not delivered yet. | Make offline PWA the first mobile distribution milestone. |
-| Documentation drift | The architecture and audio documents still describe browser speech-synthesis and Cloudinary-first playback, while current code intentionally uses local pre-recorded audio. Existing roadmaps also describe work that is now complete. | Establish one product and architecture source of truth before sales or partner diligence. |
+| Documentation drift | Earlier architecture and audio documents described browser speech-synthesis and Cloudinary-first playback, while current code uses local pre-recorded audio. | The current product and architecture record is now authoritative; keep older plans explicitly strategic or historical. |
 | Rights and claims not evidenced in the repo | The app states that it uses Oxford Dictionary recordings and is COPPA compliant. Commercial distribution needs documented audio, character, image, TTS, and privacy rights; it also needs legal review of public claims. | Treat this as a hard launch gate. Do not use "Oxford," "DfE-aligned," or compliance claims externally without evidence and approval. |
 
 ## Target customer and first job to solve
@@ -183,7 +185,7 @@ Plan **4–6 engineering weeks** for a free offline Android beta after PWA work 
 
 1. Add a PWA plugin and manifest; define cache versioning for the 318 local assets and a clear update prompt.
 2. Add Capacitor core/Android packages, a `capacitor.config`, an Android app identity, icons, splash assets, signing, and build pipeline.
-3. Keep all teaching content embedded in the app bundle so it works without network access. The audio manifest currently prefers local URLs, which is the right behaviour; remove stale Cloudinary-first documentation.
+3. Keep all teaching content embedded in the app bundle so it works without network access. The audio manifest currently prefers local URLs; the current product and architecture record documents that runtime behaviour.
 4. Test audio after a phone call, Bluetooth route change, mute/unmute, app backgrounding, and rapid repeated taps. Current audio guards are a good base, but they have only browser evidence.
 5. Add Android-specific navigation handling and test the child cannot accidentally exit a session through hardware Back.
 6. Add a native billing bridge only when the paid offer is ready. Store entitlement on a server, not solely in browser/local WebView storage.

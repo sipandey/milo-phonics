@@ -1,6 +1,8 @@
 # Milo Phonics — Technical Delivery Backlog
 
-**Source:** [Product Roadmap and Android Strategy](product-roadmap-and-android-strategy.md)
+**Current product/architecture source:** [Current Product and Architecture](current-product-and-architecture.md)
+
+**Strategic source:** [Product Roadmap and Android Strategy](product-roadmap-and-android-strategy.md)
 
 **Planning horizon:** Family beta → paid PWA → Android → school pilots
 
@@ -8,13 +10,13 @@
 
 ## Current execution slice
 
-**Completed:** E0.1 — reproducible Node/npm setup; E0.2 — automated quality gates.
+**Completed:** E0.1 — reproducible Node/npm setup; E0.2 — automated quality gates; E0.3 — focused service tests.
 
-**Active item:** E0.3 — focused tests for progress migration, level unlocking, audio URL resolution, and parent-gate rules.
+**Active item:** E0.4 — consolidate the current product and architecture record.
 
-**Status:** Complete (13 October 2026). The focused E0.3 suite covers current and corrupt progress storage, legacy migration, star monotonicity, level unlocking, local audio URL fallback, and parent-gate success/failure rules. All 13 tests run headlessly; lint and the production build also pass. The approved design and implementation boundary are recorded in [the E0.3 design](2026-10-13-e0-3-focused-service-tests-design.md).
+**Status:** Complete (13 October 2026). One current product/architecture record now describes implemented runtime behavior, local-first audio resolution, data-flow caveats, claims holds, and roadmap status. README and audio-generation guidance agree with the resolver, while older roadmaps are explicitly strategic, aspirational, or historical. The approved design and implementation boundary are recorded in [the E0.4 design](2026-10-13-e0-4-current-product-architecture-design.md).
 
-**Next item:** E0.4 — consolidate the current product and architecture record.
+**Next item:** E0.5 — versioned releases and rollback instructions.
 
 ## Audit integration and release holds
 

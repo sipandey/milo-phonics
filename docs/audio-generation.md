@@ -1,9 +1,12 @@
 # Audio Generation — Developer Guide
 
-> Phase 2 of the Phonics Audio Pipeline.
-> Production voice audio is pre-generated at development time using OpenAI TTS,
-> uploaded to Cloudinary, and served to the browser as Cloudinary MP3s.
+> Development-time audio generation pipeline.
+> Voice audio is pre-generated using OpenAI TTS and may be uploaded to Cloudinary
+> for publishing metadata. The browser runtime currently prefers bundled local
+> MP3 paths from `generatedAudioManifest.ts`.
 > The browser app **never** calls OpenAI. No secrets reach the client.
+
+> **Runtime authority:** See the [current product and architecture record](plans/current-product-and-architecture.md). This guide describes generation and publishing mechanics, not unsupported CDN-first or speech-synthesis fallback behavior.
 
 ---
 
@@ -28,9 +31,11 @@ Semantic Audio ID  (e.g. "word.monkey")
         ↓
   audioService.ts (AudioManager)
         ↓
-  Browser plays Cloudinary MP3
+  audioManifest.ts resolves localUrl first
         ↓
-  On error → SpeechSynthesis fallback (always retained)
+  Browser plays bundled local MP3
+        ↓
+  No native speech-synthesis or automatic CDN fallback
 ```
 
 ---
@@ -127,10 +132,11 @@ Format: `mp3` — universally supported by Chrome, Safari, iOS, Android.
 
 **`src/data/generatedAudioManifest.ts`** — committed to git, safe to deploy.
 
-Contains Cloudinary URLs and generation metadata for all generated assets.
+Contains Cloudinary URLs, optional local paths, and generation metadata for generated assets.
 The `audioManifest.ts` `getAudioEntry()` function merges this at runtime:
-- If a generated entry exists with a URL → returns entry with Cloudinary URL + `source: 'cloudinary'`
-- If no generated entry → returns base entry, audioService falls back to SpeechSynthesis
+- If a generated entry has a `localUrl` → returns that local path with `source: 'local'`
+- If no generated local path exists → returns the configured local/conventional path when available
+- Unknown non-word IDs return no entry; `audioService` does not invoke browser `speechSynthesis`
 
 > Components never reference Cloudinary directly. They use semantic IDs only.
 
@@ -145,7 +151,7 @@ Even extended representations ("Mmmmm") may vary unpredictably by model and voic
 
 **Policy:**
 1. Phonemes are flagged as `needs-review` in generation output
-2. They use the SpeechSynthesis fallback (with extended text like "Mmmmm") until manually approved
+2. They use the checked-in local phoneme assets; no browser `SpeechSynthesis` fallback is available
 3. To generate phonemes: set `GENERATE_PHONEMES=true` in `.env`, run the script, listen carefully to each asset, and manually approve before committing
 
 ---
@@ -196,7 +202,7 @@ When updating a single word:
 - ✅ `CLOUDINARY_API_SECRET` — generation script only, never in browser
 - ✅ `.env` is in `.gitignore` — never committed
 - ✅ `generated/` directory is in `.gitignore` — temp MP3s not committed
-- ✅ `generatedAudioManifest.ts` contains only Cloudinary CDN URLs — safe to commit and ship
+- ✅ `generatedAudioManifest.ts` contains Cloudinary URLs plus optional local paths — safe to commit and ship
 - ✅ Vite does NOT inject any `OPENAI_*` or `CLOUDINARY_API_SECRET` variables (no `VITE_` prefix)
 - ✅ `openai`, `cloudinary`, `dotenv` are `devDependencies` — excluded from production bundle by Vite
 
@@ -235,8 +241,9 @@ npm run dev
 # then open http://localhost:3000
 ```
 
-The app uses generated Cloudinary audio (from `generatedAudioManifest.ts`) where available,
-and falls back silently to SpeechSynthesis for any audio ID without a generated asset.
+The app uses bundled local audio paths resolved from semantic IDs. Cloudinary URLs in
+`generatedAudioManifest.ts` are publishing metadata; the current browser code does not
+perform an on-error CDN fallback and does not use browser `SpeechSynthesis`.
 
 ---
 

@@ -1,5 +1,7 @@
 # Phonics App Architecture & Technical Roadmap
 
+> **Status: historical and superseded.** This was an early architecture proposal and is not evidence of current shipped behavior. Use the [current product and architecture record](current-product-and-architecture.md) for implementation facts and the [technical delivery backlog](technical-delivery-backlog.md) for ordered work.
+
 ## Architecture Overview
 
 The application follows a clean, decoupled 4-layer architecture:
@@ -22,7 +24,7 @@ The application follows a clean, decoupled 4-layer architecture:
                              │
 ┌────────────────────────────▼────────────────────────────┐
 │             Content & Audio Abstraction Layer           │
-│  lettersData.ts | audioService.ts (Web Audio + Speech)  │
+│  lettersData.ts | audioService.ts (HTML Audio + Web Audio)│
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -31,7 +33,7 @@ The application follows a clean, decoupled 4-layer architecture:
 ## 1. Content Layer
 * **Data-driven**: Adding a new letter requires appending to `src/data/lettersData.ts`. No UI component refactoring is required.
 * **Asset Decoupling**: Visuals use vector emojis and scalable SVGs, eliminating bulky static image pipelines.
-* **Audio Synthesis**: Procedural Web Audio API sound synthesis eliminates asset fetching errors and allows 100% offline playback.
+* **Audio runtime**: Procedural Web Audio is used for SFX; pre-recorded voice playback is resolved through semantic IDs and bundled local assets.
 
 ## 2. Learning & Adaptive Layer
 * Current Phase: Tracks interactions per letter, per object, total taps, and session timestamps in `progressService.ts`.
@@ -51,7 +53,7 @@ The application follows a clean, decoupled 4-layer architecture:
 - [x] Animated companion character (Milo) with mouth-speech synchronization
 - [x] "Let's Play" surprise discovery loop
 - [x] 3 letters: M, S, A with 5 objects each (15 objects total)
-- [x] Procedural Web Audio SFX engine + toddler SpeechSynthesis
+- [x] Procedural Web Audio SFX engine + bundled pre-recorded voice playback
 - [x] LocalStorage progress persistence
 - [x] Arithmetic Parent Gate & Parent Dashboard
 - [x] Integration with `create-agent-room` for mechanical agent governance
