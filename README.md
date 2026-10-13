@@ -153,8 +153,8 @@ phonics/
 ## 💻 Getting Started
 
 ### Prerequisites
-* Node.js v18+ (v20+ recommended)
-* npm v9+
+* Node.js 20.x LTS
+* npm 10.x (bundled with the supported Node.js line)
 * (Optional for audio regeneration) `ffmpeg` and OpenAI / Cloudinary API keys in `.env`
 
 ### Installation
@@ -163,8 +163,16 @@ phonics/
 git clone https://github.com/sipandey/milo-phonics.git
 cd milo-phonics
 
-# Install dependencies
-npm install
+# If you use nvm, select the repository's Node.js version
+nvm install
+nvm use
+
+# Confirm the supported runtime before installing
+node --version  # v20.x
+npm --version   # 10.x
+
+# Install exactly from package-lock.json
+npm ci
 ```
 
 ### Development Server

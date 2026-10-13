@@ -6,6 +6,14 @@
 
 **Backlog convention:** P0 blocks the next release; P1 follows the release gate; P2 is only started when the preceding market signal is met. Estimates are delivery points for planning only: 1 = small, 3 = medium, 5 = large, 8 = needs decomposition.
 
+## Current execution slice
+
+**Active item:** E0.1 — reproducible Node/npm setup.
+
+**Status:** Complete (13 October 2026). The repository standard is Node.js 20.x LTS with npm 10.x, matching the existing CI workflow. `npm ci --ignore-scripts`, `npm run build`, and AgentRoom validation passed; the build was executed on the host’s Node 25/npm 11 runtime and emitted the expected engine warning. The approved design and implementation boundary are recorded in [the E0.1 design](2026-10-13-e0-1-reproducible-node-setup-design.md).
+
+**Next item:** E0.2 — automated type, lint, unit-test, and production-build checks. Keep it separate because this repository does not yet have test or lint tooling and CI changes are protected by AgentRoom guardrails.
+
 ## Audit integration and release holds
 
 This backlog incorporates the findings of the [pre-marketing content-rights and privacy audit](../audits/pre-marketing-content-rights-privacy-audit-2026-10-13.md). The audit’s P0 findings are delivery work, not documentation-only risks.
