@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { progressService } from '../../services/progressService';
 import { audioService } from '../../services/audioService';
-import { CURRICULUM_LEVELS } from '../../data/curriculumData';
+import { CURRICULUM_LEVELS } from '../../data/curriculumContent';
 import { ParentClerkSync } from './ParentClerkSync';
 import { AUDIO_RUNTIME_STATUS } from './audioRuntimeStatus';
 import { initializeSentry } from '../../observability/sentry';

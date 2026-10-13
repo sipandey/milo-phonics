@@ -76,6 +76,12 @@ Append a new entry every time:
 **Root cause:** A safe UI smoke path does not provide packet-level dependency evidence, and cleanup/fault injection can be destructive or require browser controls that are unavailable in a constrained release-check session.
 **Avoid:** Keep E0.7 open until the missing evidence is explicitly captured. Record the limitation and use an isolated profile or a dedicated test deployment for destructive and failure-path checks.
 
+### 2026-10-13 — Letting a content adapter imply content approval
+
+**What happened:** The curriculum catalogue needed a scalable schema, but the existing records still contain known prerequisite and classification findings and unresolved rights/educational review.
+**Root cause:** A machine-readable manifest can look authoritative even when its entries are only repository facts.
+**Avoid:** Carry explicit item and manifest status, scope exclusions, and versioning in the schema; keep draft extensions visibly unshipped and retain independent content, rights, and specialist validation gates.
+
 ### 2026-09-16 — Coupling secondary story narration into the critical interaction path
 
 **What happened:** In Sound Train, after blending /s/ - /æ/ - /t/ $\to$ "Sat!", the UI remained locked for an extra 5 seconds while automatically reciting the example sentence ("The cat sat on the mat."). Toddlers became impatient and tapped frantically.

@@ -3,7 +3,7 @@ import { CharacterMilo } from '../common/CharacterMilo';
 import { triggerGentleConfetti } from '../common/ParticleEffects';
 import { audioService } from '../../services/audioService';
 import { progressService } from '../../services/progressService';
-import { CURRICULUM_LEVELS, getLevelById } from '../../data/curriculumData';
+import { CURRICULUM_LEVELS, getLevelById } from '../../data/curriculumContent';
 import { getLetterById, getAllLetters } from '../../data/lettersData';
 import { ChildProgress, LetterData } from '../../types/phonics';
 import {

@@ -4,8 +4,13 @@ import { triggerGentleConfetti } from '../common/ParticleEffects';
 import { ListenRipple } from '../common/ListenRipple';
 import { audioService } from '../../services/audioService';
 import { progressService } from '../../services/progressService';
-import { BLENDING_WORDS, getWordsForLevel, getStrictWordsForLevel } from '../../data/blendingData';
-import { CURRICULUM_LEVELS, getLevelById } from '../../data/curriculumData';
+import {
+  BLENDING_WORDS,
+  CURRICULUM_LEVELS,
+  getLevelById,
+  getStrictWordsForLevel,
+  getWordsForLevel,
+} from '../../data/curriculumContent';
 import { BlendingWord, ChildProgress } from '../../types/phonics';
 import {
   ArrowRight,

@@ -13,8 +13,8 @@ The core child flow is designed to work without an account. Parent-only settings
 | Area | Current repository state | Status |
 | --- | --- | --- |
 | Letter exploration | 26-letter explorer with illustrated objects and semantic audio IDs | Implemented |
-| Introductory sequence | Seven configured groups: `s a t p`, `i n m d`, `g o c k`, `e u r`, `h b f l`, `j v w x`, `y z q` | Implemented, educational review pending |
-| Word blending | CVC/VC blending entries and sequential audio interaction | Implemented, content review pending |
+| Introductory sequence | Seven configured groups: `s a t p`, `i n m d`, `g o c k`, `e u r`, `h b f l`, `j v w x`, `y z q` | Implemented through the versioned review-state curriculum manifest; educational review pending |
+| Word blending | CVC/VC blending entries and sequential audio interaction | Implemented through manifest-backed records; content review pending |
 | Games | Let's Play, Sound Train, Bubble Pop, and Feed Milo flows are present | Implemented surface; release evidence pending |
 | Progress | LocalStorage persistence, v1 migration, star tracking, level unlocking, and resume position | Implemented |
 | Parent controls | Arithmetic gate, dashboard, reset, optional parent sync, and optional diagnostics | Gate now uses browser crypto randomness when available and a bounded retry lockout; identity, legal-consent, account deletion, and future purchase/support protections remain open |
@@ -23,6 +23,12 @@ The core child flow is designed to work without an account. Parent-only settings
 | Android | No native Android project or Play release | Planned |
 
 The configured curriculum and audio labels are repository facts, not evidence of DfE, Letters and Sounds, UK National Curriculum, SSP-programme, pronunciation, age-suitability, or learning-outcome approval. Those claims remain gated by specialist review.
+
+## Curriculum content architecture
+
+`src/data/curriculumContent.ts` is the application-facing adapter for the versioned curriculum manifest. It defines the current content version (`2026.10.13.1`), ordered sound sets, prerequisites, phonemes, graphemes, VC/CVC word shapes, audio references, draft digraph records, reader-page extension points, review rules, and an explicit modest scope. The manifest is `review` status; it does not approve rights, pronunciation, educational alignment, age suitability, mastery, or learning-outcome claims. See the [curriculum content schema](../curriculum-content-schema.md) for the field contract and change-control rules.
+
+Learning and progress consumers use manifest-backed level/word lookups. The existing `curriculumData.ts` and `blendingData.ts` modules remain source records behind the adapter for compatibility. The separate `npm run verify:curriculum` command still reports the known `at`, `bed`, and `box` findings and remains outside the general build pending content-owner decisions.
 
 ## Runtime architecture
 
@@ -97,7 +103,7 @@ Use this description instead:
 | E0.6 privacy-preserving error reporting | In progress; consent gate and scrubbers verified, vendor/privacy acceptance gated |
 | E0.7 production network/dependency verification | In progress; safe flow review recorded, full acceptance open |
 | E1 rights, privacy, claims, and parent-safety foundation | In progress; E1.1 register, E1.2 draft, E1.3 inventory, E1.4 gate hardening, E1.6 vendor review, E1.9 disclosure, and E1.10 build guard created; owner evidence missing; P0 release hold |
-| E2 curriculum specification and validation | In progress; E2.2 validator reports three content/prerequisite findings; depends on E1.1 and specialist review |
+| E2 curriculum specification and validation | In progress; E2.1 manifest adapter is implemented in review status and E2.2 validator reports three content/prerequisite findings; depends on E1.1 and specialist review |
 
 For ordered acceptance criteria, use the [technical delivery backlog](technical-delivery-backlog.md). For pricing, research, PWA, and Android hypotheses, use the [strategic product roadmap](product-roadmap-and-android-strategy.md), not this status table.
 
@@ -113,6 +119,6 @@ For ordered acceptance criteria, use the [technical delivery backlog](technical-
 | `README.md` | User-facing setup and concise verified capability summary |
 | `docs/audio-generation.md` | Developer pipeline guide; must agree with this audio section |
 
-The [E0.7 production network review](2026-10-13-e0-7-production-network-review.md) records the current deployment observations. The deployed parent sign-in modal reports Clerk Development mode and remains a release follow-up. The parent audio panel was corrected in `1661e42` to describe the verified bundled-local runtime; Cloudinary metadata is not an approved browser dependency or claim. The [asset rights register](../asset-rights-register.md) is the current inventory for E1.1; its rights evidence is not yet complete. The [privacy notice draft](../privacy-notice-draft.md) and typed `PARENT_PRIVACY_NOTICE` cover the reviewed data surfaces but are not approved or publicly published. The [data-flow inventory](../data-flow-inventory.md) reconciles authored runtime/build destinations and records unknown vendor, retention, deletion, transfer, and hosting fields rather than inferring them. The [vendor review](2026-10-13-e1-6-vendor-review.md) records current SDK/service boundaries without accepting terms. The [claims register](../claims-register.md) is the user-facing wording guard and keeps unsupported provenance, accreditation, privacy, age, outcome, and offline claims blocked. The [curriculum validation report](../curriculum-validation-report.md) records the E2.2 findings without changing content automatically.
+The [E0.7 production network review](2026-10-13-e0-7-production-network-review.md) records the current deployment observations. The deployed parent sign-in modal reports Clerk Development mode and remains a release follow-up. The parent audio panel was corrected in `1661e42` to describe the verified bundled-local runtime; Cloudinary metadata is not an approved browser dependency or claim. The [asset rights register](../asset-rights-register.md) is the current inventory for E1.1; its rights evidence is not yet complete. The [privacy notice draft](../privacy-notice-draft.md) and typed `PARENT_PRIVACY_NOTICE` cover the reviewed data surfaces but are not approved or publicly published. The [data-flow inventory](../data-flow-inventory.md) reconciles authored runtime/build destinations and records unknown vendor, retention, deletion, transfer, and hosting fields rather than inferring them. The [vendor review](2026-10-13-e1-6-vendor-review.md) records current SDK/service boundaries without accepting terms. The [claims register](../claims-register.md) is the user-facing wording guard and keeps unsupported provenance, accreditation, privacy, age, outcome, and offline claims blocked. The [curriculum content schema](../curriculum-content-schema.md) documents the review-state E2.1 manifest; the [curriculum validation report](../curriculum-validation-report.md) records the E2.2 findings without changing content automatically.
 
 Last reviewed against the code, deployment, and audit: 13 October 2026.

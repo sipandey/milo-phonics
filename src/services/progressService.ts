@@ -1,5 +1,5 @@
 import { ChildProgress, LevelProgress } from '../types/phonics';
-import { CURRICULUM_LEVELS } from '../data/curriculumData';
+import { CURRICULUM_LEVELS } from '../data/curriculumContent';
 
 const STORAGE_KEY = 'playful_phonics_progress_v2';
 const LEGACY_STORAGE_KEY = 'playful_phonics_progress_v1';

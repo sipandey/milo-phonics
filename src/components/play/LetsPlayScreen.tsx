@@ -4,7 +4,7 @@ import { triggerGentleConfetti } from '../common/ParticleEffects';
 import { ListenRipple } from '../common/ListenRipple';
 import { audioService } from '../../services/audioService';
 import { progressService } from '../../services/progressService';
-import { CURRICULUM_LEVELS, getLevelById } from '../../data/curriculumData';
+import { CURRICULUM_LEVELS, getLevelById } from '../../data/curriculumContent';
 import { getLetterById } from '../../data/lettersData';
 import { PhonicsObject, ChildProgress } from '../../types/phonics';
 import {
