@@ -8,7 +8,6 @@ declare const process: RuntimeProcess;
 
 const FRONTEND_API_ORIGIN = 'https://frontend-api.clerk.dev';
 const CLERK_PROXY_PATH = '/__clerk';
-const API_PATH_PREFIX = '/api';
 const HOP_BY_HOP_HEADERS = new Set([
   'connection',
   'content-encoding',
@@ -21,11 +20,11 @@ const HOP_BY_HOP_HEADERS = new Set([
 const getClerkPath = (requestUrl: string): { path: string; query: string } => {
   const url = new URL(requestUrl);
   const proxyIndex = url.pathname.indexOf(CLERK_PROXY_PATH);
-  const path =
-    proxyIndex >= 0
-      ? url.pathname.slice(proxyIndex + CLERK_PROXY_PATH.length) || '/'
-      : url.pathname.slice(url.pathname.indexOf(API_PATH_PREFIX) + API_PATH_PREFIX.length) || '/';
-  return { path, query: url.search };
+  const path = proxyIndex >= 0 ? url.pathname.slice(proxyIndex + CLERK_PROXY_PATH.length) || '/' : url.searchParams.get('path') || '/';
+  const queryParams = new URLSearchParams(url.searchParams);
+  queryParams.delete('path');
+  const query = queryParams.toString();
+  return { path, query: query ? `?${query}` : '' };
 };
 
 const getForwardedHeaders = (request: Request): Record<string, string> => {
