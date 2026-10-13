@@ -13,7 +13,7 @@ const rootElement = document.getElementById('root')!;
 if (isClerkEnabled && CLERK_PUBLISHABLE_KEY) {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
-      <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} proxyUrl={CLERK_PROXY_URL ?? '/__clerk'}>
+      <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} proxyUrl={CLERK_PROXY_URL}>
         <App />
       </ClerkProvider>
     </React.StrictMode>,
