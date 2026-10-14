@@ -16,6 +16,12 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-10-14 — Separate PWA installability from offline support
+
+**Decision:** Implement E6.1 with a web manifest, original Milo install icon sources, generated PNG variants, app-shell metadata, and installation guidance. Keep service-worker caching, offline cold-start, and “fully offline” wording out of this change; those belong to E6.2 and require their own runtime evidence.
+**Why:** Install metadata is a small, reversible foundation that can be tested statically without changing child progression or curriculum semantics. A manifest alone does not cache the shell or media, so combining the stories would create an unsupported offline claim.
+**Rejected:** Adding a service worker without an asset/update strategy, treating a local manifest test as proof of HTTPS installation, or advertising offline support before cold-start/audio/video/progress tests pass.
+
 ### 2026-10-14 — Treat `dist/` as a generated curriculum release artifact
 
 **Decision:** Keep `public/`, typed manifests, and runtime resolvers as the curriculum media source-of-truth. Review `dist/` as generated release evidence: the 14 October build contains 316 MP3 and 2 MP4 media files with exact path and SHA-256 parity to `public/`, zero zero-byte files, and no `ffprobe` failures. Do not commit or curate `dist/` separately.

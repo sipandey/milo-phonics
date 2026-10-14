@@ -1,6 +1,6 @@
 # Milo Phonics — Current Product and Architecture
 
-> **Source of truth.** This document records the repository’s current implemented behavior and approved wording as of 13 October 2026. It supersedes conflicting implementation descriptions in older planning documents. The [technical delivery backlog](technical-delivery-backlog.md) remains the execution tracker; the [pre-marketing audit](../audits/pre-marketing-content-rights-privacy-audit-2026-10-13.md) remains the release-claims gate.
+> **Source of truth.** This document records the repository’s current implemented behavior and approved wording as of 14 October 2026. It supersedes conflicting implementation descriptions in older planning documents. The [technical delivery backlog](technical-delivery-backlog.md) remains the execution tracker; the [pre-marketing audit](../audits/pre-marketing-content-rights-privacy-audit-2026-10-13.md) remains the release-claims gate.
 
 ## Product status
 
@@ -19,7 +19,7 @@ The core child flow is designed to work without an account. Parent-only settings
 | Progress | LocalStorage persistence, v1 migration, exploration/practice evidence, star tracking, level unlocking, and resume position | Implemented |
 | Parent controls | Arithmetic gate, dashboard, reset, optional parent sync, and optional diagnostics | Gate now uses browser crypto randomness when available and a bounded retry lockout; identity, legal-consent, account deletion, and future purchase/support protections remain open |
 | Audio runtime | Local pre-recorded assets through semantic IDs; Web Audio procedural SFX; HTML audio playback | Implemented |
-| PWA/offline install | No shipped manifest/service worker acceptance path in this repository | Planned |
+| PWA/offline install | E6.1 manifest, icons, and app-shell install metadata are implemented; no service worker is present | Install metadata implemented; HTTPS browser verification pending; offline remains planned |
 | Android | No native Android project or Play release | Planned |
 
 The configured curriculum and audio labels are repository facts, not evidence of DfE, Letters and Sounds, UK National Curriculum, SSP-programme, pronunciation, age-suitability, or learning-outcome approval. Those claims remain gated by specialist review.
