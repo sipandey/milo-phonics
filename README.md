@@ -191,7 +191,7 @@ npm run preview
 
 ### Install the web app
 
-The app shell includes install metadata and icons. On a deployed HTTPS build, use the browser’s **Install app** or **Add to Home screen** action on Android/desktop browsers. In iOS Safari, use **Share → Add to Home Screen**. The current install metadata does not provide offline support; service-worker caching is a separate roadmap item.
+The app shell includes install metadata and icons. On a deployed HTTPS build, use the browser’s **Install app** or **Add to Home screen** action on Android/desktop browsers. In iOS Safari, use **Share → Add to Home Screen**. Production builds generate a service worker that precaches the current shell and bundled media, but offline behavior remains an acceptance item until it is verified on deployed browsers and devices.
 
 ---
 

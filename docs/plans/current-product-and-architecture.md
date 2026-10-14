@@ -19,7 +19,7 @@ The core child flow is designed to work without an account. Parent-only settings
 | Progress | LocalStorage persistence, v1 migration, exploration/practice evidence, star tracking, level unlocking, and resume position | Implemented |
 | Parent controls | Arithmetic gate, dashboard, reset, optional parent sync, and optional diagnostics | Gate now uses browser crypto randomness when available and a bounded retry lockout; identity, legal-consent, account deletion, and future purchase/support protections remain open |
 | Audio runtime | Local pre-recorded assets through semantic IDs; Web Audio procedural SFX; HTML audio playback | Implemented |
-| PWA/offline install | E6.1 manifest, icons, and app-shell install metadata are implemented; no service worker is present | Install metadata implemented; HTTPS browser verification pending; offline remains planned |
+| PWA/offline install | E6.1 manifest/icons and E6.2 generated service worker are implemented; the worker precaches the built shell and bundled media | HTTPS install/offline browser verification pending; no fully-offline claim |
 | Android | No native Android project or Play release | Planned |
 
 The configured curriculum and audio labels are repository facts, not evidence of DfE, Letters and Sounds, UK National Curriculum, SSP-programme, pronunciation, age-suitability, or learning-outcome approval. Those claims remain gated by specialist review.

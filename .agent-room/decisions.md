@@ -22,6 +22,12 @@ have to re-derive it from scratch by reading git history.
 **Why:** Install metadata is a small, reversible foundation that can be tested statically without changing child progression or curriculum semantics. A manifest alone does not cache the shell or media, so combining the stories would create an unsupported offline claim.
 **Rejected:** Adding a service worker without an asset/update strategy, treating a local manifest test as proof of HTTPS installation, or advertising offline support before cold-start/audio/video/progress tests pass.
 
+### 2026-10-14 — Generate a versioned service worker from the release output
+
+**Decision:** Generate `dist/sw.js` after Vite packaging from the exact built file tree. Precache the same-origin shell, manifest, icons, release metadata, audio, and video; derive the cache name from release metadata plus a content digest; delete older Milo caches on activation; and register only in production.
+**Why:** The app already has a stable release metadata artifact and a large static curriculum asset tree. Build-time enumeration avoids a manually maintained media list and ensures hashed JS/CSS files are included. Separating generation from runtime keeps development behavior predictable.
+**Rejected:** A hand-maintained asset list, a runtime CDN fallback, caching API requests, or declaring “fully offline” before deployed browser/device tests cover cold start, playback, progress, games, and update rollback.
+
 ### 2026-10-14 — Treat `dist/` as a generated curriculum release artifact
 
 **Decision:** Keep `public/`, typed manifests, and runtime resolvers as the curriculum media source-of-truth. Review `dist/` as generated release evidence: the 14 October build contains 316 MP3 and 2 MP4 media files with exact path and SHA-256 parity to `public/`, zero zero-byte files, and no `ffprobe` failures. Do not commit or curate `dist/` separately.

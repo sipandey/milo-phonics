@@ -33,5 +33,4 @@ The repository had no web manifest, install icon files, or iOS home-screen metad
 ## Follow-up
 
 - Run the built app from a real HTTPS deployment in Android Chrome/Edge and iOS Safari; record whether install/add-to-home-screen controls appear and whether the standalone launch opens at `/`.
-- Implement E6.2 separately with a service worker and explicit cold-start/audio/video/progress tests before using “offline” or “fully offline” claims.
-
+- E6.2 now supplies the local service-worker implementation in [the service-worker plan](2026-10-14-e6-2-service-worker.md); keep explicit cold-start/audio/video/progress tests and deployed verification before using “offline” or “fully offline” claims.
