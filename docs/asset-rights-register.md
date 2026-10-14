@@ -1,6 +1,6 @@
 # Milo Phonics Asset Rights Register
 
-**Review date:** 13 October 2026
+**Review date:** 14 October 2026
 **Owner:** Unassigned — product/compliance owner required
 **Status:** Inventory complete; rights evidence incomplete. This register is a release control, not a licence or legal opinion.
 
@@ -11,6 +11,8 @@ An asset is not cleared because it is present in Git, has a generated manifest e
 ## Repository inventory
 
 The repository contains **316 committed MP3 files** and **2 committed MP4 files**. The source also references **2 video paths that are not present** in `public/`.
+
+The 14 October local build review in [the distribution asset report](plans/2026-10-14-dist-curriculum-asset-review.md) produced 316 MP3 and 2 MP4 files in the ignored `dist/` output. Every media path matched `public/` and all 318 media files had identical SHA-256 content; no media file was zero-byte or rejected by `ffprobe`. This is packaging evidence only and does not clear any rights, provenance, pronunciation, or curriculum-review row.
 
 | Register ID | Shipped or referenced scope | Count | Repository evidence | Current rights status | Required evidence/action |
 | --- | --- | ---: | --- | --- | --- |
@@ -65,4 +67,4 @@ The following values were read from the installed direct package manifests on 13
 
 ## Release control
 
-E1.1 is **in progress**. The repository inventory and dependency SBOM command are complete enough to route evidence requests, but no asset family is cleared for external launch until the open evidence ledger, generated release artifact, and full notices are resolved. E1.8 (Oxford names/recordings), E1.9 (AI-audio disclosure), E1.6 (vendor review), E1.10 (claims register), and E1.11 (Children’s Code/DPIA) remain linked release gates.
+E1.1 is **in progress**. The repository inventory, generated `dist/` parity review, and dependency SBOM command are complete enough to route evidence requests, but no asset family is cleared for external launch until the open evidence ledger, generated release artifact, and full notices are resolved. E1.8 (Oxford names/recordings), E1.9 (AI-audio disclosure), E1.6 (vendor review), E1.10 (claims register), and E1.11 (Children’s Code/DPIA) remain linked release gates.

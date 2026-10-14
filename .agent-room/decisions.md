@@ -16,6 +16,12 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-10-14 — Treat `dist/` as a generated curriculum release artifact
+
+**Decision:** Keep `public/`, typed manifests, and runtime resolvers as the curriculum media source-of-truth. Review `dist/` as generated release evidence: the 14 October build contains 316 MP3 and 2 MP4 media files with exact path and SHA-256 parity to `public/`, zero zero-byte files, and no `ffprobe` failures. Do not commit or curate `dist/` separately.
+**Why:** Build parity verifies packaging without conflating generated output with curriculum ownership, rights, pronunciation, or educational approval. The review also preserves the distinction between explicit manifest URLs and the 94 IPA files addressed through the dynamic sound resolver.
+**Rejected:** Treating a successful build or local file presence as rights/curriculum clearance, duplicating generated media in Git, or moving/removing `at`, `bed`, or `box` only to make the validator green.
+
 ### 2026-10-13 — Gate Sentry errors and traces behind parent consent and scrub events
 
 **Decision:** Keep Sentry default-off until a parent enables Optional Technical Diagnostics behind the arithmetic gate. Store a versioned local decision, fail closed when storage is unavailable, drop future events after revocation, and scrub user/account data, request URLs, breadcrumbs, contexts, tags, extras, transaction names, span attributes, and free-text exception messages. Retain only minimal release/environment metadata and sanitized stack structure; keep replay, logging, and metrics disabled.

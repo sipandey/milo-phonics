@@ -37,6 +37,7 @@ Use this checklist for every new or changed curriculum audio/video asset. It is 
 - [ ] Record the compressed file size and cumulative media-size impact; flag any bundle growth that needs release-owner review.
 - [ ] Confirm the local path exists under `public/` and matches the manifest entry exactly, including case and extension.
 - [ ] Run `npm run build` and load the asset through the browser runtime using the semantic ID.
+- [ ] Review the generated `dist/` media output: confirm source/build path parity, SHA-256 parity, no zero-byte files, and successful media decoding; retain the result with the release evidence.
 - [ ] Test first play, replay, interruption/cancellation, mute state, and a missing/failed asset path without leaving the screen locked.
 - [ ] In an isolated browser profile or test deployment, test the asset after the application is unavailable from the network. Do not make a fully-offline claim from source inspection alone.
 
