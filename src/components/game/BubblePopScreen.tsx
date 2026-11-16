@@ -378,10 +378,12 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
         </div>
 
         {/* Star Bank Counter */}
-        <div className="flex items-center gap-1.5 bg-white/95 px-4 py-2.5 rounded-full border-3 border-amber-200 shadow-[0_4px_0_#FDE68A] shrink-0 font-black text-sm text-amber-700">
-          <Star className="w-5 h-5 fill-amber-400 text-amber-500" />
-          <span>{progress.totalStars + sessionStarsEarned}</span>
-        </div>
+        {progress.toddlerFocusMode === false && (
+          <div className="flex items-center gap-1.5 bg-white/95 px-4 py-2.5 rounded-full border-3 border-amber-200 shadow-[0_4px_0_#FDE68A] shrink-0 font-black text-sm text-amber-700">
+            <Star className="w-5 h-5 fill-amber-400 text-amber-500" />
+            <span>{progress.totalStars + sessionStarsEarned}</span>
+          </div>
+        )}
       </header>
 
       {/* 2. Main Game Arena */}

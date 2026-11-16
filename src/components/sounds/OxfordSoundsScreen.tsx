@@ -44,7 +44,6 @@ const SECTIONS: SoundSection[] = [
       { symbol: 'l', word: 'leg' },
       { symbol: 'r', word: 'red' },
       { symbol: 'h', word: 'house' },
-      { symbol: 'x', word: 'Hanukkah' },
       { symbol: 'j', word: 'yes' },
       { symbol: 'w', word: 'wet' },
     ],
@@ -142,8 +141,8 @@ export const OxfordSoundsScreen: React.FC<OxfordSoundsScreenProps> = ({ onGoHome
       {/* Category Filter Pills */}
       <div className="flex justify-center gap-2 sm:gap-3 mb-6 flex-wrap">
         {[
-          { id: 'all', label: 'All Sounds (47)' },
-          { id: 'consonants', label: 'Consonants (25)' },
+          { id: 'all', label: 'All Sounds (46)' },
+          { id: 'consonants', label: 'Consonants (24)' },
           { id: 'vowels', label: 'Vowels (14)' },
           { id: 'diphthongs', label: 'Diphthongs (8)' },
         ].map((tab) => {
@@ -239,7 +238,7 @@ export const OxfordSoundsScreen: React.FC<OxfordSoundsScreenProps> = ({ onGoHome
       {/* Footer */}
       <footer className="text-center py-4 bg-white/60 backdrop-blur-sm rounded-3xl border border-amber-200/60 mt-4">
         <p className="text-xs sm:text-sm font-semibold text-amber-900/70">
-          Bundled sound reference audio. Tap a phonetic symbol for the isolated sound, or tap the word for the spoken word.
+          Bundled sound reference audio. Tap a phonetic symbol for the isolated sound, or tap the word for the spoken word. Pronunciation review is pending specialist sign-off.
         </p>
       </footer>
     </div>

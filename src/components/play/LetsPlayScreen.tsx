@@ -138,6 +138,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
 
     const scheduleRepeat = () => {
+      if (progress.automaticSoundPrompts !== true) return;
       if (repeatTimerRef.current) clearTimeout(repeatTimerRef.current);
       repeatTimerRef.current = setTimeout(async () => {
         if (cancel || hasTappedCardRef.current || audioService.isBusyPlaying()) {
@@ -187,7 +188,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
       cancel = true;
       if (repeatTimerRef.current) clearTimeout(repeatTimerRef.current);
     };
-  }, [currentObject.id, currentLetter.id, cleanPhoneme, activeLevel.id]);
+  }, [currentObject.id, currentLetter.id, cleanPhoneme, activeLevel.id, progress.automaticSoundPrompts]);
 
   // Tap Object interaction: records exploration and plays the sound blend.
   const handleTapObject = async () => {
@@ -208,9 +209,11 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
       currentObject.letterId
     );
 
+    let didWatchdogAdvance = false;
     // Watchdog timer: failsafe advance in 4.5s in case audio playback stalls or takes too long
     const watchdogTimer = setTimeout(() => {
       if (isToddlerMode) {
+        didWatchdogAdvance = true;
         advanceToNext();
       }
     }, 4500);
@@ -227,14 +230,22 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
     } finally {
       clearTimeout(watchdogTimer);
       setIsObjectAnimating(false);
-
-      // In Toddler Focus Mode: automatically advance smoothly to next sound/card
-      if (isToddlerMode) {
+      if (isToddlerMode && !didWatchdogAdvance) {
         autoAdvanceTimerRef.current = setTimeout(() => {
           advanceToNext();
         }, 1200);
       }
     }
+  };
+
+  const handleReplayObject = async () => {
+    if (!canAct() || audioService.isBusyPlaying()) return;
+    setMiloSpeech(currentObject.spokenIntro);
+    await audioService.playPhonemeWordBlend(
+      currentLetter.phonemeAudioId,
+      currentObject.wordAudioId,
+      currentObject.name
+    );
   };
 
   // Tap Letter badge / phoneme pill
@@ -575,11 +586,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
         </button>
 
         {isToddlerMode ? (
-          /* Toddler Focus Mode: Clean Star Counter Pill */
-          <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md px-5 py-2.5 rounded-full border-3 border-amber-200 shadow-[0_4px_0_#FDE68A] font-black text-amber-700 text-sm">
-            <Star className="w-5 h-5 fill-amber-400 text-amber-500" />
-            <span>{progress.totalStars} Stars</span>
-          </div>
+          <div className="flex-1" aria-hidden="true" />
         ) : (
           /* Full Explorer Mode: Level & Stars Island Badge (Tapping opens World Map Modal) */
           <button
@@ -772,14 +779,13 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
       </main>
 
       {/* 6. Big, Juicy, Toddler-Proof Action Buttons: Clean 2-Button Dock (Hidden in Toddler Focus Mode) */}
-      {!isToddlerMode && (
-        <footer className={`w-full max-w-md mx-auto flex justify-center items-center gap-3 sm:gap-4 pt-2 pb-3 sm:pb-4 shrink-0 px-2 transition-opacity duration-300 ${isAudioBusy ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
+      <footer className={`w-full max-w-md mx-auto flex justify-center items-center gap-3 sm:gap-4 pt-2 pb-3 sm:pb-4 shrink-0 px-2 transition-opacity duration-300 ${isAudioBusy ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
           {/* Symmetrical Squircle Audio Replay Button (~35% width) */}
           <button
-            onClick={handleTapObject}
+            onClick={() => void handleReplayObject()}
             disabled={isAudioBusy}
             aria-label="Play sound again"
-            className="squish-tap w-24 h-20 sm:w-28 sm:h-24 rounded-3xl bg-white text-amber-700 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex flex-col items-center justify-center p-1.5 shrink-0 cursor-pointer"
+            className={`squish-tap ${isToddlerMode ? 'w-32 h-24' : 'w-24 h-20 sm:w-28 sm:h-24'} rounded-3xl bg-white text-amber-700 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex flex-col items-center justify-center p-1.5 shrink-0 cursor-pointer`}
           >
             <RotateCcw className="w-8 h-8 sm:w-9 sm:h-9 stroke-[2.5]" />
             <span className="text-xs sm:text-sm font-black mt-1 leading-none">Again</span>
@@ -798,7 +804,10 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
             <ArrowRight className="w-7 h-7 sm:w-8 sm:h-8 stroke-[3] shrink-0" />
           </button>
         </footer>
-      )}
+      <details className="w-full max-w-md mx-auto text-center text-xs sm:text-sm text-amber-900 pb-2">
+        <summary className="cursor-pointer font-bold underline decoration-dotted">A little idea for grown-ups</summary>
+        <p className="mt-2">Look together for something else that begins with this sound. Pause, listen, and follow your child’s interest. A spoken answer is never needed, and home languages are welcome.</p>
+      </details>
     </div>
   );
 };

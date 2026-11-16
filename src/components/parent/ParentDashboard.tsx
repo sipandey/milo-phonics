@@ -138,7 +138,7 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
                   </span>
                 </div>
                 <p className="text-xs text-amber-800/90 mt-1 leading-relaxed">
-                  Single-action view: removes secondary tabs, menus, and next buttons. Plays sound on tap and auto-advances smoothly to keep toddlers from frantically clicking.
+                  Keeps the play screen simple. Replay and Continue stay available so your child can set the pace.
                 </p>
               </div>
             </div>
@@ -166,21 +166,46 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
           </div>
         </div>
 
-        {/* Section 3: Curriculum Progress */}
+        <div className="mb-6 p-4 sm:p-5 rounded-3xl bg-sky-50 border-2 border-sky-200">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h3 className="text-base font-black text-sky-950">Automatic sound prompts</h3>
+              <p className="text-xs text-sky-800 mt-1 leading-relaxed">Repeat the sound and word after a pause. Turn this off for a quieter, child-led pace.</p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-label="Automatic sound prompts"
+              aria-checked={progress.automaticSoundPrompts === true}
+              onClick={() => {
+                progressService.setAutomaticSoundPrompts(progress.automaticSoundPrompts !== true);
+                audioService.playPop();
+              }}
+              className={`w-14 h-8 rounded-full p-1 transition-colors cursor-pointer shrink-0 ${progress.automaticSoundPrompts === true ? 'bg-sky-500' : 'bg-gray-300'}`}
+            >
+              <div className={`w-6 h-6 rounded-full bg-white shadow-md transform transition-transform duration-200 ${progress.automaticSoundPrompts === true ? 'translate-x-6' : 'translate-x-0'}`} />
+            </button>
+          </div>
+        </div>
+
+        {/* Section 3: Exploration Progress */}
         <div className="space-y-4 mb-6">
           <h3 className="text-sm font-black text-amber-900 uppercase tracking-wider flex items-center gap-2">
             <Award className="w-4 h-4 text-amber-500" />
-            Curriculum Progress
+            Exploration Progress (App Sound Sequence)
           </h3>
+          <p className="text-xs leading-relaxed text-amber-900 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
+            Stars count repeated app interactions and unlock play sets. They show activity only, not whether a child knows or can use a sound.
+          </p>
 
           <div className="grid grid-cols-3 gap-2.5">
             <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 text-center">
               <div className="flex items-center justify-center gap-1 text-amber-600 mb-1">
                 <Star className="w-4 h-4 fill-amber-400 text-amber-500" />
-                <span className="text-xs font-bold">Stars Earned</span>
+                <span className="text-xs font-bold">Activity Stars</span>
               </div>
               <p className="text-2xl font-black text-amber-950">{progress.totalStars}</p>
-              <p className="text-[10px] text-amber-700">across all sounds</p>
+              <p className="text-[10px] text-amber-700">from repeated taps</p>
             </div>
 
             <div className="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200 text-center">
@@ -189,7 +214,7 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
                 <span className="text-xs font-bold">Current Level</span>
               </div>
               <p className="text-2xl font-black text-emerald-950">Level {progress.currentLevelId}</p>
-              <p className="text-[10px] text-emerald-700">Active Adventure</p>
+              <p className="text-[10px] text-emerald-700">selected play set</p>
             </div>
 
             <div className="p-3.5 bg-purple-50 rounded-2xl border border-purple-200 text-center">
@@ -198,14 +223,14 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
                 <span className="text-xs font-bold">Unlocked</span>
               </div>
               <p className="text-2xl font-black text-purple-950">{progress.unlockedLevels.length} / 7</p>
-              <p className="text-[10px] text-purple-700">Phonics Sets</p>
+              <p className="text-[10px] text-purple-700">available play sets</p>
             </div>
           </div>
 
           {/* 7 Levels Breakdown (Interactive Selector) */}
           <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-2">
             <div className="flex items-center justify-between mb-1">
-              <p className="text-xs font-bold text-gray-700">SSP Phonics Sets (Tap unlocked level to switch):</p>
+              <p className="text-xs font-bold text-gray-700">Play sets (tap an available set to revisit):</p>
               <span className="text-[10px] font-black text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded-full">
                 Active: Level {progress.currentLevelId}
               </span>
@@ -347,7 +372,7 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
               className="flex-1 py-2.5 px-4 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold squish-tap cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
             >
               <Volume2 className="w-4 h-4" />
-                <span>{AUDIO_RUNTIME_STATUS.blendTestLabel}</span>
+              <span>{AUDIO_RUNTIME_STATUS.blendTestLabel}</span>
             </button>
 
             <button

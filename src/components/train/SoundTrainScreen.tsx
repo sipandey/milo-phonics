@@ -22,8 +22,12 @@ import {
   Lock,
   X,
   MapPin,
-  Star,
 } from 'lucide-react';
+
+const GRAPHEME_SOUND_LABELS: Record<string, string> = {
+  q: '/k/ + /w/',
+  x: '/k/ + /s/',
+};
 
 interface SoundTrainScreenProps {
   onGoHome: () => void;
@@ -133,15 +137,17 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
     }
   }, [currentWord.id, isToddlerMode]);
 
-  // Tap an individual carriage: play single Oxford sound
+  // Tap an individual carriage to play its local phoneme asset.
   const handleTapCarriage = async (index: number) => {
     if (!canAct()) return;
     if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
     setHighlightedCarriage(index);
-    const phonemeAudioId = currentWord.phonemeAudioIds[index];
-    if (phonemeAudioId) {
+    const phonemeAudioGroup = currentWord.phonemeAudioGroups?.[index] ?? [currentWord.phonemeAudioIds[index]];
+    if (phonemeAudioGroup[0]) {
       audioService.playBoing();
-      await audioService.playVoice(phonemeAudioId, { interrupt: true });
+      for (const phonemeAudioId of phonemeAudioGroup) {
+        await audioService.playVoice(phonemeAudioId, { interrupt: true });
+      }
     }
     setTimeout(() => {
       setHighlightedCarriage(-1);
@@ -180,20 +186,15 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
     setIsPlayingWord(false);
     setMiloSpeech(isToddlerMode ? null : "Listen closely as we blend... 👂");
 
-    // Fail-safe watchdog: advance in 5.5s if browser audio stalls
-    const watchdogTimer = setTimeout(() => {
-      if (isToddlerMode) {
-        handleNextWord();
-      }
-    }, 5500);
-
     try {
+      const phonemeAudioIds = currentWord.phonemeAudioGroups?.flat() ?? currentWord.phonemeAudioIds;
+      const phonemeToGraphemeIndexes = currentWord.phonemeAudioGroups?.flatMap((group, graphemeIndex) => group.map(() => graphemeIndex));
       await audioService.playSequentialBlend(
-        currentWord.phonemeAudioIds,
+        phonemeAudioIds,
         currentWord.wordAudioId,
         currentWord.word,
         (idx) => {
-          setHighlightedCarriage(idx);
+          setHighlightedCarriage(phonemeToGraphemeIndexes?.[idx] ?? idx);
         }
       );
 
@@ -213,13 +214,6 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
       setJustFinishedAudio(true);
       setTimeout(() => setJustFinishedAudio(false), 2600);
 
-      // In Toddler Focus Mode: automatically advance smoothly after 1.5s golden celebration!
-      if (isToddlerMode) {
-        autoAdvanceTimerRef.current = setTimeout(() => {
-          clearTimeout(watchdogTimer);
-          handleNextWord();
-        }, 1500);
-      }
     } catch (err) {
       console.warn('[SoundTrainScreen] Error during train blend:', err);
     } finally {
@@ -244,7 +238,7 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
   };
 
   return (
-    <div className="h-[100dvh] max-h-[100dvh] w-full flex flex-col justify-between p-2.5 sm:p-4 max-w-4xl mx-auto relative z-10 select-none overflow-hidden">
+    <div className="min-h-[100dvh] w-full flex flex-col justify-between p-2.5 sm:p-4 max-w-4xl mx-auto relative z-10 select-none overflow-x-hidden">
       {/* Non-destructive toddler listening ripple overlay */}
       <ListenRipple
         isActive={isBusy}
@@ -344,11 +338,7 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
         </button>
 
         {isToddlerMode ? (
-          /* Toddler Focus Mode: Clean Star Counter Pill */
-          <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md px-5 py-2.5 rounded-full border-3 border-amber-200 shadow-[0_4px_0_#FDE68A] font-black text-amber-700 text-sm">
-            <Star className="w-5 h-5 fill-amber-400 text-amber-500" />
-            <span>{progress.totalStars} Stars</span>
-          </div>
+          <div className="flex-1" aria-hidden="true" />
         ) : (
           /* Full Explorer Mode: Level Station Badge */
           <button
@@ -378,7 +368,8 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
       {/* 2. Conductor Milo with listening pose during audio */}
       <div className="flex justify-center my-0.5 sm:my-1 shrink-0">
         <CharacterMilo
-          size={isToddlerMode ? 'lg' : 'md'}
+          size="md"
+          className="sound-train-companion"
           speechBubble={isToddlerMode || isBusy ? null : miloSpeech}
           isListening={isBusy}
           onTap={() => {
@@ -388,7 +379,7 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
       </div>
 
       {/* 3. The Sound Train Stage (Carriages & Sound Buttons) */}
-      <main className="flex-1 flex flex-col items-center justify-center my-auto min-h-0 w-full px-1">
+      <main className="relative z-0 flex-1 flex flex-col items-center justify-center my-auto min-h-[266px] w-full px-1">
         {/* Train Engine + Carriages Container */}
         <div className="w-full flex items-center justify-center gap-2 sm:gap-3">
           {/* Cute Little Train Engine Icon */}
@@ -449,7 +440,7 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
                     <div className="w-full flex items-center justify-center gap-1 bg-amber-50 px-2 py-0.5 rounded-xl border border-amber-200">
                       <Volume2 className="w-3 h-3 text-amber-600" />
                       <span className="text-[11px] sm:text-xs font-extrabold text-amber-800">
-                        /{letter}/
+                        {GRAPHEME_SOUND_LABELS[letter] ?? `/${letter}/`}
                       </span>
                     </div>
                   </button>
@@ -477,6 +468,7 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
         {/* Big Interactive "Blend! 🚂" Action Button */}
         {!isWordRevealed ? (
           <div className="mt-2 w-full max-w-sm px-2">
+            <p className="text-center text-sm font-bold text-amber-900 mb-2">Tap each sound. Have a go, then tap to hear the whole word.</p>
             <button
               onClick={handleBlendWord}
               disabled={isBusy}
@@ -488,23 +480,23 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
               }`}
             >
               <Sparkles className="w-7 h-7 sm:w-8 sm:h-8 animate-wiggle" />
-              <span>{isBlending ? 'Blending...' : 'Blend! 🚂 Choo-Choo!'}</span>
+              <span>{isBlending ? 'Blending...' : 'Hear the whole word 🚂'}</span>
             </button>
           </div>
         ) : isToddlerMode ? (
           /* Toddler Focus Mode: Clean, Massive Celebratory Picture + Word Card */
           <div className="mt-2 w-full max-w-sm px-2 animate-pop-in">
-            <div className="p-4 sm:p-6 rounded-4xl bg-white border-4 border-amber-300 shadow-2xl flex flex-col items-center justify-center gap-2 text-center ring-6 ring-amber-200">
-              <span className="text-7xl sm:text-8xl animate-bounce-gentle filter drop-shadow-md">
+            <div className="p-3 sm:p-4 rounded-4xl bg-white border-4 border-amber-300 shadow-2xl flex flex-col items-center justify-center gap-1 text-center ring-6 ring-amber-200">
+              <span className="text-4xl sm:text-5xl animate-bounce-gentle filter drop-shadow-md">
                 {currentWord.emoji}
               </span>
-              <h3 className="text-4xl sm:text-5xl font-black font-fun text-gray-900 tracking-wide uppercase">
+              <h3 className="text-2xl sm:text-3xl font-black font-fun text-gray-900 tracking-wide uppercase">
                 {currentWord.word}
               </h3>
               <div className="flex items-center gap-1.5 text-emerald-600 font-extrabold text-sm mt-1">
-                <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                <span>Brilliant Blending! ⭐</span>
+                <span>We heard the word together</span>
               </div>
+              <p className="text-xs font-semibold text-gray-700">{currentWord.meaning}</p>
             </div>
           </div>
         ) : (
@@ -581,15 +573,15 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
         )}
       </main>
 
-      {/* 4. Bottom Action Controls: Only in Full Explorer Mode */}
-      {!isToddlerMode && (
-        <footer className="w-full max-w-md mx-auto flex justify-center items-center gap-3 sm:gap-4 pt-2 pb-3 sm:pb-4 shrink-0 px-2">
+      {/* 4. Child-controlled replay and continue remain available in both modes */}
+      {
+        <footer className="sound-train-actions relative z-30 w-full max-w-md mx-auto flex justify-center items-center gap-3 sm:gap-4 pt-2 pb-3 sm:pb-4 shrink-0 px-2">
           {/* Again Button (~35% width) */}
           <button
             onClick={handleBlendWord}
             disabled={isBusy}
             aria-label="Blend sounds again"
-            className={`squish-tap w-24 h-20 sm:w-28 sm:h-24 rounded-3xl bg-white text-amber-700 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex flex-col items-center justify-center p-1.5 shrink-0 cursor-pointer transition-all ${
+            className={`squish-tap ${isToddlerMode ? 'w-32 h-24' : 'w-24 h-20 sm:w-28 sm:h-24'} rounded-3xl bg-white text-amber-700 border-4 border-amber-300 shadow-[0_6px_0_#D97706] active:translate-y-1 active:shadow-[0_2px_0_#D97706] flex flex-col items-center justify-center p-1.5 shrink-0 cursor-pointer transition-all ${
               isBusy ? 'opacity-40 pointer-events-none' : 'opacity-100'
             }`}
           >
@@ -612,7 +604,7 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
             <ArrowRight className="w-7 h-7 sm:w-8 sm:h-8 stroke-[3] shrink-0" />
           </button>
         </footer>
-      )}
+      }
     </div>
   );
 };
