@@ -2,7 +2,7 @@
  * GENERATED FILE — do not edit by hand.
  * Produced by: npx tsx scripts/optimize-and-sync-audio.ts
  *
- * Cloudinary URLs and metadata for all AI-recorded assets matching Oxford tone & pace.
+ * Cloudinary URLs and generation metadata for pre-recorded voice assets.
  * Silence trimmed with ffmpeg.
  */
 

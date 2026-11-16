@@ -14,7 +14,7 @@ class AudioService {
   private sfxGain: GainNode | null = null;
   private isMuted: boolean = false;
   private settings: AudioSettings = {
-    voiceSpeed: 0.75,     // Calm, unhurried British toddler pacing matching Oxford
+    voiceSpeed: 0.75,     // Calm, unhurried playback rate
     voicePitch: 1.0,      // Natural pitch
     sfxVolume: 0.9,
     speechVolume: 1.0,
@@ -35,7 +35,7 @@ class AudioService {
   private isBusy: boolean = false;
 
   constructor() {
-    // 100% Pre-recorded AI & Oxford audio pipeline.
+    // Pre-recorded local and generated audio pipeline.
     // Browser native SpeechSynthesis is strictly disabled per project architecture.
   }
 
@@ -146,8 +146,8 @@ class AudioService {
    * Play voice audio via semantic audio ID (e.g. "word.monkey", "phoneme.m")
    *
    * 1. Looks up entry in central audioManifest.
-   * 2. Oxford authentic audio takes precedence for phonemes and authentic recordings.
-   * 3. Pre-recorded AI audio (Coral British RP matching Oxford tone & pace) with Cloudinary CDN backing for all others.
+   * 2. Local phoneme audio and generated word audio are resolved from the manifests.
+   * Audio provenance and pronunciation quality require specialist review.
    * 4. Triggers speech lifecycle listeners so visual animations (Milo mouth) sync perfectly.
    */
   public async playVoice(audioId: string, options?: PlayVoiceOptions): Promise<void> {
@@ -176,7 +176,7 @@ class AudioService {
   }
 
   /**
-   * Play pre-recorded audio URL (100% pre-recorded Oxford or AI Cloudinary asset)
+   * Play a pre-recorded audio URL.
    */
   private playRemoteVoice(url: string, fallbackText?: string, options?: PlayVoiceOptions): Promise<void> {
     return new Promise((resolve) => {
@@ -299,7 +299,7 @@ class AudioService {
   }
 
   /**
-   * Play authentic British English sound from Oxford Dictionary dataset
+   * Play a local isolated phoneme or example-word asset.
    * @param symbol IPA or sound symbol (e.g. "m", "æ", "dʒ", "p")
    * @param kind "isolation" (pure phoneme) or "words" (example word)
    */
@@ -316,7 +316,7 @@ class AudioService {
   }
 
   /**
-   * Play pedagogical blend: authentic Oxford isolated phoneme sound,
+   * Play a blend: isolated phoneme sound,
    * followed by a calm toddler breath pause, then the word spoken in British English.
    * e.g. /m/... Monkey!
    */
@@ -330,7 +330,7 @@ class AudioService {
     const token = ++this.currentBlendToken;
     this.setBusy(true);
     try {
-      // 1. Play authentic Oxford isolated phoneme sound
+      // 1. Play the isolated phoneme sound
       await this.playVoice(phonemeAudioId, { interrupt: true });
       if (this.currentBlendToken !== token) return;
 
@@ -338,7 +338,7 @@ class AudioService {
       await new Promise((resolve) => setTimeout(resolve, 200));
       if (this.currentBlendToken !== token) return;
 
-      // 3. Play the authentic / slow AI-generated word audio asset
+      // 3. Play the pre-recorded word audio asset
       const wordEntry = getAudioEntry(wordAudioId);
       if (wordEntry?.url) {
         await this.playVoice(wordAudioId, { interrupt: false });
@@ -357,7 +357,7 @@ class AudioService {
   /**
    * Sequential CVC Blending for the Sound Train:
    * Plays each phoneme one-by-one with highlight callback, pauses, then speaks the blended word.
-   * Uses authentic Oxford phonemes and trimmed AI CVC words with zero browser speech-synthesis.
+   * Uses pre-recorded phoneme and CVC word audio without browser speech-synthesis.
    */
   public async playSequentialBlend(
     phonemeAudioIds: string[],
