@@ -13,7 +13,7 @@
 | Published digraph content | None; `sh`, `ch`, `th`, `ck`, `ng`, and `qu` are draft records |
 | Reader pages | None yet; the typed collection is reserved for a later reviewed reader |
 
-The review status is deliberate. The manifest does not approve pronunciation, rights, educational alignment, age suitability, mastery, or learning outcomes. The existing curriculum validation command still reports the known `at`, `bed`, and `box` findings; this schema does not reclassify or remove those records.
+The review status is deliberate. The manifest does not approve pronunciation, rights, educational alignment, age suitability, mastery, or learning outcomes. The VC entry `at` was removed from the CVC blending catalogue. Curriculum validation now checks multi-phoneme grapheme groups such as final `x` while retaining the separate specialist-review gates.
 
 ## Data contract
 

@@ -28,8 +28,8 @@ describe('curriculum content manifest', () => {
     expect(getCurriculumWordsForLevel(1).map(({ id }) => id)).not.toContain('pan');
   });
 
-  it('classifies current word entries without changing their source data', () => {
-    expect(CURRICULUM_CONTENT.words.find(({ id }) => id === 'at')?.shape).toBe('VC');
+  it('classifies the current CVC entries without retaining the unresolved VC record', () => {
+    expect(CURRICULUM_CONTENT.words.find(({ id }) => id === 'at')).toBeUndefined();
     expect(CURRICULUM_CONTENT.words.find(({ id }) => id === 'sat')?.shape).toBe('CVC');
     expect(CURRICULUM_CONTENT.words.find(({ id }) => id === 'sat')?.audio.word).toBe('cvc.sat');
   });

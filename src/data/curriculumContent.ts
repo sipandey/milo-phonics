@@ -104,7 +104,7 @@ export const CURRICULUM_CONTENT: CurriculumContentManifest = {
     summary: 'Introductory letter-sound and short-word blending activities.',
     included: [
       'Single-letter phonemes and graphemes in the current sound-set order.',
-      'VC and CVC word records with reviewable audio references.',
+      'CVC word records with reviewable audio references.',
       'Draft extension points for digraphs, readers, and review scheduling.',
     ],
     excludedClaims: [

@@ -46,7 +46,8 @@ const ClerkActiveSync: React.FC = () => {
         }
 
         const exported = progressService.exportForClerk();
-        const { cloudSyncedAt: _cloudSyncedAt, ...stableProgress } = exported;
+        const stableProgress = { ...exported };
+        delete stableProgress.cloudSyncedAt;
         const signature = JSON.stringify(stableProgress);
         if (signature !== lastSyncedSignatureRef.current) {
           await user.update({

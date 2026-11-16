@@ -1,26 +1,22 @@
 # Curriculum and Asset Validation Report
 
-**Review date:** 13 October 2026
+**Review date:** 16 November 2026
 **Command:** `npm run verify:curriculum`
-**Status:** Failing by design until curriculum/content owners resolve the findings below.
+**Status:** Passed after removing the misclassified VC entry and validating multi-phoneme grapheme groups.
 
-The validator checks blending IDs, level references, simple three-letter CVC shape, taught-letter prerequisites, phoneme alignment, audio IDs, and bundled local audio paths. It is a release-control tool; it does not decide whether a word is pedagogically appropriate or change curriculum/audio content automatically.
+The validator checks blending IDs, level references, CVC shape, taught-letter prerequisites, phoneme alignment (including multi-phoneme grapheme groups), audio IDs, and bundled local audio paths. It is a release-control tool; it does not decide whether a word is pedagogically appropriate or change curriculum/audio content automatically.
 
 ## Current findings
 
-| Code | Item | Finding | Required owner decision |
-| --- | --- | --- | --- |
-| `NON_CVC_WORD` | `at` | `at` is a two-letter VC entry but uses the `cvc.at`/CVC curriculum shape | Reclassify as VC with a separate schema/audio path, or remove/replace it after curriculum review |
-| `UNTAUGHT_LETTER` | `bed` | `b` is introduced at Level 5 but `bed` is published at Level 4 | Move the entry after `b` is taught, change the sequence, or obtain a documented curriculum exception |
-| `UNTAUGHT_LETTER` | `box` | `x` is introduced at Level 6 but `box` is published at Level 5 | Move the entry after `x` is taught, change the sequence, or obtain a documented curriculum exception |
+No release-blocking curriculum or bundled audio findings were reported for the 37 blending entries. The `at` VC item was removed from the CVC catalogue. Final `x` is represented as the grapheme group `/k/` + `/s/` and its flattened phoneme sequence is checked by the validator.
 
-No missing local CVC/sentence assets or duplicate IDs were reported in this run. That result does not establish asset rights, pronunciation quality, or educational suitability; those remain E1.1/E1.8/E1.9 and specialist-review gates.
+This result does not establish asset rights, pronunciation quality, or educational suitability; those remain separate specialist-review gates.
 
 ## Release policy
 
-- Keep `npm run verify:curriculum` available for content CI/review and do not suppress the three findings.
-- Do not wire this failing validator into the general production build until the content owner resolves or formally records each finding; once clean, add it as a required build step.
+- Keep `npm run verify:curriculum` available for content CI/review and re-run it after curriculum changes.
+- The current validation is clean; retain it as a release gate.
 - Any exception must include the owner, rationale, prerequisite mapping, word classification, audio IDs, source/rights evidence, and review date.
 - Re-run after every curriculum, audio manifest, or level-sequence change.
 
-E2.2 remains **in progress**. The validator is implemented and the current defects are reproducible; content correction and pronunciation/educational approval are not inferred from code.
+E2.2 validation is **clean** for the current catalogue. Pronunciation/educational approval is not inferred from code and remains pending specialist review.

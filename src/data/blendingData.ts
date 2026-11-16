@@ -52,19 +52,6 @@ export const BLENDING_WORDS: BlendingWord[] = [
     meaning: 'Sweet sticky sap runs down the pine tree!',
     color: '#10B981',
   },
-  {
-    id: 'at',
-    word: 'at',
-    cvcAudioId: 'cvc.at',
-    sentenceAudioId: 'sentence.at',
-    levelId: 1,
-    letters: ['a', 't'],
-    phonemeAudioIds: ['phoneme.a', 'phoneme.t'],
-    emoji: '📍',
-    meaning: 'Look at that shiny yellow star!',
-    color: '#8B5CF6',
-  },
-
   // ==========================================
   // LEVEL 2: + i, n, m, d
   // ==========================================

@@ -71,14 +71,23 @@ export function validateCurriculum(
       }
     }
 
-    if (word.letters.length !== word.phonemeAudioIds.length) {
-      addFinding(findings, 'PHONEME_ALIGNMENT', word.id, `Word ${word.id} has ${word.letters.length} letters but ${word.phonemeAudioIds.length} phoneme IDs`);
+    const expectedGroups = word.letters.map((letter) => (
+      letter === 'x' ? ['phoneme.k', 'phoneme.s'] : [`phoneme.${letter}`]
+    ));
+    const actualGroups = word.phonemeAudioGroups ?? word.phonemeAudioIds.map((audioId) => [audioId]);
+
+    if (actualGroups.length !== word.letters.length) {
+      addFinding(findings, 'PHONEME_ALIGNMENT', word.id, `Word ${word.id} has ${word.letters.length} letters but ${actualGroups.length} phoneme groups`);
     }
 
-    word.letters.forEach((letter, index) => {
-      const expectedAudioId = `phoneme.${letter}`;
-      if (word.phonemeAudioIds[index] !== expectedAudioId) {
-        addFinding(findings, 'PHONEME_ALIGNMENT', word.id, `Word ${word.id} expects ${expectedAudioId} at position ${index + 1}`);
+    if (actualGroups.flat().join('|') !== word.phonemeAudioIds.join('|')) {
+      addFinding(findings, 'PHONEME_ALIGNMENT', word.id, `Word ${word.id} has phoneme groups that do not match its flattened phoneme IDs`);
+    }
+
+    expectedGroups.forEach((expectedGroup, index) => {
+      const actualGroup = actualGroups[index] ?? [];
+      if (actualGroup.join('|') !== expectedGroup.join('|')) {
+        addFinding(findings, 'PHONEME_ALIGNMENT', word.id, `Word ${word.id} expects ${expectedGroup.join(' + ')} for letter ${word.letters[index]} at position ${index + 1}`);
       }
     });
 

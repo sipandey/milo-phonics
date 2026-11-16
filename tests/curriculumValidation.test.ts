@@ -83,4 +83,44 @@ describe('curriculum validation', () => {
 
     expect(findings).toEqual([]);
   });
+
+  it('accepts a final x grapheme represented by the two /k/ and /s/ phonemes', () => {
+    const findings = validateCurriculum({
+      levels: levels.map((level) => level.id === 2 ? { ...level, letterIds: ['b', 'o', 'x'] } : level),
+      words: [createWord({
+        id: 'box',
+        word: 'box',
+        levelId: 2,
+        letters: ['b', 'o', 'x'],
+        phonemeAudioIds: ['phoneme.b', 'phoneme.o', 'phoneme.k', 'phoneme.s'],
+        phonemeAudioGroups: [['phoneme.b'], ['phoneme.o'], ['phoneme.k', 'phoneme.s']],
+        cvcAudioId: 'cvc.box',
+        sentenceAudioId: 'sentence.box',
+      })],
+      audioIds: new Set(['cvc.box', 'sentence.box']),
+      localAssetPaths: new Set(['/audio/cvc/cvc.box.mp3', '/audio/sentences/sentence.box.mp3']),
+    });
+
+    expect(findings).toEqual([]);
+  });
+
+  it('reports groups that do not match a grapheme or their flattened phoneme IDs', () => {
+    const findings = validateCurriculum({
+      levels: levels.map((level) => level.id === 2 ? { ...level, letterIds: ['b', 'o', 'x'] } : level),
+      words: [createWord({
+        id: 'box',
+        word: 'box',
+        levelId: 2,
+        letters: ['b', 'o', 'x'],
+        phonemeAudioIds: ['phoneme.b', 'phoneme.o', 'phoneme.k', 'phoneme.s'],
+        phonemeAudioGroups: [['phoneme.b'], ['phoneme.o'], ['phoneme.k']],
+        cvcAudioId: 'cvc.box',
+        sentenceAudioId: 'sentence.box',
+      })],
+      audioIds: new Set(['cvc.box', 'sentence.box']),
+      localAssetPaths: new Set(['/audio/cvc/cvc.box.mp3', '/audio/sentences/sentence.box.mp3']),
+    });
+
+    expect(findings.map((finding) => finding.code)).toContain('PHONEME_ALIGNMENT');
+  });
 });
