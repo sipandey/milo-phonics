@@ -3,10 +3,11 @@ import { CharacterMilo } from '../common/CharacterMilo';
 import { BigButton } from '../common/BigButton';
 import { audioService } from '../../services/audioService';
 import { progressService } from '../../services/progressService';
-import { Settings, Star } from 'lucide-react';
+import { Settings } from 'lucide-react';
 
 interface HomeScreenProps {
   onStartPlay: () => void;
+  onOpenListenTalk: () => void;
   onOpenSoundTrain: () => void;
   onOpenBubblePop: () => void;
   onOpenFeedMilo: () => void;
@@ -18,6 +19,7 @@ interface HomeScreenProps {
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
   onStartPlay,
+  onOpenListenTalk,
   onOpenSoundTrain,
   onOpenBubblePop,
   onOpenFeedMilo,
@@ -42,7 +44,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     }, 400);
 
     const speechTimer = setTimeout(() => {
-      setMiloSpeech("Touch anything!");
+      setMiloSpeech('Choose a picture or a sound.');
     }, 4500);
 
     return () => {
@@ -55,20 +57,20 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     <div className="min-h-screen flex flex-col justify-between p-4 sm:p-6 max-w-4xl mx-auto relative z-10">
       {/* Top Header: Star Bank Counter & Discreet Parent Gate */}
       <header className="flex justify-between items-center w-full mb-2">
-        {/* Child-Friendly Star Bank Badge */}
-        <div className="flex items-center gap-1.5 bg-white/95 px-4 py-2.5 rounded-full border-3 border-amber-200 shadow-[0_4px_0_#FDE68A] shrink-0 font-black text-sm text-amber-700 select-none">
-          <Star className="w-5 h-5 fill-amber-400 text-amber-500" />
-          <span>{progress.totalStars} Stars</span>
-        </div>
+        {!isToddlerMode ? (
+          <div className="flex items-center gap-1.5 bg-white/95 px-4 py-2.5 rounded-full border-3 border-amber-200 shadow-[0_4px_0_#FDE68A] shrink-0 font-black text-sm text-amber-700 select-none">
+            <span>{progress.totalStars} Activity Stars</span>
+          </div>
+        ) : <div aria-hidden="true" />}
 
         {/* Small Discreet Parent Gate */}
         <button
           onClick={onOpenParentGate}
           aria-label="Parents Dashboard"
-          className="px-3.5 py-2.5 rounded-2xl bg-white/90 hover:bg-white text-gray-500 hover:text-gray-800 text-xs font-bold border-2 border-amber-200 shadow-[0_3px_0_#FDE68A] flex items-center gap-1.5 squish-tap cursor-pointer transition-transform active:scale-95"
+          className={`rounded-2xl bg-white/90 hover:bg-white text-gray-500 hover:text-gray-800 text-xs font-bold border-2 border-amber-200 shadow-[0_3px_0_#FDE68A] flex items-center justify-center gap-1.5 squish-tap cursor-pointer transition-transform active:scale-95 ${isToddlerMode ? 'w-12 h-12' : 'px-3.5 py-2.5'}`}
         >
           <Settings className="w-4 h-4 text-amber-600" />
-          <span className="text-amber-950 font-black">Parents</span>
+          {!isToddlerMode && <span className="text-amber-950 font-black">Parents</span>}
         </button>
       </header>
 
@@ -95,15 +97,50 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           }}
         />
 
-        {/* Toddler Activities Grid: 2 - 1 - 2 Symmetrical Layout */}
+        {/* Keep the toddler start simple; the full activity menu stays available below. */}
         <div className="w-full max-w-xl px-2 mb-3 sm:mb-5 flex flex-col gap-2.5 sm:gap-3.5">
+          {isToddlerMode ? (
+            <>
+              <div className="grid grid-cols-1 gap-2.5 sm:gap-4">
+                <BigButton
+                  variant="sky"
+                  size="lg"
+                  onClick={onOpenListenTalk}
+                  icon={<span className="text-3xl sm:text-5xl">💬</span>}
+                  label="Listen & Talk"
+                  className="w-full"
+                />
+                <BigButton
+                  variant="yellow"
+                  size="lg"
+                  onClick={onStartPlay}
+                  icon={<span className="text-3xl sm:text-5xl">🦁</span>}
+                  label="Let's Play!"
+                  className="w-full"
+                />
+              </div>
+              <details className="w-full">
+                <summary className="min-h-14 flex items-center justify-center rounded-2xl border-2 border-amber-200 bg-white/90 text-amber-950 font-black text-lg cursor-pointer select-none">
+                  More games
+                </summary>
+                <div className="grid grid-cols-2 gap-2.5 sm:gap-4 mt-3">
+                  <BigButton variant="green" size="lg" onClick={onOpenSoundTrain} icon={<span>🚂</span>} label="Sound Train" className="w-full" />
+                  <BigButton variant="purple" size="lg" onClick={onOpenBubblePop} icon={<span>🫧</span>} label="Bubble Pop" className="w-full" />
+                  <BigButton variant="coral" size="lg" onClick={onOpenFeedMilo} icon={<span>🍎</span>} label="Feed Milo" className="w-full" />
+                  <BigButton variant="white" size="lg" onClick={onOpenLetters} icon={<span>🔤</span>} label="Letters" className="w-full" />
+                  <BigButton variant="sky" size="lg" onClick={onOpenOxfordSounds} icon={<span>🎵</span>} label="Sound library" className="w-full col-span-2" />
+                </div>
+              </details>
+            </>
+          ) : (
+            <>
           {/* Row 1: Core Exploration & Blending */}
           <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
             <BigButton
               variant="yellow"
               size="lg"
               onClick={onStartPlay}
-              className="w-full animate-pulse-glow"
+              className="w-full"
               icon={<span className="text-3xl sm:text-5xl">🦁</span>}
               label="Let's Play!"
               badge="Sound Sets 🌱"
@@ -143,9 +180,20 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             />
           </div>
 
-          {/* Row 3: Reference & Sound Explorers (Hidden in Toddler Focus Mode) */}
-          {!isToddlerMode && (
-            <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
+          {/* Listening and language discovery is available before letter-based play. */}
+          <div className={`grid gap-2.5 sm:gap-4 ${isToddlerMode ? 'grid-cols-1' : 'grid-cols-3'}`}>
+            <BigButton
+              variant="sky"
+              size="lg"
+              onClick={onOpenListenTalk}
+              icon={<span className="text-3xl sm:text-5xl">💬</span>}
+              label="Listen & Talk"
+              badge="Pictures & Words"
+              className="w-full"
+            />
+
+            {!isToddlerMode && (
+              <>
               <BigButton
                 variant="white"
                 size="lg"
@@ -161,19 +209,20 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 onClick={onOpenOxfordSounds}
                 icon={<span className="text-3xl sm:text-5xl">🇬🇧</span>}
                 label="Sounds"
-                badge="Oxford"
+                badge="Sound Library"
                 className="w-full"
               />
-            </div>
+              </>
+            )}
+          </div>
+            </>
           )}
         </div>
       </main>
 
       {/* Bottom Visual Encouragement */}
       <footer className="text-center py-2">
-        <p className="text-amber-800/60 font-semibold text-sm">
-          Tap any button to explore sounds & fun! ✨
-        </p>
+        {!isToddlerMode && <p className="text-amber-800/60 font-semibold text-sm">Choose an activity to explore.</p>}
       </footer>
     </div>
   );

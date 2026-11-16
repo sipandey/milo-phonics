@@ -27,12 +27,12 @@ export const LetterDetailScreen: React.FC<LetterDetailScreenProps> = ({
 
   const activeObject: PhonicsObject = letter.objects[selectedObjectIndex];
 
-  // Entry sequence: Animate letter + Oxford phoneme -> show object + Oxford phoneme + slow British word
+  // Entry sequence: animate the letter, then introduce its object and sound.
   useEffect(() => {
     let cancel = false;
 
     const runSequence = async () => {
-      // Phase 1: Letter introduction with authentic Oxford sound
+      // Phase 1: play the local phoneme asset.
       setIsLetterAnimating(true);
       setMiloSpeech(letter.phoneme);
       await audioService.playVoice(letter.phonemeAudioId);
@@ -68,7 +68,7 @@ export const LetterDetailScreen: React.FC<LetterDetailScreenProps> = ({
     };
   }, [letterId]);
 
-  // Handle tap on the Giant Letter (authentic Oxford sound)
+  // Handle tap on the giant letter and play its phoneme asset.
   const handleTapLetter = () => {
     setIsLetterAnimating(true);
     progressService.recordLetterInteraction(letter.id);
@@ -81,7 +81,7 @@ export const LetterDetailScreen: React.FC<LetterDetailScreenProps> = ({
     }, 600);
   };
 
-  // Handle tap on the Active Object (Oxford sound + slow British word)
+  // Handle tap on the active object and play its sound and word.
   const handleTapObject = () => {
     setIsObjectAnimating(true);
     progressService.recordObjectInteraction(activeObject.id, letter.id);

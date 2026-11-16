@@ -55,7 +55,7 @@ export const BigButton: React.FC<BigButtonProps> = ({
       } ${className}`}
     >
       {badge && (
-        <span className="absolute -top-3 -right-2 px-3 py-1 bg-bubble-pink text-white font-bold text-xs rounded-full shadow-md border-2 border-white animate-bounce-gentle">
+        <span className="absolute -top-3 -right-2 px-3 py-1 bg-bubble-pink text-white font-bold text-xs rounded-full shadow-md border-2 border-white">
           {badge}
         </span>
       )}

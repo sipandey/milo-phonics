@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ScreenType } from './types/phonics';
 import { HomeScreen } from './components/home/HomeScreen';
 import { LetsPlayScreen } from './components/play/LetsPlayScreen';
+import { ListenTalkScreen } from './components/play/ListenTalkScreen';
 import { LetterSelectScreen } from './components/letter/LetterSelectScreen';
 import { LetterDetailScreen } from './components/letter/LetterDetailScreen';
 import { OxfordSoundsScreen } from './components/sounds/OxfordSoundsScreen';
@@ -11,7 +12,6 @@ import { FeedMiloScreen } from './components/game/FeedMiloScreen';
 import { ParentGateModal } from './components/common/ParentGateModal';
 import { ParentDashboard } from './components/parent/ParentDashboard';
 import { TeaserModal } from './components/common/TeaserModal';
-import { FloatingBubblesBackground } from './components/common/ParticleEffects';
 
 export function App() {
   const [currentScreen, setCurrentScreen] = useState<ScreenType>('home');
@@ -24,8 +24,16 @@ export function App() {
     message: '',
   });
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [currentScreen]);
+
   const handleStartPlay = () => {
     setCurrentScreen('lets-play');
+  };
+
+  const handleOpenListenTalk = () => {
+    setCurrentScreen('listen-talk');
   };
 
   const handleOpenSoundTrain = () => {
@@ -76,13 +84,11 @@ export function App() {
 
   return (
     <div className="relative min-h-screen min-h-[100dvh] bg-gradient-to-b from-amber-50/70 via-orange-50/40 to-yellow-50/70 overflow-x-hidden font-fun">
-      {/* Gentle Floating Ambient Background */}
-      <FloatingBubblesBackground />
-
       {/* Screen Routing */}
       {currentScreen === 'home' && (
         <HomeScreen
           onStartPlay={handleStartPlay}
+          onOpenListenTalk={handleOpenListenTalk}
           onOpenSoundTrain={handleOpenSoundTrain}
           onOpenBubblePop={handleOpenBubblePop}
           onOpenFeedMilo={handleOpenFeedMilo}
@@ -117,6 +123,10 @@ export function App() {
           onExploreLetter={handleSelectLetter}
           onOpenSoundTrain={handleOpenSoundTrain}
         />
+      )}
+
+      {currentScreen === 'listen-talk' && (
+        <ListenTalkScreen onGoHome={handleGoHome} />
       )}
 
       {currentScreen === 'letters' && (

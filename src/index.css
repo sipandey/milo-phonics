@@ -46,6 +46,22 @@
   scrollbar-width: none;
 }
 
+@media (max-height: 600px) {
+  .sound-train-companion > button {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .sound-train-actions button {
+    height: 4.25rem;
+  }
+
+  .sound-train-actions {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+}
+
 /* Floating touch ripple for toddler listen mode */
 @keyframes floatUp {
   0% {

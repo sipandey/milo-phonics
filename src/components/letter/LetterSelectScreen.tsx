@@ -70,7 +70,7 @@ export const LetterSelectScreen: React.FC<LetterSelectScreenProps> = ({
             Touch a letter to explore! 🔊
           </p>
           <p className="text-sm font-semibold text-amber-700/70 mt-1">
-            Tap sound buttons to hear Oxford British English phonemes
+            Tap sound buttons to hear pre-recorded phonemes
           </p>
         </div>
 
@@ -115,7 +115,7 @@ export const LetterSelectScreen: React.FC<LetterSelectScreenProps> = ({
                 {/* Speaker icon in corner for instant sound playback */}
                 <button
                   onClick={(e) => handlePlaySoundOnly(e, letter.phonemeAudioId, letter.id)}
-                  aria-label={`Listen to Oxford sound for ${letter.symbol}`}
+                  aria-label={`Listen to phoneme sound for ${letter.symbol}`}
                   className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full flex items-center justify-center shadow-sm text-white hover:scale-115 active:scale-95 transition-transform"
                   style={{ backgroundColor: letter.colorTheme.primary }}
                 >
@@ -161,7 +161,7 @@ export const LetterSelectScreen: React.FC<LetterSelectScreenProps> = ({
       {/* Footer */}
       <footer className="text-center py-2">
         <p className="text-amber-800/60 font-semibold text-sm">
-          Listen to authentic Oxford British sounds & learn to read! 🇬🇧🌟
+          Listen to a sound and explore the letter. Audio review is pending.
         </p>
       </footer>
     </div>
