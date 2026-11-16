@@ -93,6 +93,7 @@ const defaultProgress: ChildProgress = {
   lastLetter: 's',
   lastObjectIndex: 0,
   toddlerFocusMode: true,
+  automaticSoundPrompts: false,
 };
 
 type ProgressListener = (progress: ChildProgress) => void;
@@ -198,6 +199,7 @@ class ProgressService {
       lastObjectIndex: typeof raw.lastObjectIndex === 'number' ? Math.max(0, raw.lastObjectIndex) : 0,
       cloudSyncedAt: raw.cloudSyncedAt,
       toddlerFocusMode: raw.toddlerFocusMode !== undefined ? raw.toddlerFocusMode : true,
+      automaticSoundPrompts: raw.automaticSoundPrompts === true,
     };
   }
 
@@ -217,6 +219,11 @@ class ProgressService {
 
   public setToddlerFocusMode(enabled: boolean) {
     this.progress.toddlerFocusMode = enabled;
+    this.saveProgress();
+  }
+
+  public setAutomaticSoundPrompts(enabled: boolean) {
+    this.progress.automaticSoundPrompts = enabled;
     this.saveProgress();
   }
 

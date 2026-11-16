@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useUser, SignInButton, UserButton } from '@clerk/clerk-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useUser, SignInButton, SignUpButton, UserButton } from '@clerk/clerk-react';
 import { progressService } from '../../services/progressService';
 import { ChildProgress } from '../../types/phonics';
-import { Cloud, CheckCircle2, RefreshCw, LogIn } from 'lucide-react';
+import { Cloud, CheckCircle2, RefreshCw, LogIn, UserPlus, AlertCircle } from 'lucide-react';
 
 export const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY as string | undefined;
 export const CLERK_PROXY_URL =
@@ -11,8 +11,8 @@ export const CLERK_PROXY_URL =
 
 export const isClerkEnabled = Boolean(
   CLERK_PUBLISHABLE_KEY &&
-  CLERK_PUBLISHABLE_KEY.startsWith('pk_') &&
-  CLERK_PUBLISHABLE_KEY !== 'pk_test_placeholder_key'
+  (CLERK_PUBLISHABLE_KEY.startsWith('pk_test_') || CLERK_PUBLISHABLE_KEY.startsWith('pk_live_')) &&
+  CLERK_PUBLISHABLE_KEY.length > 20
 );
 
 // Inner component that safely uses Clerk hooks only when ClerkProvider is active
@@ -20,34 +20,77 @@ const ClerkActiveSync: React.FC = () => {
   const { isLoaded, isSignedIn, user } = useUser();
   const [isSyncing, setIsSyncing] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
+  const [syncError, setSyncError] = useState<string | null>(null);
+  const lastSyncedSignatureRef = useRef<string | null>(null);
+  const lastSyncedUserIdRef = useRef<string | null>(null);
+  const isApplyingCloudDataRef = useRef(false);
+  const syncQueueRef = useRef<Promise<void>>(Promise.resolve());
+
+  const handleSyncToCloud = useCallback((mergeCloudData = false): Promise<void> => {
+    if (!user) return Promise.resolve();
+    if (lastSyncedUserIdRef.current !== user.id) {
+      lastSyncedUserIdRef.current = user.id;
+      lastSyncedSignatureRef.current = null;
+    }
+    const syncTask = async () => {
+      setIsSyncing(true);
+      try {
+        if (mergeCloudData) {
+          const cloudData = (user.unsafeMetadata?.phonicsProgress as Partial<ChildProgress>) || undefined;
+          isApplyingCloudDataRef.current = true;
+          try {
+            progressService.syncWithClerk(cloudData);
+          } finally {
+            isApplyingCloudDataRef.current = false;
+          }
+        }
+
+        const exported = progressService.exportForClerk();
+        const { cloudSyncedAt: _cloudSyncedAt, ...stableProgress } = exported;
+        const signature = JSON.stringify(stableProgress);
+        if (signature !== lastSyncedSignatureRef.current) {
+          await user.update({
+            unsafeMetadata: {
+              ...user.unsafeMetadata,
+              phonicsProgress: exported,
+            },
+          });
+          lastSyncedSignatureRef.current = signature;
+        }
+        setSyncError(null);
+        setLastSyncTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      } catch (err) {
+        console.warn('Failed to sync progress with Clerk cloud:', err);
+        setSyncError('Progress could not be saved to your account. Check your connection and try again.');
+      } finally {
+        setIsSyncing(false);
+      }
+    };
+
+    const queuedSync = syncQueueRef.current.then(syncTask, syncTask);
+    syncQueueRef.current = queuedSync.catch(() => undefined);
+    return queuedSync;
+  }, [user]);
 
   useEffect(() => {
-    if (isLoaded && isSignedIn && user) {
-      handleSyncToCloud();
-    }
-  }, [isLoaded, isSignedIn, user?.id]);
+    if (!isLoaded || !isSignedIn || !user) return;
 
-  const handleSyncToCloud = async () => {
-    if (!user) return;
-    setIsSyncing(true);
-    try {
-      const cloudData = (user.unsafeMetadata?.phonicsProgress as Partial<ChildProgress>) || undefined;
-      progressService.syncWithClerk(cloudData);
+    let debounceTimer: ReturnType<typeof setTimeout> | undefined;
+    const unsubscribe = progressService.subscribe(() => {
+      if (isApplyingCloudDataRef.current) return;
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        void handleSyncToCloud(false);
+      }, 800);
+    });
 
-      const exported = progressService.exportForClerk();
-      await user.update({
-        unsafeMetadata: {
-          ...user.unsafeMetadata,
-          phonicsProgress: exported,
-        },
-      });
-      setLastSyncTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-    } catch (err) {
-      console.warn('Failed to sync progress with Clerk cloud:', err);
-    } finally {
-      setIsSyncing(false);
-    }
-  };
+    void handleSyncToCloud(true);
+
+    return () => {
+      unsubscribe();
+      if (debounceTimer) clearTimeout(debounceTimer);
+    };
+  }, [isLoaded, isSignedIn, user?.id, handleSyncToCloud]);
 
   if (!isLoaded) {
     return (
@@ -69,14 +112,22 @@ const ClerkActiveSync: React.FC = () => {
           <span className="text-[10px] font-bold bg-sky-200 text-sky-900 px-2 py-0.5 rounded-full">Clerk Auth</span>
         </div>
         <p className="text-xs text-sky-800 mb-3">
-          Sign in to automatically save your child's stars, levels, and progress across all family devices (tablets, phones, web).
+          Create a parent account or sign in to back up your child's progress across devices.
         </p>
-        <SignInButton mode="modal">
-          <button className="w-full py-2.5 px-4 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm squish-tap transition-all cursor-pointer">
-            <LogIn className="w-4 h-4" />
-            <span>Sign In with Clerk (Parent Account)</span>
-          </button>
-        </SignInButton>
+        <div className="grid grid-cols-2 gap-2">
+          <SignInButton mode="modal">
+            <button type="button" className="min-h-12 px-3 py-2.5 bg-sky-700 hover:bg-sky-800 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm squish-tap transition-all cursor-pointer">
+              <LogIn className="w-4 h-4 shrink-0" />
+              <span>Sign In</span>
+            </button>
+          </SignInButton>
+          <SignUpButton mode="modal">
+            <button type="button" className="min-h-12 px-3 py-2.5 bg-white hover:bg-sky-50 text-sky-900 border-2 border-sky-300 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm squish-tap transition-all cursor-pointer">
+              <UserPlus className="w-4 h-4 shrink-0" />
+              <span>Create Account</span>
+            </button>
+          </SignUpButton>
+        </div>
       </div>
     );
   }
@@ -94,13 +145,13 @@ const ClerkActiveSync: React.FC = () => {
       <div className="flex items-center justify-between text-xs text-emerald-800">
         <div>
           <p className="font-bold">{user.primaryEmailAddress?.emailAddress || user.fullName || 'Parent Account'}</p>
-          <p className="text-[11px] text-emerald-600">
-            {lastSyncTime ? `Last synced at ${lastSyncTime}` : 'Synced with Clerk cloud'}
+          <p className={`text-[11px] ${syncError ? 'text-red-700' : 'text-emerald-600'}`} role={syncError ? 'alert' : undefined}>
+            {syncError || (lastSyncTime ? `Last synced at ${lastSyncTime}` : 'Syncing your progress...')}
           </p>
         </div>
 
         <button
-          onClick={handleSyncToCloud}
+          onClick={() => void handleSyncToCloud(true)}
           disabled={isSyncing}
           className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-xs flex items-center gap-1.5 shadow-sm squish-tap disabled:opacity-50 cursor-pointer"
         >
@@ -108,6 +159,12 @@ const ClerkActiveSync: React.FC = () => {
           <span>{isSyncing ? 'Syncing...' : 'Sync Now'}</span>
         </button>
       </div>
+      {syncError && (
+        <div className="mt-3 flex items-center gap-2 text-xs text-red-700">
+          <AlertCircle className="w-4 h-4 shrink-0" />
+          <span>Use “Sync Now” to retry.</span>
+        </div>
+      )}
     </div>
   );
 };

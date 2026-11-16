@@ -126,6 +126,7 @@ export interface ChildProgress {
   lastObjectIndex?: number;
   cloudSyncedAt?: string;
   toddlerFocusMode?: boolean; // Single-action pacing with no button clutter
+  automaticSoundPrompts?: boolean; // Adult-controlled repeat prompts
 }
 
 export interface AudioSettings {
@@ -141,6 +142,7 @@ export interface BlendingWord {
   word: string;
   levelId: number;
   phonemeAudioIds: string[]; // e.g. ['phoneme.s', 'phoneme.a', 'phoneme.t']
+  phonemeAudioGroups?: string[][]; // Per grapheme; one grapheme may represent multiple phonemes (e.g. x -> /k/ + /s/)
   letters: string[];         // e.g. ['s', 'a', 't']
   emoji: string;             // e.g. '🐈'
   meaning: string;           // e.g. 'Sat on a mat'
@@ -150,4 +152,4 @@ export interface BlendingWord {
   color: string;
 }
 
-export type ScreenType = 'home' | 'lets-play' | 'letters' | 'letter-detail' | 'sound-safari' | 'story' | 'parent' | 'oxford-sounds' | 'sound-train' | 'bubble-pop' | 'feed-milo';
+export type ScreenType = 'home' | 'lets-play' | 'listen-talk' | 'letters' | 'letter-detail' | 'sound-safari' | 'story' | 'parent' | 'oxford-sounds' | 'sound-train' | 'bubble-pop' | 'feed-milo';
