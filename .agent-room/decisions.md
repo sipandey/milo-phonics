@@ -16,6 +16,12 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-16 — Lint changed session records while legacy logs are migrated
+
+**Decision:** Keep `create-agent-room lint-sessions` strict for every added or modified session record in CI, but run it only against records changed by the current push or pull request. Preserve the existing historical records and migrate their format separately.
+**Why:** The pinned linter currently reports 120 schema errors across 28 historical records, causing CI to fail even when no session log changed. A changed-record gate keeps new work conformant without rewriting or discarding historical evidence as a side effect of an unrelated code change.
+**Rejected:** Ignoring linter failures, deleting or moving historical records, or fabricating missing historical metadata just to satisfy the tool.
+
 ### 2026-10-14 — Separate PWA installability from offline support
 
 **Decision:** Implement E6.1 with a web manifest, original Milo install icon sources, generated PNG variants, app-shell metadata, and installation guidance. Keep service-worker caching, offline cold-start, and “fully offline” wording out of this change; those belong to E6.2 and require their own runtime evidence.

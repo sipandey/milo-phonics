@@ -15,3 +15,4 @@ instead of scrolling off a terminal and being forgotten.
 - 2026-09-15T13:32:19.810Z | author: Siddharth Pandey <siddharth.pandey06@gmail.com> | bypassed: Change scope exceeds guidance: 82 files changed (limit 20); Change scope exceeds guidance: 812 lines changed (limit 500)
 - 2026-09-16T05:19:10.469Z | author: Siddharth Pandey <siddharth.pandey06@gmail.com> | bypassed: Change scope exceeds guidance: 203 files changed (limit 20); Change scope exceeds guidance: 2683 lines changed (limit 500)
 - 2026-09-16T11:44:53.419Z | author: Siddharth Pandey <siddharth.pandey06@gmail.com> | bypassed: Change scope exceeds guidance: 270 files changed (limit 20)
+- 2026-11-17T05:02:08.079Z | author: Siddharth Pandey <siddharth.pandey06@gmail.com> | bypassed: Protected path violation: .github/workflows/agent-room-validate.yml

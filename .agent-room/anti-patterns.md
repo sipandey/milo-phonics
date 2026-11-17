@@ -21,6 +21,12 @@ Append a new entry every time:
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-16 — Linting the whole legacy session archive blocks unrelated CI
+
+**What happened:** GitHub Actions failed at `create-agent-room lint-sessions` while both the project validator and application checks passed.
+**Root cause:** The workflow linted all 42 historical session files, including 28 records written before the current schema; the linter reported 120 errors unrelated to files changed by the commit.
+**Avoid:** Lint newly added or modified session records in CI and migrate historical records as a dedicated task; do not silently ignore failures or rewrite historical facts to manufacture valid metadata.
+
 ### 2026-10-13 — Treating generated assets and vendor metadata as rights evidence
 
 **What happened:** The repository contained generated audio, committed Milo videos, source-dataset/Oxford wording, and Cloudinary/OpenAI metadata, but no retained owner, licence, contract, territory, term, or modification records. The same audit found two video paths referenced by runtime code but absent from `public/`.
