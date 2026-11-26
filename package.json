@@ -22,7 +22,8 @@
     "agent-room:metrics": "create-agent-room metrics .",
     "generate:service-worker": "node --experimental-strip-types scripts/generate-service-worker.ts",
     "generate:audio": "tsx scripts/generate-audio.ts",
-    "generate:audio:dry-run": "tsx scripts/generate-audio.ts --dry-run"
+    "generate:audio:dry-run": "tsx scripts/generate-audio.ts --dry-run",
+    "walkthrough": "node scripts/walkthrough/run-all.mjs"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.61.9",
