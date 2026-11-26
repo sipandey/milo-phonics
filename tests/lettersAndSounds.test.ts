@@ -165,4 +165,35 @@ describe('Letters and Sounds programme data', () => {
     ]);
     expect(phase3?.trickyWords).toEqual(['he', 'she', 'we', 'me', 'be', 'was', 'you', 'they', 'all', 'are', 'my', 'her']);
   });
+
+  it('covers all seven Phase 1 aspects without letters or tricky words', () => {
+    const phase1 = LETTERS_AND_SOUNDS.phases.find((p) => p.id === 1);
+    expect(phase1?.aspects?.map((aspect) => aspect.title)).toEqual([
+      'Environmental sounds',
+      'Instrumental sounds',
+      'Body percussion',
+      'Rhythm and rhyme',
+      'Alliteration',
+      'Voice sounds',
+      'Oral blending and segmenting',
+    ]);
+    expect(phase1?.sets).toEqual([]);
+    expect(phase1?.trickyWords).toEqual([]);
+  });
+
+  it('lists the Phase 4 and Phase 5 tricky words and Phase 5 graphemes', () => {
+    const byId = (id: number) => LETTERS_AND_SOUNDS.phases.find((p) => p.id === id);
+    expect(byId(4)?.trickyWords).toEqual([
+      'said', 'have', 'like', 'so', 'do', 'some', 'come', 'were', 'there', 'little', 'one', 'when', 'out', 'what',
+    ]);
+    expect(byId(4)?.adjacentConsonantWords).toEqual(expect.arrayContaining(['t.r.a.p', 's.t.r.o.ng', 'm.i.l.k', 'c.r.e.p.t']));
+    expect(byId(5)?.trickyWords).toEqual(['oh', 'their', 'people', 'Mr', 'Mrs', 'looked', 'called', 'asked', 'could']);
+    expect(byId(5)?.sets.flatMap((set) => set.gpcs.map((g) => g.grapheme))).toEqual([
+      'ay', 'ou', 'ie', 'ea', 'oy', 'ir', 'ue', 'aw', 'wh', 'ph', 'ew', 'oe', 'au', 'a-e', 'e-e', 'i-e', 'o-e', 'u-e',
+    ]);
+  });
+
+  it('orders phases 1 to 5', () => {
+    expect(LETTERS_AND_SOUNDS.phases.map((p) => p.id)).toEqual([1, 2, 3, 4, 5]);
+  });
 });
