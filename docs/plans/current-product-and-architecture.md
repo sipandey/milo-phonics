@@ -17,7 +17,7 @@ The core child flow is designed to work without an account. Parent-only settings
 | Word blending | CVC/VC blending entries and sequential audio interaction | Implemented through manifest-backed records; content review pending |
 | Games | Let's Play, Sound Train, Bubble Pop, and Feed Milo flows are present | Implemented surface; release evidence pending |
 | Progress | LocalStorage persistence, v1 migration, exploration/practice evidence, star tracking, level unlocking, and resume position | Implemented |
-| Parent controls | Arithmetic gate, dashboard, reset, optional parent sync, and optional diagnostics | Gate now uses browser crypto randomness when available and a bounded retry lockout; identity, legal-consent, account deletion, and future purchase/support protections remain open |
+| Parent controls | Arithmetic gate, dashboard, reset, and optional parent sync | Gate now uses browser crypto randomness when available and a bounded retry lockout; identity, legal-consent, account deletion, and future purchase/support protections remain open |
 | Audio runtime | Local pre-recorded assets through semantic IDs; Web Audio procedural SFX; HTML audio playback | Implemented |
 | PWA/offline install | E6.1 manifest/icons and E6.2 generated service worker are implemented; the worker precaches the built shell and bundled media | HTTPS install/offline browser verification pending; no fully-offline claim |
 | Android | No native Android project or Play release | Planned |
@@ -49,9 +49,7 @@ Bundled files in public/audio/ and browser storage
 
 ### Observability
 
-The optional Sentry project is `milo-phonics` in the `personal-df4` organization. `src/observability/sentry.ts` initializes `@sentry/react` before the React root only when `VITE_SENTRY_DSN` is present and the parent has enabled Optional Technical Diagnostics in the arithmetic-gated Parent Dashboard. The current integration captures consent-gated browser errors and sampled tracing, defaults to a 0.1 trace rate, and carries the build release into Sentry. `@sentry/vite-plugin` uploads hidden source maps only for builds with the secret `SENTRY_AUTH_TOKEN`.
-
-Session Replay, client logging, and application metrics are disabled. Event and span scrubbers remove account/user data, request URLs, breadcrumbs, contexts, tags, extras, transaction names, span attributes, and free-text exception messages. The Sentry project also has server-side scrubbing, default scrubbers, IP-address storage prevention, and additional `user`/`geo` sensitive-field matches enabled for new events. The arithmetic-gated Parent Dashboard displays a clearly marked draft privacy notice, but it is not approved legal text. A synthetic event retained a Sentry-inferred geography context, so consent and scrubbing are technical controls, not the E0.6 acceptance claim: production enablement remains gated on retention, privacy notice, and vendor data-flow review. Do not set a production DSN until those controls are approved.
+No error-monitoring or analytics service is used. Sentry was removed on 26 November 2026; `src/components/common/AppErrorBoundary.tsx` shows a local, child-safe restart screen if rendering fails, and sends nothing off the device.
 
 ### Progress
 

@@ -42,7 +42,6 @@ The snapshot is derived from the committed lockfile, not from a live registry lo
 | Package | Locked version | Declared licence | Runtime role |
 | --- | --- | --- | --- |
 | `@clerk/clerk-react` | 5.61.9 | MIT | Optional parent account surface |
-| `@sentry/react` | 11.7.0 | MIT | Optional parent-consented diagnostics |
 | `canvas-confetti` | 1.9.4 | ISC | Celebration effect |
 | `lucide-react` | 0.475.0 | ISC | UI icons |
 | `react` | 18.3.1 | MIT | UI runtime |
@@ -53,7 +52,6 @@ The snapshot is derived from the committed lockfile, not from a live registry lo
 | Package | Locked version | Declared licence | Use |
 | --- | --- | --- | --- |
 | `@eslint/js` | 10.0.1 | MIT | Lint configuration |
-| `@sentry/vite-plugin` | 5.4.1 | MIT | Optional release upload integration |
 | `@types/canvas-confetti` | 1.9.0 | MIT | Type declarations |
 | `@types/react` | 18.3.31 | MIT | Type declarations |
 | `@types/react-dom` | 18.3.7 | MIT | Type declarations |
@@ -74,10 +72,9 @@ The snapshot is derived from the committed lockfile, not from a live registry lo
 
 ## Review flags
 
-- `FSL-1.1-MIT` appears on `@sentry/cli` and its platform packages. These are development/release tooling dependencies, but the licence and redistribution treatment still require release-owner review.
 - `CC-BY-4.0` appears on `caniuse-lite`, a build-time browser-compatibility data package. Retain its attribution treatment with the generated notices.
 - `BlueOak-1.0.0` appears on several npm tooling packages. Keep the exact licence text in the release evidence rather than normalizing it to MIT.
-- Package licences do not approve Clerk, Sentry, Cloudinary, OpenAI, Google Fonts, hosting, or other service terms. Those vendor/data-flow records remain separate release gates.
+- Package licences do not approve Clerk, Cloudinary, OpenAI, Google Fonts, hosting, or other service terms. Those vendor/data-flow records remain separate release gates.
 
 ## Release checklist
 

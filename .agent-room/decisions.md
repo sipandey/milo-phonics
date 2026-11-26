@@ -16,6 +16,12 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-26 — Remove Sentry and use a local error screen
+
+**Decision:** Remove `@sentry/react`, `@sentry/vite-plugin`, the consent toggle, the Sentry privacy wording, and all `SENTRY_*` configuration. Wrap the app in `AppErrorBoundary`, which shows a child-safe restart screen and sends nothing off the device. Mark the Sentry data flows DF-002, DF-005, and DF-103 as retired, and replace `docs/sentry.md` with clean-up steps. This supersedes the 2026-10-13 Sentry instrumentation and vendor-review decisions.
+**Why:** The app is now a private home tool for one family (see the 2026-11-26 Letters and Sounds design). Sentry carried open DPA, retention, inferred-geography, and consent work with little benefit at this scale, while a crash still needs to avoid a blank screen for the child.
+**Rejected:** Keeping Sentry permanently off behind consent (unused code and unresolved review items), or deleting the historical Sentry plan documents (they remain as records).
+
 ### 2026-11-26 — Pivot to a parent-led Letters and Sounds home tool
 
 **Decision:** Direct current work toward private home teaching of one child aged 3–4, following Letters and Sounds Phases 1–5. Every phase, set, and sound is open at any time; the parent selects focus sounds and records progress (*not yet / with help / secure*). Keep Clerk sync, remove Sentry, and pause commerce, Android, and school work. Design: `docs/plans/2026-11-26-letters-and-sounds-home-design.md`.
