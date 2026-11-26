@@ -411,7 +411,7 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
                 }`}
               >
                 <Volume2 className="w-8 h-8 sm:w-9 sm:h-9" />
-                <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider mt-0.5">
+                <span className="text-[10px] sm:text-xs font-black tracking-wider mt-0.5">
                   {isAudioBusy ? 'Listening...' : 'Hear Again'}
                 </span>
               </button>
@@ -462,7 +462,7 @@ export const BubblePopScreen: React.FC<BubblePopScreenProps> = ({ onGoHome }) =>
                     <span
                       className={`${
                         isToddlerMode ? 'text-6xl sm:text-7xl md:text-8xl' : 'text-5xl sm:text-6xl'
-                      } font-black font-fun tracking-wide capitalize transition-transform duration-300 drop-shadow-sm ${
+                      } font-black font-fun tracking-wide transition-transform duration-300 drop-shadow-sm ${
                         isPopped ? 'scale-130 text-amber-500' : ''
                       }`}
                       style={{ color: choice.colorTheme.primary }}

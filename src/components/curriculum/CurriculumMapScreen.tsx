@@ -7,6 +7,7 @@ import { useTeachingProgress } from '../../hooks/useTeachingProgress';
 import { teachingProgressStore } from '../../services/teachingProgressStore';
 import { DEFAULT_CHILD_ID, getItemState, knownGraphemes, setFocus } from '../../services/teachingProgress';
 import type { LettersAndSoundsPhaseId } from '../../types/lettersAndSounds';
+import { LetterOnLines } from './LetterOnLines';
 import { STATUS_STYLES, StatusButtons, recordMark } from './teachingUi';
 
 import type { PhaseOneActivityId } from '../../curriculum/phaseOneActivities';
@@ -88,16 +89,17 @@ export const CurriculumMapScreen: React.FC<CurriculumMapScreenProps> = ({ onBack
                     key={id}
                     type="button"
                     onClick={() => onOpenSound(id)}
-                    className="min-h-[44px] px-4 rounded-xl bg-amber-400 text-amber-950 font-black cursor-pointer"
+                    aria-label={`Open the focus sound ${gpc.grapheme}`}
+                    className="min-h-[44px] px-3 rounded-xl bg-amber-400 text-amber-950 font-black cursor-pointer"
                   >
-                    {gpc.grapheme}
+                    <LetterOnLines graphemes={[gpc.grapheme]} className="h-8" />
                   </button>
                 ) : null;
               })}
             </div>
             <p className="text-sm mt-3">
               <span className="font-bold">Words: </span>
-              {practise.words.length > 0 ? practise.words.slice(0, 10).map((word) => word.text).join(', ') : 'none yet'}
+              {practise.words.length > 0 ? practise.words.slice(0, 10).map((word) => word.text.toLowerCase()).join(', ') : 'none yet'}
             </p>
             {practise.needsMoreSounds && (
               <p className="text-xs text-amber-900 mt-1">
@@ -169,7 +171,7 @@ export const CurriculumMapScreen: React.FC<CurriculumMapScreenProps> = ({ onBack
                       STATUS_STYLES[status(gpc.id) ?? 'none']
                     }`}
                   >
-                    {gpc.grapheme}
+                    <LetterOnLines graphemes={[gpc.grapheme]} className="h-12 mx-auto block" />
                     {gpc.id.endsWith('-short') && <span className="block text-xs font-bold">short</span>}
                     {gpc.id.endsWith('-long') && <span className="block text-xs font-bold">long</span>}
                     {focusIds.includes(gpc.id) && <span className="absolute top-1 right-2 text-base" aria-hidden="true">★</span>}
@@ -188,7 +190,7 @@ export const CurriculumMapScreen: React.FC<CurriculumMapScreenProps> = ({ onBack
           {(phase.adjacentConsonantWords?.length ?? 0) > 0 && (
             <section>
               <h2 className="font-black text-lg mb-2">Words with adjacent consonants</h2>
-              <p className="text-sm mb-3">{phase.adjacentConsonantWords?.map((word) => parseSegmentedWord(word).text).join(', ')}</p>
+              <p className="text-sm mb-3">{phase.adjacentConsonantWords?.map((word) => parseSegmentedWord(word).text.toLowerCase()).join(', ')}</p>
               <StatusButtons itemLabel="adjacent consonant blending" current={status(`blend.phase${phase.id}`)} onMark={(next) => recordMark(`blend.phase${phase.id}`, next)} compact />
             </section>
           )}

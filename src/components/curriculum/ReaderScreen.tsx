@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { LETTERS_AND_SOUNDS } from '../../data/lettersAndSounds';
 import { readerPageText } from '../../curriculum/graphemeMarks';
+import { parseSegmentedWord } from '../../curriculum/lettersAndSoundsValidation';
 import { useTeachingProgress } from '../../hooks/useTeachingProgress';
 import { DEFAULT_CHILD_ID, getItemState } from '../../services/teachingProgress';
 import { GraphemeWord } from './GraphemeWord';
@@ -42,7 +43,7 @@ export const ReaderScreen: React.FC<ReaderScreenProps> = ({ readerId, onBack }) 
       return;
     }
     setTrickyHint(null);
-    const text = token.replace(/\./g, '').replace(/\|/g, '-');
+    const text = parseSegmentedWord(token).text;
     void playWordSoundBySound(token, text, () => tokenRef.current === playToken);
   };
 
@@ -62,7 +63,7 @@ export const ReaderScreen: React.FC<ReaderScreenProps> = ({ readerId, onBack }) 
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <h1 className="text-2xl font-black font-fun">{reader.title}</h1>
+        <h1 className="text-2xl font-black font-fun">{reader.title.toLowerCase()}</h1>
         <span className="ml-auto text-sm font-bold text-gray-500" aria-label={`Page ${pageIndex + 1} of ${reader.pages.length}`}>
           {pageIndex + 1} / {reader.pages.length}
         </span>
@@ -81,15 +82,15 @@ export const ReaderScreen: React.FC<ReaderScreenProps> = ({ readerId, onBack }) 
                 <button
                   type="button"
                   onClick={() => tapWord(token)}
-                  aria-label={token.startsWith('*') ? `Tricky word ${token.slice(1)}` : `Hear ${token.replace(/\./g, '')} sound by sound`}
+                  aria-label={token.startsWith('*') ? `Tricky word ${token.slice(1)}` : `Hear ${parseSegmentedWord(token).text} sound by sound`}
                   className="min-h-[72px] px-2 rounded-2xl cursor-pointer hover:bg-amber-50"
                 >
                   {token.startsWith('*') ? (
                     <span className="font-black font-fun text-rose-600">
-                      {index === 0 ? token.charAt(1).toUpperCase() + token.slice(2) : token.slice(1)}
+                      {token.slice(1)}
                     </span>
                   ) : (
-                    <GraphemeWord segmented={index === 0 ? token.charAt(0).toUpperCase() + token.slice(1) : token} showMarks={showMarks} />
+                    <GraphemeWord segmented={token} showMarks={showMarks} />
                   )}
                 </button>
                 {index === page.words.length - 1 && (

@@ -14,6 +14,7 @@ import {
   setFocus,
 } from '../../services/teachingProgress';
 import { GraphemeWord } from './GraphemeWord';
+import { LetterOnLines } from './LetterOnLines';
 import { STATUS_STYLES, StatusButtons, playSymbols, recordMark } from './teachingUi';
 
 interface SoundPageScreenProps {
@@ -87,7 +88,9 @@ export const SoundPageScreen: React.FC<SoundPageScreenProps> = ({ gpcId, onBack 
         <p className="text-sm font-bold">
           {phase.title} · {set.title}
         </p>
-        <h1 className="text-8xl font-black font-fun my-2">{spellings}</h1>
+        <h1 className="my-2" aria-label={`Sound ${spellings}`}>
+          <LetterOnLines graphemes={[gpc.grapheme, ...(gpc.alternativeGraphemes ?? [])]} className="h-36 mx-auto block" />
+        </h1>
         <p className="text-lg">/{gpc.phoneme}/</p>
         <button
           type="button"

@@ -243,7 +243,7 @@ export const LetterDetailScreen: React.FC<LetterDetailScreenProps> = ({
             className="mt-2 text-xl sm:text-2xl font-black font-fun tracking-wide"
             style={{ color: activeObject.accentColor }}
           >
-            {activeObject.name}
+            {activeObject.name.toLowerCase()}
           </span>
         </button>
       </main>

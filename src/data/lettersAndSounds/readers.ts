@@ -5,8 +5,8 @@ import type { LettersAndSoundsReader } from '../../types/lettersAndSounds';
  * a tricky word. `npm run verify:curriculum` checks each reader is decodable
  * after `afterGpcId` using tricky words up to its phase. Not specialist-reviewed.
  *
- * Playback note: sound-by-sound playback uses one sound per grapheme, so "then"
- * plays th as /θ/; readers avoid short-oo words for the same reason.
+ * Where a letter makes a different sound in a word, the token says so
+ * (`s=z` in "is", `th=ð` in "then"). Readers avoid short-oo words.
  */
 
 export const PHASE_2_READERS: readonly LettersAndSoundsReader[] = [
@@ -26,8 +26,8 @@ export const PHASE_2_READERS: readonly LettersAndSoundsReader[] = [
     title: 'The cat and the dog',
     afterGpcId: 'gpc.r',
     pages: [
-      { words: ['*the', 'c.a.t', 'i.s', 'o.n', '*the', 'm.a.t'], end: '.', picture: '🐱' },
-      { words: ['*the', 'd.o.g', 'i.s', 'i.n', '*the', 'p.e.n'], end: '.', picture: '🐕' },
+      { words: ['*the', 'c.a.t', 'i.s=z', 'o.n', '*the', 'm.a.t'], end: '.', picture: '🐱' },
+      { words: ['*the', 'd.o.g', 'i.s=z', 'i.n', '*the', 'p.e.n'], end: '.', picture: '🐕' },
       { words: ['*the', 'c.a.t', 'r.a.n', '*to', '*the', 'd.o.g'], end: '.', picture: '🏃' },
       { words: ['*the', 'c.a.t', 'a.n.d', '*the', 'd.o.g', 'n.a.p'], end: '.', picture: '😴' },
     ],
@@ -51,7 +51,7 @@ export const PHASE_3_READERS: readonly LettersAndSoundsReader[] = [
     title: 'Fish and chips',
     afterGpcId: 'gpc.ng',
     pages: [
-      { words: ['*the', 'f.i.sh', 'sh.o.p', 'i.s', 'b.i.g'], end: '.', picture: '🏪' },
+      { words: ['*the', 'f.i.sh', 'sh.o.p', 'i.s=z', 'b.i.g'], end: '.', picture: '🏪' },
       { words: ['*I', 'g.o.t', 'f.i.sh', 'a.n.d', 'ch.i.p.s'], end: '.', picture: '🐟' },
       { words: ['*my', 'ch.i.p.s', '*are', 'i.n', 'a', 'd.i.sh'], end: '.', picture: '🍟' },
       { words: ['*I', 'h.a.d', 'a', 'b.i.g', 'f.i.sh'], end: '!', picture: '😋' },
@@ -64,8 +64,8 @@ export const PHASE_3_READERS: readonly LettersAndSoundsReader[] = [
     pages: [
       { words: ['r.ai.n', 'h.i.t.s', '*the', 'p.ar.k'], end: '.', picture: '🌧️' },
       { words: ['*we', 's.ee', 'a', 'w.e.t', 'd.o.g'], end: '.', picture: '🐕' },
-      { words: ['*the', 'd.o.g', 'h.a.s', 'a', 'r.e.d', 'c.oa.t'], end: '.', picture: '🧥' },
-      { words: ['th.e.n', '*we', 's.ee', '*the', 's.u.n'], end: '!', picture: '☀️' },
+      { words: ['*the', 'd.o.g', 'h.a.s=z', 'a', 'r.e.d', 'c.oa.t'], end: '.', picture: '🧥' },
+      { words: ['th=ð.e.n', '*we', 's.ee', '*the', 's.u.n'], end: '!', picture: '☀️' },
     ],
   },
   {
@@ -76,7 +76,7 @@ export const PHASE_3_READERS: readonly LettersAndSoundsReader[] = [
       { words: ['*I', 's.ee', 'a.n', 'ow.l'], end: '!', picture: '🦉' },
       { words: ['*the', 'ow.l', 's.i.t.s', 'o.n', 'a', 'l.o.g'], end: '.', picture: '🪵' },
       { words: ['i.t', 'c.a.n', 's.ee', '*the', 'm.oo.n'], end: '.', picture: '🌕' },
-      { words: ['h.oo.t', 'h.oo.t', '*the', 'm.oo.n', 'i.s', 'h.igh'], end: '!', picture: '🌙' },
+      { words: ['h.oo.t', 'h.oo.t', '*the', 'm.oo.n', 'i.s=z', 'h.igh'], end: '!', picture: '🌙' },
     ],
   },
 ];

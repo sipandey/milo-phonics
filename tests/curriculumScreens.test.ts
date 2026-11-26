@@ -54,7 +54,7 @@ describe('SoundPageScreen', () => {
   });
 
   it('shows notes for the adult and a back button for an unknown sound', () => {
-    expect(renderToStaticMarkup(createElement(SoundPageScreen, { gpcId: 'gpc.f', onBack: noop }))).toContain('can be taught as a tricky word');
+    expect(renderToStaticMarkup(createElement(SoundPageScreen, { gpcId: 'gpc.f', onBack: noop }))).toContain('can also be taught as a tricky word');
     expect(renderToStaticMarkup(createElement(SoundPageScreen, { gpcId: 'gpc.nope', onBack: noop }))).toContain('Back');
   });
 });

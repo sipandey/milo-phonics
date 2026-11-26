@@ -159,7 +159,7 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
     if (!canAct()) return;
     setIsPlayingWord(true);
     audioService.playPop();
-    setMiloSpeech(`${currentWord.word.toUpperCase()}!`);
+    setMiloSpeech(`${currentWord.word}!`);
     await audioService.playCvcWord(currentWord.id, currentWord.word);
     setIsPlayingWord(false);
   };
@@ -209,7 +209,7 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
       triggerGentleConfetti();
       audioService.playChime();
       setIsWordRevealed(true);
-      setMiloSpeech(isToddlerMode ? null : `Brilliant! ${currentWord.word.toUpperCase()}! 🌟`);
+      setMiloSpeech(isToddlerMode ? null : `Brilliant! ${currentWord.word}! 🌟`);
 
       setJustFinishedAudio(true);
       setTimeout(() => setJustFinishedAudio(false), 2600);
@@ -429,7 +429,7 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
                     <span
                       className={`${
                         isToddlerMode ? 'text-5xl sm:text-7xl' : 'text-4xl sm:text-6xl'
-                      } font-black font-fun tracking-wide capitalize transition-transform ${
+                      } font-black font-fun tracking-wide transition-transform ${
                         isHighlighted ? 'scale-115 text-amber-900' : 'text-gray-900'
                       }`}
                     >
@@ -490,7 +490,7 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
               <span className="text-4xl sm:text-5xl animate-bounce-gentle filter drop-shadow-md">
                 {currentWord.emoji}
               </span>
-              <h3 className="text-2xl sm:text-3xl font-black font-fun text-gray-900 tracking-wide uppercase">
+              <h3 className="text-2xl sm:text-3xl font-black font-fun text-gray-900 tracking-wide">
                 {currentWord.word}
               </h3>
               <div className="flex items-center gap-1.5 text-emerald-600 font-extrabold text-sm mt-1">
@@ -513,7 +513,7 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
 
                 <div className="flex-1 text-left min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <h3 className="text-3xl sm:text-4xl font-black font-fun text-gray-900 tracking-wide uppercase truncate">
+                    <h3 className="text-3xl sm:text-4xl font-black font-fun text-gray-900 tracking-wide truncate">
                       {currentWord.word}
                     </h3>
                     <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500 shrink-0" />
@@ -563,7 +563,7 @@ export const SoundTrainScreen: React.FC<SoundTrainScreenProps> = ({ onGoHome }) 
 
                 <div className="shrink-0 flex items-center gap-1 bg-white px-2 py-1 rounded-xl border border-amber-200 shadow-xs">
                   <Volume2 className={`w-3.5 h-3.5 text-amber-600 ${isPlayingSentence ? 'animate-bounce' : ''}`} />
-                  <span className="text-[10px] font-black text-amber-800 uppercase tracking-wider">
+                  <span className="text-[10px] font-black text-amber-800 tracking-wider">
                     {isPlayingSentence ? 'Playing' : 'Slow'}
                   </span>
                 </div>

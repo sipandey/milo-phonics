@@ -446,7 +446,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
             <div className="my-4 p-3 bg-amber-50 rounded-2xl border border-amber-200 flex justify-center gap-2 text-2xl font-black text-amber-900">
               {getLevelById(levelUnlockAlert)?.letterIds.map((l) => (
                 <span key={l} className="px-3 py-1 bg-white rounded-xl shadow-xs border border-amber-300">
-                  {l.toUpperCase()}
+                  {l}
                 </span>
               ))}
             </div>
@@ -545,7 +545,7 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
                           )}
                         </div>
                         <p className="text-xs font-bold text-gray-600">
-                          Sounds: {lvl.letterIds.map((l) => l.toUpperCase()).join('  •  ')}
+                          Sounds: {lvl.letterIds.join('  •  ')}
                         </p>
                       </div>
                     </div>
@@ -769,10 +769,10 @@ export const LetsPlayScreen: React.FC<LetsPlayScreenProps> = ({
             <span
               className={`mt-2 ${
                 isToddlerMode ? 'text-4xl sm:text-5xl md:text-6xl' : 'text-3xl sm:text-4xl'
-              } font-black font-fun tracking-wide capitalize select-none`}
+              } font-black font-fun tracking-wide select-none`}
               style={{ color: currentObject.accentColor }}
             >
-              {currentObject.name}
+              {currentObject.name.toLowerCase()}
             </span>
           </button>
         </div>

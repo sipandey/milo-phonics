@@ -6,7 +6,7 @@ import type {
   LettersAndSoundsProgramme,
   LettersAndSoundsSet,
 } from '../types/lettersAndSounds';
-import { parseSegmentedWord } from './lettersAndSoundsValidation';
+import { parsePronunciations, parseSegmentedWord } from './lettersAndSoundsValidation';
 
 /** Phonemes whose sound-library file differs from the IPA, or that play as two sounds. */
 const AUDIO_SYMBOL_OVERRIDES: Record<string, readonly string[]> = { ks: ['x'], kw: ['k', 'w'] };
@@ -60,7 +60,10 @@ export function wordSoundSymbols(
     (preferred && spellings(preferred).includes(grapheme) ? preferred : undefined) ??
     all.find((gpc) => spellings(gpc).includes(grapheme));
 
-  return parseSegmentedWord(segmented).graphemes.map((grapheme) => {
+  const pronunciations = parsePronunciations(segmented);
+  return parseSegmentedWord(segmented).graphemes.map((grapheme, index) => {
+    const pronunciation = pronunciations[index];
+    if (pronunciation) return phonemeAudioSymbols(pronunciation);
     const gpc = lookup(grapheme) ?? (isDoubledConsonant(grapheme) ? lookup(grapheme[0] ?? '') : undefined);
     return gpc ? phonemeAudioSymbols(gpc.phoneme) : [grapheme];
   });
