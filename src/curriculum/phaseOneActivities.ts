@@ -5,6 +5,10 @@ import { findGpc, phonemeAudioSymbols, wordSoundSymbols } from './soundPage';
 
 /** Phase 1 listening games: pictures and sounds only, no letters. */
 
+export type PhaseOneActivityId = 'robot-blending' | 'sound-boxes' | 'first-sounds' | 'odd-one-out';
+
+export const PHASE_ONE_ACTIVITY_IDS: readonly PhaseOneActivityId[] = ['robot-blending', 'sound-boxes', 'first-sounds', 'odd-one-out'];
+
 export interface PictureChoice {
   readonly id: string;
   readonly label: string;

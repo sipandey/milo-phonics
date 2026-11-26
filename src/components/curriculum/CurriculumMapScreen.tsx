@@ -9,7 +9,9 @@ import { DEFAULT_CHILD_ID, getItemState, knownGraphemes, setFocus } from '../../
 import type { LettersAndSoundsPhaseId } from '../../types/lettersAndSounds';
 import { STATUS_STYLES, StatusButtons, recordMark } from './teachingUi';
 
-export type PhaseOneActivityId = 'robot-blending' | 'sound-boxes' | 'first-sounds' | 'odd-one-out';
+import type { PhaseOneActivityId } from '../../curriculum/phaseOneActivities';
+
+export type { PhaseOneActivityId };
 
 /** Games available for each Phase 1 aspect. */
 const ASPECT_ACTIVITIES: Record<string, readonly { id: PhaseOneActivityId; label: string }[]> = {

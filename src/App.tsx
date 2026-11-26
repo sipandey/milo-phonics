@@ -12,6 +12,7 @@ import { FeedMiloScreen } from './components/game/FeedMiloScreen';
 import { CurriculumMapScreen, type PhaseOneActivityId } from './components/curriculum/CurriculumMapScreen';
 import { PictureChoiceActivity } from './components/phase1/PictureChoiceActivity';
 import { SoundBoxesActivity } from './components/phase1/SoundBoxesActivity';
+import { TodaySessionScreen } from './components/today/TodaySessionScreen';
 import { SoundPageScreen } from './components/curriculum/SoundPageScreen';
 import { ParentGateModal } from './components/common/ParentGateModal';
 import { ParentDashboard } from './components/parent/ParentDashboard';
@@ -23,6 +24,7 @@ export function App() {
   const [selectedGpcId, setSelectedGpcId] = useState<string>('gpc.s');
   const [selectedActivity, setSelectedActivity] = useState<PhaseOneActivityId>('robot-blending');
   const [isParentGateOpen, setIsParentGateOpen] = useState(false);
+  const [gateDestination, setGateDestination] = useState<'dashboard' | 'today'>('dashboard');
   const [isParentDashboardOpen, setIsParentDashboardOpen] = useState(false);
   const [teaser, setTeaser] = useState<{ isOpen: boolean; title: string; message: string }>({
     isOpen: false,
@@ -87,12 +89,19 @@ export function App() {
   };
 
   const handleOpenParentGate = () => {
+    setGateDestination('dashboard');
+    setIsParentGateOpen(true);
+  };
+
+  const handleOpenToday = () => {
+    setGateDestination('today');
     setIsParentGateOpen(true);
   };
 
   const handleParentGateUnlocked = () => {
     setIsParentGateOpen(false);
-    setIsParentDashboardOpen(true);
+    if (gateDestination === 'today') setCurrentScreen('today');
+    else setIsParentDashboardOpen(true);
   };
 
   const handleShowTeaser = (title: string, message: string) => {
@@ -116,6 +125,7 @@ export function App() {
           onOpenLetters={handleOpenLetters}
           onOpenOxfordSounds={handleOpenOxfordSounds}
           onOpenParentGate={handleOpenParentGate}
+          onOpenToday={handleOpenToday}
           onTeaserClick={handleShowTeaser}
         />
       )}
@@ -185,6 +195,8 @@ export function App() {
         ) : (
           <PictureChoiceActivity activityId={selectedActivity} onExit={() => setCurrentScreen('curriculum-map')} />
         ))}
+
+      {currentScreen === 'today' && <TodaySessionScreen onExit={handleGoHome} />}
 
       {/* Parent Gate Modal */}
       <ParentGateModal

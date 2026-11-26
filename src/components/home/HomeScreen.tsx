@@ -14,6 +14,7 @@ interface HomeScreenProps {
   onOpenLetters: () => void;
   onOpenOxfordSounds: () => void;
   onOpenParentGate: () => void;
+  onOpenToday: () => void;
   onTeaserClick?: (title: string, message: string) => void;
 }
 
@@ -26,6 +27,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenLetters,
   onOpenOxfordSounds,
   onOpenParentGate,
+  onOpenToday,
 }) => {
   const [miloSpeech, setMiloSpeech] = useState<string | null>("Hi! Let's play!");
   const [progress, setProgress] = useState(progressService.getProgress());
@@ -99,6 +101,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
         {/* Keep the toddler start simple; the full activity menu stays available below. */}
         <div className="w-full max-w-xl px-2 mb-3 sm:mb-5 flex flex-col gap-2.5 sm:gap-3.5">
+          <BigButton
+            variant="green"
+            size="lg"
+            onClick={onOpenToday}
+            icon={<span className="text-3xl sm:text-5xl">🌟</span>}
+            label="Today with Milo"
+            badge="Grown-up + child"
+            className="w-full"
+          />
           {isToddlerMode ? (
             <>
               <div className="grid grid-cols-1 gap-2.5 sm:gap-4">
