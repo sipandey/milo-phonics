@@ -21,6 +21,12 @@ Append a new entry every time:
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-26 — Silencing store notifications to stop a sync loop
+
+**What happened:** The teaching progress store skipped notifying listeners on cloud merges so Clerk sync would not re-upload merged data; that would also have left open screens showing stale progress after sign-in. It was caught while adding the first screen that reads the store.
+**Root cause:** One notification channel served two purposes (screen refresh and upload trigger), so stopping one stopped both.
+**Avoid:** Notify every change with its source (`local` or `cloud`) and let each listener decide; sync uploads only `local` changes.
+
 ### 2026-11-26 — Adding synced data to Clerk metadata without measuring the total
 
 **What happened:** Planning a new synced record showed that the existing synced progress could reach about 6 KB on its own (84 explored objects and per-letter practice evidence), so adding more could silently push the account past Clerk's roughly 8 KB metadata limit.

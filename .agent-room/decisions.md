@@ -16,6 +16,12 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-26 — Put the curriculum map and sound pages in the parent area
+
+**Decision:** Open the curriculum map from the parent dashboard (behind the arithmetic gate). The map shows Phases 1–5, sound tiles coloured by status, blending per set, tricky words, and a Practise these bar. Each sound page plays the sound from the bundled sound library, records marks, and lists words; words are played sound by sound, then whole where a recorded file exists. Practice words must contain a focus sound and use only introduced or focus sounds. Linking sound pages to Bubble Pop and Feed Milo is left to step 5, because those games are tied to the old 7 levels.
+**Why:** Marking and choosing sounds are adult decisions, so they sit behind the gate. Most Letters and Sounds words have no recorded whole-word audio, so sound-by-sound playback with the adult saying the word works for every word without new recordings.
+**Rejected:** A child-facing map, generating whole-word audio now, and reworking the existing games inside this step.
+
 ### 2026-11-26 — Store parent-recorded teaching progress as a separate v3 record
 
 **Decision:** Add `milo_teaching_progress_v3` alongside the existing progress record instead of rewriting it. Items are sounds, tricky words, blending per set, and Phase 1 aspects (about 126), each stored as a compact tuple [status, last practised day, count, updated time], keyed by child ID. Sync merges per item with the newest change winning, including removals. The new record starts empty rather than migrating old taps and stars. When Clerk metadata would exceed about 8 KB, the legacy record is left out of the upload before teaching progress. This replaces the design's "migrate existing progress" wording for this step.
