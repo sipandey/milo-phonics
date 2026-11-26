@@ -16,6 +16,12 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-26 — Pivot to a parent-led Letters and Sounds home tool
+
+**Decision:** Direct current work toward private home teaching of one child aged 3–4, following Letters and Sounds Phases 1–5. Every phase, set, and sound is open at any time; the parent selects focus sounds and records progress (*not yet / with help / secure*). Keep Clerk sync, remove Sentry, and pause commerce, Android, and school work. Design: `docs/plans/2026-11-26-letters-and-sounds-home-design.md`.
+**Why:** The maintainer is setting earning aside to teach their own child. Adult-recorded progress is honest because the app cannot hear the child, and free navigation matches how a parent targets specific sounds. Sentry adds consent, vendor, and privacy work with little value for one family; Clerk sync is wanted for multiple devices.
+**Rejected:** Automatic star-based unlocking, completing Phase 1 before Phase 2, continuing the commercial beta sequence, and keeping Sentry behind consent.
+
 ### 2026-11-16 — Lint changed session records while legacy logs are migrated
 
 **Decision:** Keep `create-agent-room lint-sessions` strict for every added or modified session record in CI, but run it only against records changed by the current push or pull request. Preserve the existing historical records and migrate their format separately.
