@@ -16,6 +16,12 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-26 — Model Letters and Sounds as a separate, checked programme
+
+**Decision:** Add Phases 1–5 as typed data in `src/data/lettersAndSounds/`, with words written as segmented strings (`k.i.ck`, `m.a-e.k`) and a checker that walks the programme in teaching order. Words must be decodable at the exact correspondence they are listed under, not just by the end of the set. Doubled consonants count once ff/ll/ss are taught. The existing 7-level catalogue stays in place until the screens move over (design step 4).
+**Why:** Segmented words make multi-letter graphemes and split digraphs explicit, so the checker and later word selection ("known sounds" plus "practise these") can share one rule. Strict order matters because the parent can start on any single sound.
+**Rejected:** Rewriting the current 7 levels in place (would break screens that expect one letter per item), checking decodability per set rather than per correspondence, and treating irregular pronunciations as blocking errors.
+
 ### 2026-11-26 — Remove Sentry and use a local error screen
 
 **Decision:** Remove `@sentry/react`, `@sentry/vite-plugin`, the consent toggle, the Sentry privacy wording, and all `SENTRY_*` configuration. Wrap the app in `AppErrorBoundary`, which shows a child-safe restart screen and sends nothing off the device. Mark the Sentry data flows DF-002, DF-005, and DF-103 as retired, and replace `docs/sentry.md` with clean-up steps. This supersedes the 2026-10-13 Sentry instrumentation and vendor-review decisions.

@@ -21,6 +21,12 @@ Append a new entry every time:
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-26 — Trusting per-letter source word lists as decodable at that letter
+
+**What happened:** The supplied Letters and Sounds lists put "Ken" under k, "pocket" under ck, and "run" under u, but each uses a letter taught later in the sequence; "carrot" needs rr, which Phase 2 never teaches.
+**Root cause:** Source lists are written for a whole set taught over a week, not for one sound at a time.
+**Avoid:** Run `npm run verify:curriculum` after any word-list change and move words to the first correspondence where every grapheme is known; never add a word just because a published list has it under that letter.
+
 ### 2026-11-26 — Building with the shell's default Node instead of the pinned Node 24
 
 **What happened:** `npm run build` failed locally with `node: bad option: --experimental-strip-types` while tests and lint passed.
