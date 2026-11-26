@@ -32,6 +32,25 @@ The hook only looks at `git status --porcelain`, so unrelated pre-existing
 dirty files in the work tree will also trigger it — commit or stash them
 first if that gets noisy.
 
+## Browser testing (Playwright MCP)
+
+`.mcp.json` registers the Playwright MCP server (`@playwright/mcp@0.0.86`,
+pinned). It drives the installed Google Chrome with `--isolated`, so every
+run uses a fresh temporary profile and never touches the user's own Chrome
+sign-ins. Claude Code asks once to approve project MCP servers; approve
+`playwright`, then restart the session to load its `browser_*` tools.
+
+Before pushing any change that affects screens or audio:
+
+1. Start the dev server (`npm run dev`, port 3000; or the `phonics-dev`
+   entry in `.claude/launch.json`).
+2. Use the Playwright tools to walk through every changed flow, including
+   the parent gate where relevant, and check the browser console for errors.
+3. Report what was exercised and what was not (audio can be triggered but
+   not listened to).
+
+Playwright output goes to `.playwright-mcp/`, which is git-ignored.
+
 ## Git identity & rules
 
 Use this identity for commits in this repo:

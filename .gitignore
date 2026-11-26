@@ -36,3 +36,6 @@ dist-ssr
 generated/
 # Generated audio manifest is committed (it's source code for the app)
 # !src/data/generatedAudioManifest.ts
+
+# Playwright MCP output (snapshots, console logs)
+.playwright-mcp/
