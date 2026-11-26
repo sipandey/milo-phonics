@@ -9,9 +9,10 @@ import { X, Volume2, VolumeX, RotateCcw, Sparkles, Star, Award, BookOpen } from 
 
 interface ParentDashboardProps {
   onClose: () => void;
+  onOpenCurriculumMap: () => void;
 }
 
-export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => {
+export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose, onOpenCurriculumMap }) => {
   const [progress, setProgress] = useState(progressService.getProgress());
   const [isMuted, setIsMuted] = useState(audioService.getIsMuted());
 
@@ -49,6 +50,18 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
             <p className="text-xs text-gray-500">Curriculum progression, cloud backup & voice settings</p>
           </div>
         </div>
+
+        <button
+          type="button"
+          onClick={onOpenCurriculumMap}
+          className="mb-6 w-full min-h-[72px] rounded-3xl bg-amber-400 hover:bg-amber-300 text-amber-950 border-2 border-amber-500 p-4 text-left flex items-center gap-3 cursor-pointer shadow-sm"
+        >
+          <span className="text-3xl" aria-hidden="true">📚</span>
+          <span>
+            <span className="block text-base font-black">Curriculum map</span>
+            <span className="block text-xs">Choose any sound, mark what is introduced, and record how practice went.</span>
+          </span>
+        </button>
 
         {/* Section 1: Clerk Authentication & Cloud Backup */}
         <div className="mb-6">
