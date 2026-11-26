@@ -16,6 +16,12 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-26 — Show only lowercase letters to the child
+
+**Decision:** Everything a child reads is lowercase: letter symbols in the old letter data, the Letters board, letter detail, Let's Play, Bubble Pop, Feed Milo, Sound Train, the sound library's example words, word labels, names in word lists and readers, reader titles on the reader screen, and the first word of reader sentences. The tricky word "I" stays a capital. Adult labels (buttons, the parent area, map titles) keep ordinary English. Capitals are to be taught later as their own activity, with a parent switch for names and sentence starts (Phase 3–4).
+**Why:** UK phonics teaching introduces lowercase letters first and capitals later; the app showed both depending on the screen (data, `toUpperCase`, and Tailwind `uppercase`/`capitalize`), which the parent noticed.
+**Rejected:** Showing capital and lowercase pairs (Aa) now, removing names from the word lists, and lowercasing adult interface text.
+
 ### 2026-11-26 — Draw lone letters on handwriting lines and mark per-word pronunciations
 
 **Decision:** Show any grapheme that appears on its own (Today Teach and Revisit, sound-page heading, curriculum tiles, focus chips) on handwriting lines drawn from measured Nunito proportions (x-height 0.50, ascender 0.71, descender 0.19). Alternative spellings read "f or ff". Words may mark a letter's sound when it differs from the correspondence, written `grapheme=IPA` (`a.s=z`, `o.f=v`, `th=ð.e.n`); the checker and display use the grapheme, and playback uses the marked sound. Applied to as, is, his, has, of, that, and then.

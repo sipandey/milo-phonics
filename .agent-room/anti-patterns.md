@@ -21,6 +21,12 @@ Append a new entry every time:
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-26 — Capitalising letters through CSS classes
+
+**What happened:** After the letter data was made lowercase, Bubble Pop bubbles, Sound Train carriages, and word labels still showed capitals because of Tailwind `capitalize` and `uppercase` classes, which change the rendered text without changing the data.
+**Root cause:** Case was controlled in three places: data, JavaScript (`toUpperCase`), and CSS.
+**Avoid:** Keep child-facing text lowercase in data and do not use `uppercase`, `capitalize`, or `toUpperCase` in child screens; `tests/lowercaseDisplay.test.ts` scans for them and `scripts/walkthrough/lowercase-letters.mjs` checks the rendered text.
+
 ### 2026-11-26 — Showing a lone lowercase letter large with nothing to give it scale
 
 **What happened:** The Today session showed "s" alone at a large size and "a" on the next step; the parent read the s as a capital, though both were lowercase in the data and the DOM.
