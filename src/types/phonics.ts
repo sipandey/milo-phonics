@@ -152,4 +152,4 @@ export interface BlendingWord {
   color: string;
 }
 
-export type ScreenType = 'home' | 'lets-play' | 'listen-talk' | 'letters' | 'letter-detail' | 'sound-safari' | 'story' | 'parent' | 'oxford-sounds' | 'sound-train' | 'bubble-pop' | 'feed-milo' | 'curriculum-map' | 'sound-page';
+export type ScreenType = 'home' | 'lets-play' | 'listen-talk' | 'letters' | 'letter-detail' | 'sound-safari' | 'story' | 'parent' | 'oxford-sounds' | 'sound-train' | 'bubble-pop' | 'feed-milo' | 'curriculum-map' | 'sound-page' | 'phase-one-activity';
