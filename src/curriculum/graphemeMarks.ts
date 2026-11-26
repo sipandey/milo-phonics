@@ -19,11 +19,11 @@ export function graphemeMarks(segmented: string): MarkedGrapheme[] {
     for (const rawToken of part.split('.')) {
       const token = rawToken.split('=')[0] ?? rawToken;
       if (SPLIT_DIGRAPH.test(token)) {
-        marked.push({ text: token[0] ?? '', mark: 'split' });
+        marked.push({ text: (token[0] ?? '').toLowerCase(), mark: 'split' });
         pendingE = { text: token[2] ?? 'e', mark: 'split' };
         continue;
       }
-      marked.push({ text: token, mark: token.length > 1 ? 'line' : 'dot' });
+      marked.push({ text: token.toLowerCase(), mark: token.length > 1 ? 'line' : 'dot' });
       if (pendingE) {
         marked.push(pendingE);
         pendingE = null;

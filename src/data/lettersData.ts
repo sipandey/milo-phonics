@@ -3,7 +3,7 @@ import { LetterData } from "../types/phonics";
 export const lettersData: Record<string, LetterData> = {
   a: {
     id: "a",
-    symbol: "A",
+    symbol: "a",
     phoneme: "/æ/",
     phonemeSpoken: "/æ/",
     nameSpoken: "Letter A",
@@ -87,7 +87,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   b: {
     id: "b",
-    symbol: "B",
+    symbol: "b",
     phoneme: "/b/",
     phonemeSpoken: "/b/",
     nameSpoken: "Letter B",
@@ -145,7 +145,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   c: {
     id: "c",
-    symbol: "C",
+    symbol: "c",
     phoneme: "/k/",
     phonemeSpoken: "/k/",
     nameSpoken: "Letter C",
@@ -203,7 +203,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   d: {
     id: "d",
-    symbol: "D",
+    symbol: "d",
     phoneme: "/d/",
     phonemeSpoken: "/d/",
     nameSpoken: "Letter D",
@@ -261,7 +261,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   e: {
     id: "e",
-    symbol: "E",
+    symbol: "e",
     phoneme: "/e/",
     phonemeSpoken: "/e/",
     nameSpoken: "Letter E",
@@ -319,7 +319,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   f: {
     id: "f",
-    symbol: "F",
+    symbol: "f",
     phoneme: "/f/",
     phonemeSpoken: "/f/",
     nameSpoken: "Letter F",
@@ -377,7 +377,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   g: {
     id: "g",
-    symbol: "G",
+    symbol: "g",
     phoneme: "/g/",
     phonemeSpoken: "/g/",
     nameSpoken: "Letter G",
@@ -435,7 +435,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   h: {
     id: "h",
-    symbol: "H",
+    symbol: "h",
     phoneme: "/h/",
     phonemeSpoken: "/h/",
     nameSpoken: "Letter H",
@@ -493,7 +493,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   i: {
     id: "i",
-    symbol: "I",
+    symbol: "i",
     phoneme: "/ɪ/",
     phonemeSpoken: "/ɪ/",
     nameSpoken: "Letter I",
@@ -551,7 +551,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   j: {
     id: "j",
-    symbol: "J",
+    symbol: "j",
     phoneme: "/dʒ/",
     phonemeSpoken: "/dʒ/",
     nameSpoken: "Letter J",
@@ -609,7 +609,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   k: {
     id: "k",
-    symbol: "K",
+    symbol: "k",
     phoneme: "/k/",
     phonemeSpoken: "/k/",
     nameSpoken: "Letter K",
@@ -667,7 +667,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   l: {
     id: "l",
-    symbol: "L",
+    symbol: "l",
     phoneme: "/l/",
     phonemeSpoken: "/l/",
     nameSpoken: "Letter L",
@@ -725,7 +725,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   m: {
     id: "m",
-    symbol: "M",
+    symbol: "m",
     phoneme: "/m/",
     phonemeSpoken: "/m/",
     nameSpoken: "Letter M",
@@ -809,7 +809,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   n: {
     id: "n",
-    symbol: "N",
+    symbol: "n",
     phoneme: "/n/",
     phonemeSpoken: "/n/",
     nameSpoken: "Letter N",
@@ -867,7 +867,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   o: {
     id: "o",
-    symbol: "O",
+    symbol: "o",
     phoneme: "/ɒ/",
     phonemeSpoken: "/ɒ/",
     nameSpoken: "Letter O",
@@ -925,7 +925,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   p: {
     id: "p",
-    symbol: "P",
+    symbol: "p",
     phoneme: "/p/",
     phonemeSpoken: "/p/",
     nameSpoken: "Letter P",
@@ -983,7 +983,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   q: {
     id: "q",
-    symbol: "Q",
+    symbol: "q",
     phoneme: "/k/ + /w/",
     phonemeSpoken: "/k/ followed by /w/",
     nameSpoken: "Letter Q",
@@ -1041,7 +1041,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   r: {
     id: "r",
-    symbol: "R",
+    symbol: "r",
     phoneme: "/r/",
     phonemeSpoken: "/r/",
     nameSpoken: "Letter R",
@@ -1099,7 +1099,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   s: {
     id: "s",
-    symbol: "S",
+    symbol: "s",
     phoneme: "/s/",
     phonemeSpoken: "/s/",
     nameSpoken: "Letter S",
@@ -1183,7 +1183,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   t: {
     id: "t",
-    symbol: "T",
+    symbol: "t",
     phoneme: "/t/",
     phonemeSpoken: "/t/",
     nameSpoken: "Letter T",
@@ -1241,7 +1241,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   u: {
     id: "u",
-    symbol: "U",
+    symbol: "u",
     phoneme: "/ʌ/",
     phonemeSpoken: "/ʌ/",
     nameSpoken: "Letter U",
@@ -1299,7 +1299,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   v: {
     id: "v",
-    symbol: "V",
+    symbol: "v",
     phoneme: "/v/",
     phonemeSpoken: "/v/",
     nameSpoken: "Letter V",
@@ -1357,7 +1357,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   w: {
     id: "w",
-    symbol: "W",
+    symbol: "w",
     phoneme: "/w/",
     phonemeSpoken: "/w/",
     nameSpoken: "Letter W",
@@ -1415,7 +1415,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   x: {
     id: "x",
-    symbol: "X",
+    symbol: "x",
     phoneme: "/k/ + /s/",
     phonemeSpoken: "/k/ followed by /s/",
     nameSpoken: "Letter X",
@@ -1473,7 +1473,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   y: {
     id: "y",
-    symbol: "Y",
+    symbol: "y",
     phoneme: "/j/",
     phonemeSpoken: "/j/",
     nameSpoken: "Letter Y",
@@ -1531,7 +1531,7 @@ export const lettersData: Record<string, LetterData> = {
   },
   z: {
     id: "z",
-    symbol: "Z",
+    symbol: "z",
     phoneme: "/z/",
     phonemeSpoken: "/z/",
     nameSpoken: "Letter Z",

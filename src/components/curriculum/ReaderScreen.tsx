@@ -63,7 +63,7 @@ export const ReaderScreen: React.FC<ReaderScreenProps> = ({ readerId, onBack }) 
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <h1 className="text-2xl font-black font-fun">{reader.title}</h1>
+        <h1 className="text-2xl font-black font-fun">{reader.title.toLowerCase()}</h1>
         <span className="ml-auto text-sm font-bold text-gray-500" aria-label={`Page ${pageIndex + 1} of ${reader.pages.length}`}>
           {pageIndex + 1} / {reader.pages.length}
         </span>
@@ -87,10 +87,10 @@ export const ReaderScreen: React.FC<ReaderScreenProps> = ({ readerId, onBack }) 
                 >
                   {token.startsWith('*') ? (
                     <span className="font-black font-fun text-rose-600">
-                      {index === 0 ? token.charAt(1).toUpperCase() + token.slice(2) : token.slice(1)}
+                      {token.slice(1)}
                     </span>
                   ) : (
-                    <GraphemeWord segmented={index === 0 ? token.charAt(0).toUpperCase() + token.slice(1) : token} showMarks={showMarks} />
+                    <GraphemeWord segmented={token} showMarks={showMarks} />
                   )}
                 </button>
                 {index === page.words.length - 1 && (

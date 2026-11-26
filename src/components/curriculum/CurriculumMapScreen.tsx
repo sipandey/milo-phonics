@@ -99,7 +99,7 @@ export const CurriculumMapScreen: React.FC<CurriculumMapScreenProps> = ({ onBack
             </div>
             <p className="text-sm mt-3">
               <span className="font-bold">Words: </span>
-              {practise.words.length > 0 ? practise.words.slice(0, 10).map((word) => word.text).join(', ') : 'none yet'}
+              {practise.words.length > 0 ? practise.words.slice(0, 10).map((word) => word.text.toLowerCase()).join(', ') : 'none yet'}
             </p>
             {practise.needsMoreSounds && (
               <p className="text-xs text-amber-900 mt-1">
@@ -190,7 +190,7 @@ export const CurriculumMapScreen: React.FC<CurriculumMapScreenProps> = ({ onBack
           {(phase.adjacentConsonantWords?.length ?? 0) > 0 && (
             <section>
               <h2 className="font-black text-lg mb-2">Words with adjacent consonants</h2>
-              <p className="text-sm mb-3">{phase.adjacentConsonantWords?.map((word) => parseSegmentedWord(word).text).join(', ')}</p>
+              <p className="text-sm mb-3">{phase.adjacentConsonantWords?.map((word) => parseSegmentedWord(word).text.toLowerCase()).join(', ')}</p>
               <StatusButtons itemLabel="adjacent consonant blending" current={status(`blend.phase${phase.id}`)} onMark={(next) => recordMark(`blend.phase${phase.id}`, next)} compact />
             </section>
           )}

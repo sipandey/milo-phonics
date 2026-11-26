@@ -400,14 +400,14 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
                 {miloState === 'chewing' ? (
                   <>
                     <span className="text-2xl animate-bounce">😋</span>
-                    <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider mt-0.5">
+                    <span className="text-[10px] sm:text-xs font-black tracking-wider mt-0.5">
                       Yum!
                     </span>
                   </>
                 ) : (
                   <>
                     <Volume2 className="w-8 h-8 sm:w-9 sm:h-9" />
-                    <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider mt-0.5">
+                    <span className="text-[10px] sm:text-xs font-black tracking-wider mt-0.5">
                       {isAudioBusy ? 'Listening...' : 'Hear Sound'}
                     </span>
                   </>
@@ -450,14 +450,14 @@ export const FeedMiloScreen: React.FC<FeedMiloScreenProps> = ({ onGoHome }) => {
                     </span>
 
                     {/* Food Object Name Label */}
-                    <span className="text-xs sm:text-sm font-black text-amber-950 mt-1 capitalize tracking-wide">
-                      {choice.object.name}
+                    <span className="text-xs sm:text-sm font-black text-amber-950 mt-1 tracking-wide">
+                      {choice.object.name.toLowerCase()}
                     </span>
 
                     {/* Visual Sound Dot (Single Grapheme Sound Button) */}
                     <div className="mt-0.5 flex items-center gap-1">
                       <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
-                      <span className="text-[10px] font-extrabold text-amber-700 uppercase">
+                      <span className="text-[10px] font-extrabold text-amber-700">
                         /{choice.letterId}/
                       </span>
                     </div>

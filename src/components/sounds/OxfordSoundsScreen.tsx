@@ -222,7 +222,7 @@ export const OxfordSoundsScreen: React.FC<OxfordSoundsScreenProps> = ({ onGoHome
                       title={`Play example word "${item.word}"`}
                     >
                       <span className="text-xs font-semibold text-gray-400">e.g.</span>
-                      <span className="text-base sm:text-lg font-black capitalize">
+                      <span className="text-base sm:text-lg font-black">
                         {item.word}
                       </span>
                       <span className="text-xs text-amber-600 font-bold">🔊</span>

@@ -26,8 +26,8 @@ describe('graphemeMarks', () => {
     expect(readerPageText({ words: ['th=ð.e.n', '*we', 's.ee'], end: '!', picture: '☀️' })).toBe('Then we see!');
   });
 
-  it('keeps capitals and hyphens', () => {
-    expect(graphemeMarks('S.a.m')[0]).toEqual({ text: 'S', mark: 'dot' });
+  it('shows names in lowercase and keeps hyphens', () => {
+    expect(graphemeMarks('S.a.m')[0]).toEqual({ text: 's', mark: 'dot' });
     expect(graphemeMarks('z.i.g|z.a.g').map((g) => g.text).join('')).toBe('zig-zag');
     expect(graphemeMarks('z.i.g|z.a.g')[3]).toEqual({ text: '-', mark: 'none' });
   });
