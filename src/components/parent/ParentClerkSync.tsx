@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useUser, SignInButton, SignUpButton, UserButton } from '@clerk/clerk-react';
 import { progressService } from '../../services/progressService';
+import { buildClerkMetadata } from '../../services/teachingProgress';
+import { teachingProgressStore } from '../../services/teachingProgressStore';
 import { ChildProgress } from '../../types/phonics';
 import { Cloud, CheckCircle2, RefreshCw, LogIn, UserPlus, AlertCircle } from 'lucide-react';
 
@@ -40,6 +42,7 @@ const ClerkActiveSync: React.FC = () => {
           isApplyingCloudDataRef.current = true;
           try {
             progressService.syncWithClerk(cloudData);
+            teachingProgressStore.mergeFromCloud(user.unsafeMetadata?.teachingProgress);
           } finally {
             isApplyingCloudDataRef.current = false;
           }
@@ -48,14 +51,15 @@ const ClerkActiveSync: React.FC = () => {
         const exported = progressService.exportForClerk();
         const stableProgress = { ...exported };
         delete stableProgress.cloudSyncedAt;
-        const signature = JSON.stringify(stableProgress);
+        const teachingProgress = teachingProgressStore.get();
+        const signature = JSON.stringify({ progress: stableProgress, teaching: teachingProgress });
         if (signature !== lastSyncedSignatureRef.current) {
-          await user.update({
-            unsafeMetadata: {
-              ...user.unsafeMetadata,
-              phonicsProgress: exported,
-            },
-          });
+          const { metadata, fits } = buildClerkMetadata(user.unsafeMetadata, exported, teachingProgress);
+          if (!fits) {
+            setSyncError('There is too much progress to back up to your account. It is still saved on this device.');
+            return;
+          }
+          await user.update({ unsafeMetadata: metadata });
           lastSyncedSignatureRef.current = signature;
         }
         setSyncError(null);
@@ -77,18 +81,21 @@ const ClerkActiveSync: React.FC = () => {
     if (!isLoaded || !isSignedIn || !user) return;
 
     let debounceTimer: ReturnType<typeof setTimeout> | undefined;
-    const unsubscribe = progressService.subscribe(() => {
+    const scheduleSync = () => {
       if (isApplyingCloudDataRef.current) return;
       if (debounceTimer) clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => {
         void handleSyncToCloud(false);
       }, 800);
-    });
+    };
+    const unsubscribeProgress = progressService.subscribe(scheduleSync);
+    const unsubscribeTeaching = teachingProgressStore.subscribe(scheduleSync);
 
     void handleSyncToCloud(true);
 
     return () => {
-      unsubscribe();
+      unsubscribeProgress();
+      unsubscribeTeaching();
       if (debounceTimer) clearTimeout(debounceTimer);
     };
   }, [isLoaded, isSignedIn, user?.id, handleSyncToCloud]);
