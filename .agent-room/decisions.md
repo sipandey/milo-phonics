@@ -16,6 +16,12 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-26 — Draw lone letters on handwriting lines and mark per-word pronunciations
+
+**Decision:** Show any grapheme that appears on its own (Today Teach and Revisit, sound-page heading, curriculum tiles, focus chips) on handwriting lines drawn from measured Nunito proportions (x-height 0.50, ascender 0.71, descender 0.19). Alternative spellings read "f or ff". Words may mark a letter's sound when it differs from the correspondence, written `grapheme=IPA` (`a.s=z`, `o.f=v`, `th=ð.e.n`); the checker and display use the grapheme, and playback uses the marked sound. Applied to as, is, his, has, of, that, and then.
+**Why:** The parent saw a lone lowercase s read as a capital next to a lowercase a; s and S share a shape and differ only in height. Playback of "as" gave /æ/ /s/, which blends to the wrong word.
+**Rejected:** Changing the font (every font has the same s/S problem), showing capitals, and treating as/is/his/of as tricky words only.
+
 ### 2026-11-26 — Add checked little readers and sound buttons for Phases 2 and 3
 
 **Decision:** Add six four-page decodable readers (three in Phase 2, three in Phase 3) as phase data. Each reader names the correspondence after which every word is decodable; the curriculum checker verifies its words at that point and its tricky words against the reader's phase. Readers appear in the curriculum map, marked ready when every word uses introduced sounds, and are recordable teaching items. Words on readers, sound pages, and the Today practise step use sound buttons: dots under one-letter sounds, lines under multi-letter sounds, and matching marks for split digraphs. The map remembers the open phase while the app runs.

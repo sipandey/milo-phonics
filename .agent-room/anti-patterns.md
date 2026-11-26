@@ -21,6 +21,12 @@ Append a new entry every time:
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-26 — Showing a lone lowercase letter large with nothing to give it scale
+
+**What happened:** The Today session showed "s" alone at a large size and "a" on the next step; the parent read the s as a capital, though both were lowercase in the data and the DOM.
+**Root cause:** Letters such as s, c, o, v, w, x, and z have the same shape in both cases and are told apart only by height relative to other letters or lines.
+**Avoid:** Show standalone graphemes with `LetterOnLines`; check standalone-letter screens in screenshots, not only snapshots.
+
 ### 2026-11-26 — Treating passing walkthroughs as proof the layout is right
 
 **What happened:** All 38 walkthrough steps passed while the reader showed its full stop as a floating dot after a gap and a sound page put the "Needs" hint on the same line as the word; tablet-size screenshots showed both.
