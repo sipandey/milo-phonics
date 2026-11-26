@@ -154,4 +154,15 @@ describe('Letters and Sounds programme data', () => {
     ]);
     expect(phase2?.trickyWords).toEqual(['the', 'to', 'no', 'go', 'I', 'into']);
   });
+
+  it('follows the Phase 3 order, with both oo sounds as separate correspondences', () => {
+    const phase3 = LETTERS_AND_SOUNDS.phases.find((p) => p.id === 3);
+    expect(phase3?.sets.map((set) => set.gpcs.map((g) => g.grapheme))).toEqual([
+      ['j', 'v', 'w', 'x'],
+      ['y', 'z', 'zz', 'qu'],
+      ['ch', 'sh', 'th', 'ng'],
+      ['ai', 'ee', 'igh', 'oa', 'oo', 'oo', 'ar', 'or', 'ur', 'ow', 'oi', 'ear', 'air', 'ure', 'er'],
+    ]);
+    expect(phase3?.trickyWords).toEqual(['he', 'she', 'we', 'me', 'be', 'was', 'you', 'they', 'all', 'are', 'my', 'her']);
+  });
 });
