@@ -10,6 +10,7 @@ describe('parent privacy notice draft', () => {
     expect(PARENT_PRIVACY_NOTICE.status).toBe('draft');
     expect(noticeText).toContain('LocalStorage');
     expect(noticeText).toContain('playful_phonics_progress_v2');
+    expect(noticeText).toContain('milo_teaching_progress_v3');
     expect(noticeText).toContain('Clerk');
     expect(noticeText).toContain('Google Fonts');
     expect(noticeText).toContain('Cloudinary');
