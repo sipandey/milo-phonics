@@ -9,6 +9,7 @@ import { teachingProgressStore } from '../../services/teachingProgressStore';
 import { DEFAULT_CHILD_ID, getItemState } from '../../services/teachingProgress';
 import { StatusButtons, playSymbols, playWordSoundBySound, recordMark } from '../curriculum/teachingUi';
 import { GraphemeWord } from '../curriculum/GraphemeWord';
+import { LetterOnLines } from '../curriculum/LetterOnLines';
 import { PictureChoiceActivity } from '../phase1/PictureChoiceActivity';
 import { SoundBoxesActivity } from '../phase1/SoundBoxesActivity';
 
@@ -60,7 +61,11 @@ export const TodaySessionScreen: React.FC<TodaySessionScreenProps> = ({ onExit }
     const label = gpc ? gpc.grapheme : itemId.replace(/^tricky\./, '');
     return (
       <div key={itemId} className="rounded-3xl bg-white border-2 border-gray-200 p-4 flex items-center gap-4 flex-wrap">
-        <span className="text-5xl font-black font-fun min-w-[72px] text-center">{label}</span>
+        {gpc ? (
+          <LetterOnLines graphemes={[gpc.grapheme]} className="h-16" />
+        ) : (
+          <span className="text-5xl font-black font-fun min-w-[72px] text-center">{label}</span>
+        )}
         {gpc && (
           <button
             type="button"
@@ -140,7 +145,7 @@ export const TodaySessionScreen: React.FC<TodaySessionScreenProps> = ({ onExit }
                 <p className="text-sm text-gray-600">Suggested next sound. To choose a different one, use “Practise this sound” in the curriculum map.</p>
               )}
               <div className="rounded-4xl border-4 border-amber-300 bg-amber-50 p-6 text-center">
-                <p className="text-8xl font-black font-fun">{[teachGpc.grapheme, ...(teachGpc.alternativeGraphemes ?? [])].join(' / ')}</p>
+                <LetterOnLines graphemes={[teachGpc.grapheme, ...(teachGpc.alternativeGraphemes ?? [])]} className="h-36 mx-auto block" />
                 <button
                   type="button"
                   onClick={() => playGpc(teachGpc.id)}
