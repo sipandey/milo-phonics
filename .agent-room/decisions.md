@@ -16,6 +16,12 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-26 — Add checked little readers and sound buttons for Phases 2 and 3
+
+**Decision:** Add six four-page decodable readers (three in Phase 2, three in Phase 3) as phase data. Each reader names the correspondence after which every word is decodable; the curriculum checker verifies its words at that point and its tricky words against the reader's phase. Readers appear in the curriculum map, marked ready when every word uses introduced sounds, and are recordable teaching items. Words on readers, sound pages, and the Today practise step use sound buttons: dots under one-letter sounds, lines under multi-letter sounds, and matching marks for split digraphs. The map remembers the open phase while the app runs.
+**Why:** Phase 3 sounds were already in place; reading short sentences and seeing digraphs as one sound were the missing parts. Checking readers in teaching order prevents an untaught sound slipping into a story. Sound-by-sound playback uses one sound per grapheme, so readers avoid short-oo words.
+**Rejected:** Recording sentence audio now, per-word reader marks, letting tricky words from later phases appear early, and resetting the map to Phase 2 on every return.
+
 ### 2026-11-26 — Add Today with Milo as a gated daily session
 
 **Decision:** Add a "Today with Milo" button at the top of the home screen. It opens through the parent gate into a four-step session: Revisit (up to three items marked with help and not practised for three days, otherwise a recap of the two least recently practised introduced items), Teach (the first focus sound, or the next sound not yet introduced), Practise (up to four decodable words plus a Phase 1 game that rotates daily), and Apply (an off-screen activity). The plan is built once when the session opens, so marking items does not reshuffle the steps. Existing home buttons stay; the design's full home-screen simplification is deferred.

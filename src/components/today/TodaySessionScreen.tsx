@@ -8,6 +8,7 @@ import { useTeachingProgress } from '../../hooks/useTeachingProgress';
 import { teachingProgressStore } from '../../services/teachingProgressStore';
 import { DEFAULT_CHILD_ID, getItemState } from '../../services/teachingProgress';
 import { StatusButtons, playSymbols, playWordSoundBySound, recordMark } from '../curriculum/teachingUi';
+import { GraphemeWord } from '../curriculum/GraphemeWord';
 import { PictureChoiceActivity } from '../phase1/PictureChoiceActivity';
 import { SoundBoxesActivity } from '../phase1/SoundBoxesActivity';
 
@@ -167,9 +168,9 @@ export const TodaySessionScreen: React.FC<TodaySessionScreenProps> = ({ onExit }
                         type="button"
                         onClick={() => play((isCurrent) => playWordSoundBySound(word.segmented, word.text, isCurrent, plan.teach.gpcId))}
                         aria-label={`Hear ${word.text} sound by sound`}
-                        className="min-h-[88px] rounded-3xl border-2 border-amber-200 bg-white text-3xl font-black font-fun cursor-pointer"
+                        className="min-h-[88px] rounded-3xl border-2 border-amber-200 bg-white text-3xl cursor-pointer"
                       >
-                        {word.text}
+                        <GraphemeWord segmented={word.segmented} />
                       </button>
                     ))}
                   </div>

@@ -153,6 +153,7 @@ export function listTeachingItemIds(programme: LettersAndSoundsProgramme): strin
     }
     if ((phase.adjacentConsonantWords?.length ?? 0) > 0) ids.push(`blend.phase${phase.id}`);
     ids.push(...phase.trickyWords.map((word) => `tricky.${word.toLowerCase()}`));
+    ids.push(...(phase.readers ?? []).map((reader) => `reader.${reader.id}`));
   }
   return ids;
 }

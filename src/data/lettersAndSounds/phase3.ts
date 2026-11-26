@@ -1,4 +1,5 @@
 import type { LettersAndSoundsPhase } from '../../types/lettersAndSounds';
+import { PHASE_3_READERS } from './readers';
 
 /**
  * Phase 3 follows the Letters and Sounds order and word lists supplied by the
@@ -76,4 +77,5 @@ export const PHASE_3: LettersAndSoundsPhase = {
     },
   ],
   trickyWords: ['he', 'she', 'we', 'me', 'be', 'was', 'you', 'they', 'all', 'are', 'my', 'her'],
+  readers: PHASE_3_READERS,
 };

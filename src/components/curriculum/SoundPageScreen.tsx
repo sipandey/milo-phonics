@@ -13,6 +13,7 @@ import {
   removeItem,
   setFocus,
 } from '../../services/teachingProgress';
+import { GraphemeWord } from './GraphemeWord';
 import { STATUS_STYLES, StatusButtons, playSymbols, recordMark } from './teachingUi';
 
 interface SoundPageScreenProps {
@@ -151,8 +152,8 @@ export const SoundPageScreen: React.FC<SoundPageScreenProps> = ({ gpcId, onBack 
               }`}
             >
               <span>
-                <span className="block text-3xl font-black font-fun">{word.text}</span>
-                {!word.decodable && <span className="text-xs">Needs: {word.missing.join(', ')}</span>}
+                <GraphemeWord segmented={word.segmented} showMarks={word.decodable} className="text-3xl" />
+                {!word.decodable && <span className="block text-xs mt-1">Needs: {word.missing.join(', ')}</span>}
               </span>
               <Volume2 className="w-6 h-6 shrink-0" />
             </button>
