@@ -13,6 +13,7 @@ import { CurriculumMapScreen, type PhaseOneActivityId } from './components/curri
 import { PictureChoiceActivity } from './components/phase1/PictureChoiceActivity';
 import { SoundBoxesActivity } from './components/phase1/SoundBoxesActivity';
 import { TodaySessionScreen } from './components/today/TodaySessionScreen';
+import { ReaderScreen } from './components/curriculum/ReaderScreen';
 import { SoundPageScreen } from './components/curriculum/SoundPageScreen';
 import { ParentGateModal } from './components/common/ParentGateModal';
 import { ParentDashboard } from './components/parent/ParentDashboard';
@@ -22,6 +23,7 @@ export function App() {
   const [currentScreen, setCurrentScreen] = useState<ScreenType>('home');
   const [selectedLetterId, setSelectedLetterId] = useState<string>('m');
   const [selectedGpcId, setSelectedGpcId] = useState<string>('gpc.s');
+  const [selectedReaderId, setSelectedReaderId] = useState<string>('sam-tim-dad');
   const [selectedActivity, setSelectedActivity] = useState<PhaseOneActivityId>('robot-blending');
   const [isParentGateOpen, setIsParentGateOpen] = useState(false);
   const [gateDestination, setGateDestination] = useState<'dashboard' | 'today'>('dashboard');
@@ -81,6 +83,11 @@ export function App() {
   const handleOpenActivity = (activityId: PhaseOneActivityId) => {
     setSelectedActivity(activityId);
     setCurrentScreen('phase-one-activity');
+  };
+
+  const handleOpenReader = (readerId: string) => {
+    setSelectedReaderId(readerId);
+    setCurrentScreen('reader');
   };
 
   const handleOpenSound = (gpcId: string) => {
@@ -182,7 +189,7 @@ export function App() {
       )}
 
       {currentScreen === 'curriculum-map' && (
-        <CurriculumMapScreen onBack={handleGoHome} onOpenSound={handleOpenSound} onOpenActivity={handleOpenActivity} />
+        <CurriculumMapScreen onBack={handleGoHome} onOpenSound={handleOpenSound} onOpenActivity={handleOpenActivity} onOpenReader={handleOpenReader} />
       )}
 
       {currentScreen === 'sound-page' && (
@@ -197,6 +204,8 @@ export function App() {
         ))}
 
       {currentScreen === 'today' && <TodaySessionScreen onExit={handleGoHome} />}
+
+      {currentScreen === 'reader' && <ReaderScreen readerId={selectedReaderId} onBack={() => setCurrentScreen('curriculum-map')} />}
 
       {/* Parent Gate Modal */}
       <ParentGateModal

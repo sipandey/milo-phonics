@@ -21,7 +21,7 @@ afterEach(() => {
 
 describe('CurriculumMapScreen', () => {
   it('shows Phase 2 sound tiles, blending marks, and tricky words', () => {
-    const markup = renderToStaticMarkup(createElement(CurriculumMapScreen, { onBack: noop, onOpenSound: noop, onOpenActivity: noop }));
+    const markup = renderToStaticMarkup(createElement(CurriculumMapScreen, { onBack: noop, onOpenSound: noop, onOpenActivity: noop, onOpenReader: noop }));
     expect(markup).toContain('Open the sound s, not introduced');
     expect(markup).toContain('Open the sound ck, not introduced');
     expect(markup).toContain('How did blending in Set 1 go?');
@@ -35,7 +35,7 @@ describe('CurriculumMapScreen', () => {
       next = markItem(next, DEFAULT_CHILD_ID, 'gpc.t', 'with-help', now);
       return setFocus(next, DEFAULT_CHILD_ID, ['gpc.t'], now);
     });
-    const markup = renderToStaticMarkup(createElement(CurriculumMapScreen, { onBack: noop, onOpenSound: noop, onOpenActivity: noop }));
+    const markup = renderToStaticMarkup(createElement(CurriculumMapScreen, { onBack: noop, onOpenSound: noop, onOpenActivity: noop, onOpenReader: noop }));
     expect(markup).toContain('Open the sound t, with-help');
     expect(markup).toContain('at, sat');
     expect(markup).toContain('Fewer than three words fit');

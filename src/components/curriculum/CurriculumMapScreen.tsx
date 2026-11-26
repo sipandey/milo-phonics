@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { LETTERS_AND_SOUNDS } from '../../data/lettersAndSounds';
 import { findGpc, selectPractiseWords } from '../../curriculum/soundPage';
-import { parseSegmentedWord } from '../../curriculum/lettersAndSoundsValidation';
+import { isDecodableWith, parseSegmentedWord } from '../../curriculum/lettersAndSoundsValidation';
 import { useTeachingProgress } from '../../hooks/useTeachingProgress';
 import { teachingProgressStore } from '../../services/teachingProgressStore';
 import { DEFAULT_CHILD_ID, getItemState, knownGraphemes, setFocus } from '../../services/teachingProgress';
@@ -27,11 +27,19 @@ interface CurriculumMapScreenProps {
   readonly onBack: () => void;
   readonly onOpenSound: (gpcId: string) => void;
   readonly onOpenActivity: (activityId: PhaseOneActivityId) => void;
+  readonly onOpenReader: (readerId: string) => void;
 }
 
-export const CurriculumMapScreen: React.FC<CurriculumMapScreenProps> = ({ onBack, onOpenSound, onOpenActivity }) => {
+/** Remembers the open phase tab while the app is running, so returning from a sound page or reader keeps it. */
+let lastPhaseId: LettersAndSoundsPhaseId = 2;
+
+export const CurriculumMapScreen: React.FC<CurriculumMapScreenProps> = ({ onBack, onOpenSound, onOpenActivity, onOpenReader }) => {
   const doc = useTeachingProgress();
-  const [phaseId, setPhaseId] = useState<LettersAndSoundsPhaseId>(2);
+  const [phaseId, setPhaseIdState] = useState<LettersAndSoundsPhaseId>(lastPhaseId);
+  const setPhaseId = (next: LettersAndSoundsPhaseId) => {
+    lastPhaseId = next;
+    setPhaseIdState(next);
+  };
   const phase = LETTERS_AND_SOUNDS.phases.find((candidate) => candidate.id === phaseId);
   const status = (itemId: string) => getItemState(doc, DEFAULT_CHILD_ID, itemId)?.status ?? null;
   const focusIds = doc.children[DEFAULT_CHILD_ID]?.focus.ids ?? [];
@@ -182,6 +190,35 @@ export const CurriculumMapScreen: React.FC<CurriculumMapScreenProps> = ({ onBack
               <h2 className="font-black text-lg mb-2">Words with adjacent consonants</h2>
               <p className="text-sm mb-3">{phase.adjacentConsonantWords?.map((word) => parseSegmentedWord(word).text).join(', ')}</p>
               <StatusButtons itemLabel="adjacent consonant blending" current={status(`blend.phase${phase.id}`)} onMark={(next) => recordMark(`blend.phase${phase.id}`, next)} compact />
+            </section>
+          )}
+
+          {(phase.readers?.length ?? 0) > 0 && (
+            <section>
+              <h2 className="font-black text-lg mb-2">Little readers</h2>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {phase.readers?.map((reader) => {
+                  const id = `reader.${reader.id}`;
+                  const ready = reader.pages.every((page) =>
+                    page.words.every((word) => word.startsWith('*') || isDecodableWith(word, known, { allowDoubledConsonants: [...known].some((g) => /^(ff|ll|ss|zz)$/.test(g)) })),
+                  );
+                  return (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => onOpenReader(reader.id)}
+                      aria-label={`Open the reader ${reader.title}${ready ? ', ready' : ', needs more sounds'}`}
+                      className={`min-h-[72px] rounded-2xl border-2 p-3 text-left flex items-center gap-3 cursor-pointer ${STATUS_STYLES[status(id) ?? 'none']}`}
+                    >
+                      <span className="text-4xl" aria-hidden="true">{reader.pages[0]?.picture}</span>
+                      <span>
+                        <span className="block font-black text-gray-900">{reader.title}</span>
+                        <span className="block text-xs text-gray-600">{ready ? 'Ready: uses introduced sounds' : 'Needs more sounds introduced'}</span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </section>
           )}
 
