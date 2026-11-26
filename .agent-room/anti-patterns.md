@@ -21,6 +21,12 @@ Append a new entry every time:
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-26 — Building with the shell's default Node instead of the pinned Node 24
+
+**What happened:** `npm run build` failed locally with `node: bad option: --experimental-strip-types` while tests and lint passed.
+**Root cause:** The shell defaulted to Node 20.19.0, but `package.json` `engines` and `.nvmrc` require Node 24; npm only warns about `engines`, and the build scripts rely on type stripping that Node 20 lacks.
+**Avoid:** Run `nvm use` (or put Node 24 first on `PATH`) before building or changing dependencies, and confirm with `node -v`; do not "fix" the build script for an older Node.
+
 ### 2026-11-16 — Linting the whole legacy session archive blocks unrelated CI
 
 **What happened:** GitHub Actions failed at `create-agent-room lint-sessions` while both the project validator and application checks passed.
