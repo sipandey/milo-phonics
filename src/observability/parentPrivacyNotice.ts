@@ -21,7 +21,7 @@ export const PARENT_PRIVACY_NOTICE: ParentPrivacyNotice = {
       heading: 'Core play and browser storage',
       paragraphs: [
         'Milo Phonics can be used without an account. Core progress is kept in this browser using LocalStorage, including the current level, stars, explored letters and objects, tap counts, last-played position, and focus-mode setting.',
-        'The current progress key is playful_phonics_progress_v2; an older playful_phonics_progress_v1 key may be read once for migration. Browser storage and the diagnostic consent choice remain on this device unless a parent enables an account or optional diagnostics. Clearing site data or using Reset All Progress removes the local progress held by this app.',
+        'The current progress key is playful_phonics_progress_v2; an older playful_phonics_progress_v1 key may be read once for migration. Browser storage remains on this device unless a parent signs in to sync progress. Clearing site data or using Reset All Progress removes the local progress held by this app.',
       ],
     },
     {
@@ -39,11 +39,9 @@ export const PARENT_PRIVACY_NOTICE: ParentPrivacyNotice = {
       ],
     },
     {
-      heading: 'Optional technical diagnostics',
+      heading: 'Error monitoring and analytics',
       paragraphs: [
-        'Optional Technical Diagnostics are off by default and are not required to play. If a parent enables them, minimized browser error and performance details leave this device for Sentry. The intended payload is limited to release and environment details, browser technical information, and a sanitized error stack.',
-        'The app does not intentionally send child progress, audio, free text, account identifiers, breadcrumbs, replay recordings, client logs, or application metrics through this diagnostic path. Sentry may infer approximate geography from connection metadata even when IP addresses are redacted. The current Sentry Developer plan retains error data for 30 days; deletion, backups, subprocessors, and transfer terms require approval.',
-        'A parent can revoke diagnostics in the Parent Dashboard. Revocation stops future error reports and trace sampling; it does not itself delete an event already received by Sentry. The local choice is stored under milo_phonics_sentry_consent_v1.',
+        'No error-monitoring or analytics service is used. If the app fails to display, it shows a restart screen on this device and sends no error report.',
       ],
     },
     {
@@ -56,7 +54,7 @@ export const PARENT_PRIVACY_NOTICE: ParentPrivacyNotice = {
     {
       heading: 'Questions and deletion requests',
       paragraphs: [
-        'For now, the privacy contact is not supplied. A real controller contact and an approved process for local deletion, account deletion, diagnostic deletion requests, access, export, and complaints must be added before publication. This draft is not legal advice and is not a compliance certification.',
+        'For now, the privacy contact is not supplied. A real controller contact and an approved process for local deletion, account deletion, access, export, and complaints must be added before publication. This draft is not legal advice and is not a compliance certification.',
       ],
     },
   ],

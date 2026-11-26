@@ -4,8 +4,6 @@ import { audioService } from '../../services/audioService';
 import { CURRICULUM_LEVELS } from '../../data/curriculumContent';
 import { ParentClerkSync } from './ParentClerkSync';
 import { AUDIO_RUNTIME_STATUS } from './audioRuntimeStatus';
-import { initializeSentry } from '../../observability/sentry';
-import { getSentryConsent, setSentryConsent } from '../../observability/sentryConsent';
 import { PARENT_PRIVACY_NOTICE } from '../../observability/parentPrivacyNotice';
 import { X, Volume2, VolumeX, RotateCcw, Sparkles, Star, Award, BookOpen } from 'lucide-react';
 
@@ -16,7 +14,6 @@ interface ParentDashboardProps {
 export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => {
   const [progress, setProgress] = useState(progressService.getProgress());
   const [isMuted, setIsMuted] = useState(audioService.getIsMuted());
-  const [isSentryConsentGranted, setIsSentryConsentGranted] = useState(getSentryConsent());
 
   useEffect(() => {
     const unsubscribe = progressService.subscribe((updated) => {
@@ -56,50 +53,6 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({ onClose }) => 
         {/* Section 1: Clerk Authentication & Cloud Backup */}
         <div className="mb-6">
           <ParentClerkSync />
-        </div>
-
-        {/* Section 2: Consent-aware technical diagnostics */}
-        <div className="mb-6 p-4 sm:p-5 rounded-3xl bg-sky-50/90 border-2 border-sky-200 shadow-sm">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-start gap-3">
-              <span className="text-3xl">🛠️</span>
-              <div>
-                <h3 className="text-base font-black text-sky-950">Optional Technical Diagnostics</h3>
-                <p className="text-xs text-sky-800/90 mt-1 leading-relaxed">
-                  Share minimized browser error reports to help repair broken sessions. Reports exclude child progress,
-                  audio, free text, account identifiers, and breadcrumbs. This choice is optional and can be changed here.
-                </p>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              role="switch"
-              aria-label="Share optional technical diagnostics"
-              aria-checked={isSentryConsentGranted}
-              onClick={() => {
-                const nextConsent = !isSentryConsentGranted;
-                const didPersist = setSentryConsent(nextConsent);
-                setIsSentryConsentGranted(didPersist ? nextConsent : false);
-                if (didPersist && nextConsent) {
-                  initializeSentry();
-                }
-                audioService.playPop();
-              }}
-              className={`w-14 h-8 rounded-full p-1 transition-colors cursor-pointer shrink-0 ${
-                isSentryConsentGranted ? 'bg-sky-500' : 'bg-gray-300'
-              }`}
-            >
-              <div
-                className={`w-6 h-6 rounded-full bg-white shadow-md transform transition-transform duration-200 ${
-                  isSentryConsentGranted ? 'translate-x-6' : 'translate-x-0'
-                }`}
-              />
-            </button>
-          </div>
-          <p className="text-[11px] text-sky-700 mt-3">
-            {isSentryConsentGranted ? 'Technical diagnostics are enabled on this device.' : 'Technical diagnostics are off by default.'}
-          </p>
         </div>
 
         <details className="mb-6 rounded-3xl border-2 border-slate-200 bg-slate-50/90 p-4 shadow-sm">
