@@ -16,6 +16,12 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-26 — Build Phase 1 listening games as new picture-only screens
+
+**Decision:** Add four Phase 1 games opened from the Phase 1 cards in the curriculum map: Robot Milo (oral blending), Sound boxes (oral segmenting), First sounds (alliteration), and Odd one out (rhyme). They show pictures only, never letters; each round has a replayable prompt, a gentle wobble for a wrong pick, and a child-led Next; the adult records a mark at the end. Content is curated in `src/curriculum/phaseOneActivities.ts`. The existing Feed Milo game is unchanged. Browser walkthroughs are committed in `scripts/walkthrough/` and run with `npm run walkthrough`.
+**Why:** Feed Milo and Bubble Pop are tied to the old 7 levels and show letters; a shared picture-choice screen was smaller than reworking both. Only recorded words whose picture shows the word are used, so blending and rhyme work without new audio. Committed walkthroughs make the Playwright check repeatable in any session.
+**Rejected:** Reworking Feed Milo to hide letters, deriving pictures automatically from all CVC words, automatic advancing between rounds, and keeping walkthroughs only in a scratch folder.
+
 ### 2026-11-26 — Use Playwright MCP for browser checks before pushing
 
 **Decision:** Register `@playwright/mcp@0.0.86` in the project `.mcp.json`, running the installed Google Chrome with `--isolated`, and require a Playwright walkthrough of every changed screen before pushing (documented in `CLAUDE.md`).

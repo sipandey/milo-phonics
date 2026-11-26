@@ -9,7 +9,9 @@ import { OxfordSoundsScreen } from './components/sounds/OxfordSoundsScreen';
 import { SoundTrainScreen } from './components/train/SoundTrainScreen';
 import { BubblePopScreen } from './components/game/BubblePopScreen';
 import { FeedMiloScreen } from './components/game/FeedMiloScreen';
-import { CurriculumMapScreen } from './components/curriculum/CurriculumMapScreen';
+import { CurriculumMapScreen, type PhaseOneActivityId } from './components/curriculum/CurriculumMapScreen';
+import { PictureChoiceActivity } from './components/phase1/PictureChoiceActivity';
+import { SoundBoxesActivity } from './components/phase1/SoundBoxesActivity';
 import { SoundPageScreen } from './components/curriculum/SoundPageScreen';
 import { ParentGateModal } from './components/common/ParentGateModal';
 import { ParentDashboard } from './components/parent/ParentDashboard';
@@ -19,6 +21,7 @@ export function App() {
   const [currentScreen, setCurrentScreen] = useState<ScreenType>('home');
   const [selectedLetterId, setSelectedLetterId] = useState<string>('m');
   const [selectedGpcId, setSelectedGpcId] = useState<string>('gpc.s');
+  const [selectedActivity, setSelectedActivity] = useState<PhaseOneActivityId>('robot-blending');
   const [isParentGateOpen, setIsParentGateOpen] = useState(false);
   const [isParentDashboardOpen, setIsParentDashboardOpen] = useState(false);
   const [teaser, setTeaser] = useState<{ isOpen: boolean; title: string; message: string }>({
@@ -71,6 +74,11 @@ export function App() {
   const handleOpenCurriculumMap = () => {
     setIsParentDashboardOpen(false);
     setCurrentScreen('curriculum-map');
+  };
+
+  const handleOpenActivity = (activityId: PhaseOneActivityId) => {
+    setSelectedActivity(activityId);
+    setCurrentScreen('phase-one-activity');
   };
 
   const handleOpenSound = (gpcId: string) => {
@@ -164,12 +172,19 @@ export function App() {
       )}
 
       {currentScreen === 'curriculum-map' && (
-        <CurriculumMapScreen onBack={handleGoHome} onOpenSound={handleOpenSound} />
+        <CurriculumMapScreen onBack={handleGoHome} onOpenSound={handleOpenSound} onOpenActivity={handleOpenActivity} />
       )}
 
       {currentScreen === 'sound-page' && (
         <SoundPageScreen gpcId={selectedGpcId} onBack={() => setCurrentScreen('curriculum-map')} />
       )}
+
+      {currentScreen === 'phase-one-activity' &&
+        (selectedActivity === 'sound-boxes' ? (
+          <SoundBoxesActivity onExit={() => setCurrentScreen('curriculum-map')} />
+        ) : (
+          <PictureChoiceActivity activityId={selectedActivity} onExit={() => setCurrentScreen('curriculum-map')} />
+        ))}
 
       {/* Parent Gate Modal */}
       <ParentGateModal

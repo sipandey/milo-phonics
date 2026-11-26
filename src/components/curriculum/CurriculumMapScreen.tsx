@@ -9,12 +9,25 @@ import { DEFAULT_CHILD_ID, getItemState, knownGraphemes, setFocus } from '../../
 import type { LettersAndSoundsPhaseId } from '../../types/lettersAndSounds';
 import { STATUS_STYLES, StatusButtons, recordMark } from './teachingUi';
 
+export type PhaseOneActivityId = 'robot-blending' | 'sound-boxes' | 'first-sounds' | 'odd-one-out';
+
+/** Games available for each Phase 1 aspect. */
+const ASPECT_ACTIVITIES: Record<string, readonly { id: PhaseOneActivityId; label: string }[]> = {
+  'p1.oral-blending': [
+    { id: 'robot-blending', label: '🤖 Robot Milo (blending)' },
+    { id: 'sound-boxes', label: '🟦 Sound boxes (segmenting)' },
+  ],
+  'p1.alliteration': [{ id: 'first-sounds', label: '🦁 First sounds' }],
+  'p1.rhythm-rhyme': [{ id: 'odd-one-out', label: '🎵 Odd one out' }],
+};
+
 interface CurriculumMapScreenProps {
   readonly onBack: () => void;
   readonly onOpenSound: (gpcId: string) => void;
+  readonly onOpenActivity: (activityId: PhaseOneActivityId) => void;
 }
 
-export const CurriculumMapScreen: React.FC<CurriculumMapScreenProps> = ({ onBack, onOpenSound }) => {
+export const CurriculumMapScreen: React.FC<CurriculumMapScreenProps> = ({ onBack, onOpenSound, onOpenActivity }) => {
   const doc = useTeachingProgress();
   const [phaseId, setPhaseId] = useState<LettersAndSoundsPhaseId>(2);
   const phase = LETTERS_AND_SOUNDS.phases.find((candidate) => candidate.id === phaseId);
@@ -114,6 +127,20 @@ export const CurriculumMapScreen: React.FC<CurriculumMapScreenProps> = ({ onBack
               <ul className="list-disc pl-5 text-sm text-gray-700 my-2">
                 {aspect.activityIdeas.map((idea) => <li key={idea}>{idea}</li>)}
               </ul>
+              {(ASPECT_ACTIVITIES[aspect.id]?.length ?? 0) > 0 && (
+                <div className="flex gap-2 flex-wrap mb-3">
+                  {ASPECT_ACTIVITIES[aspect.id]?.map((activity) => (
+                    <button
+                      key={activity.id}
+                      type="button"
+                      onClick={() => onOpenActivity(activity.id)}
+                      className="min-h-[56px] px-4 rounded-2xl bg-amber-400 text-amber-950 font-black cursor-pointer active:scale-95 transition-transform"
+                    >
+                      {activity.label}
+                    </button>
+                  ))}
+                </div>
+              )}
               <StatusButtons itemLabel={aspect.title} current={status(aspect.id)} onMark={(next) => recordMark(aspect.id, next)} compact />
             </section>
           ))}

@@ -49,6 +49,12 @@ Before pushing any change that affects screens or audio:
 3. Report what was exercised and what was not (audio can be triggered but
    not listened to).
 
+Scripted walkthroughs live in `scripts/walkthrough/` and drive the same
+Playwright MCP server over stdio, so they work even when the `browser_*`
+tools are not loaded in the session. With the dev server running, run
+`npm run walkthrough` (or `npm run walkthrough -- http://localhost:3100`).
+Add a walkthrough script for each new screen.
+
 Playwright output goes to `.playwright-mcp/`, which is git-ignored.
 
 ## Git identity & rules

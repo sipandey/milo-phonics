@@ -21,6 +21,12 @@ Append a new entry every time:
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-26 — Using a CVC word's picture when it shows something else
+
+**What happened:** The CVC catalogue pairs some words with related pictures: "sat" and "cat" both show a cat, "mat" shows a person doing yoga, "jam" shows a strawberry, and "tin" and "can" share one picture. Used as answers in a picture game, these make a correct blend impossible to identify.
+**Root cause:** The pictures were chosen to illustrate sentences, not to stand for the word on their own.
+**Avoid:** Picture-choice games use the curated lists in `phaseOneActivities.ts`, and tests require unique pictures per round; add a word only if its picture alone shows that word.
+
 ### 2026-11-26 — Silencing store notifications to stop a sync loop
 
 **What happened:** The teaching progress store skipped notifying listeners on cloud merges so Clerk sync would not re-upload merged data; that would also have left open screens showing stale progress after sign-in. It was caught while adding the first screen that reads the store.
