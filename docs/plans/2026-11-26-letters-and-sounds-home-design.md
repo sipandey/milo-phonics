@@ -1,7 +1,7 @@
 # Letters and Sounds home-teaching design
 
 **Date:** 26 November 2026
-**Status:** Approved by the maintainer (26 November 2026). Implementation starts with Sentry removal.
+**Status:** Approved by the maintainer (26 November 2026). Delivery steps 1–7 implemented on 26 November 2026; use with the child and specialist review are still to come.
 **Scope:** Re-direct Milo from a commercial beta toward a parent-led home tool that follows the Letters and Sounds Phases 1–5 structure, for one child aged 3–4 who already knows a couple of letters.
 
 This supersedes the commercial sequencing in `product-roadmap-and-android-strategy.md` and the E5/E7/E8/E9 backlog for current work. Those documents stay as historical strategy.

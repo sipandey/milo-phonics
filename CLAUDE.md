@@ -46,7 +46,9 @@ Before pushing any change that affects screens or audio:
    entry in `.claude/launch.json`).
 2. Use the Playwright tools to walk through every changed flow, including
    the parent gate where relevant, and check the browser console for errors.
-3. Report what was exercised and what was not (audio can be triggered but
+3. For visual changes, take screenshots at 1024×768 (saved under
+   `.playwright-mcp/`) and look at them; snapshots do not show layout.
+4. Report what was exercised and what was not (audio can be triggered but
    not listened to).
 
 Scripted walkthroughs live in `scripts/walkthrough/` and drive the same

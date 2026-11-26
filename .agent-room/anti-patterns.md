@@ -21,6 +21,12 @@ Append a new entry every time:
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-26 — Treating passing walkthroughs as proof the layout is right
+
+**What happened:** All 38 walkthrough steps passed while the reader showed its full stop as a floating dot after a gap and a sound page put the "Needs" hint on the same line as the word; tablet-size screenshots showed both.
+**Root cause:** Accessibility snapshots check names, states, and flow, not position or spacing.
+**Avoid:** For any visual change, capture screenshots at 1024×768 into `.playwright-mcp/` and look at them before committing, in addition to running `npm run walkthrough`.
+
 ### 2026-11-26 — Using a CVC word's picture when it shows something else
 
 **What happened:** The CVC catalogue pairs some words with related pictures: "sat" and "cat" both show a cat, "mat" shows a person doing yoga, "jam" shows a strawberry, and "tin" and "can" share one picture. Used as answers in a picture game, these make a correct blend impossible to identify.

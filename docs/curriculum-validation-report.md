@@ -45,3 +45,7 @@ Doubled consonants (nn, mm, tt…) are accepted once a doubled grapheme (ff, ll,
 | carrot | r (Set 4) | Removed | rr is not taught in Phase 2 |
 
 Phase 4 adjacent-consonant words beyond trap, strong, milk, and crept were added for practice. Irregular pronunciations (for example *of*, *as*, *sure*, and unstressed vowels in longer Phase 5 words) are recorded as notes, not errors. A phonics specialist has not reviewed the sequence or word lists.
+
+### Readers (26 November 2026)
+
+Six four-page readers (`src/data/lettersAndSounds/readers.ts`) pass the same check: each is decodable after its stated correspondence, and tricky words come only from its own or earlier phases. The readers were written for this app and have not been specialist-reviewed. Sound-by-sound playback gives th its /θ/ sound in "then", and readers avoid short-oo words.
