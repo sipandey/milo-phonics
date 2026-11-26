@@ -1,4 +1,4 @@
-import type { LettersAndSoundsProgramme } from '../types/lettersAndSounds';
+import type { LettersAndSoundsProgramme, LettersAndSoundsReader } from '../types/lettersAndSounds';
 
 export type LettersAndSoundsFindingCode =
   | 'DUPLICATE_ID'
@@ -6,7 +6,10 @@ export type LettersAndSoundsFindingCode =
   | 'MALFORMED_WORD'
   | 'UNTAUGHT_GRAPHEME'
   | 'MISSING_TARGET_GRAPHEME'
-  | 'NO_ADJACENT_CONSONANTS';
+  | 'NO_ADJACENT_CONSONANTS'
+  | 'UNTAUGHT_TRICKY_WORD'
+  | 'UNKNOWN_GPC'
+  | 'EMPTY_READER';
 
 export interface LettersAndSoundsFinding {
   readonly code: LettersAndSoundsFindingCode;
@@ -97,7 +100,8 @@ export function validateLettersAndSounds(programme: LettersAndSoundsProgramme): 
   const seenTrickyWords = new Set<string>();
   let allowDoubledConsonants = false;
 
-  const checkWord = (itemPrefix: string, segmented: string, targets: readonly string[] | null) => {
+  /** `targets`: graphemes the word must contain; `adjacent`: needs adjacent consonants; `any`: decodability only. */
+  const checkWord = (itemPrefix: string, segmented: string, targets: readonly string[] | 'adjacent' | 'any') => {
     let parsed: ParsedWord;
     try {
       parsed = parseSegmentedWord(segmented);
@@ -110,11 +114,48 @@ export function validateLettersAndSounds(programme: LettersAndSoundsProgramme): 
     if (missing.length > 0) {
       add('UNTAUGHT_GRAPHEME', itemId, `"${parsed.text}" uses ${missing.join(', ')} before it is taught`);
     }
-    if (targets && !parsed.graphemes.some((grapheme) => targets.includes(grapheme))) {
+    if (Array.isArray(targets) && !parsed.graphemes.some((grapheme) => targets.includes(grapheme))) {
       add('MISSING_TARGET_GRAPHEME', itemId, `"${parsed.text}" does not contain ${targets.join(' or ')}`);
     }
-    if (!targets && !parsed.graphemes.some((g, i) => isConsonantGrapheme(g) && isConsonantGrapheme(parsed.graphemes[i + 1] ?? 'a'))) {
+    if (targets === 'adjacent' && !parsed.graphemes.some((g, i) => isConsonantGrapheme(g) && isConsonantGrapheme(parsed.graphemes[i + 1] ?? 'a'))) {
       add('NO_ADJACENT_CONSONANTS', itemId, `"${parsed.text}" has no adjacent consonants`);
+    }
+  };
+
+  const allGpcIds = new Set(programme.phases.flatMap((phase) => phase.sets.flatMap((set) => set.gpcs.map((gpc) => gpc.id))));
+  const readersByGpc = new Map<string, { phaseId: number; reader: LettersAndSoundsReader }[]>();
+  const seenReaderIds = new Set<string>();
+  for (const phase of programme.phases) {
+    for (const reader of phase.readers ?? []) {
+      const itemId = `reader.${reader.id}`;
+      if (seenReaderIds.has(itemId)) add('DUPLICATE_ID', itemId, `Duplicate reader ID ${reader.id}`);
+      seenReaderIds.add(itemId);
+      if (reader.pages.length === 0) add('EMPTY_READER', itemId, `Reader ${reader.id} has no pages`);
+      if (!allGpcIds.has(reader.afterGpcId)) {
+        add('UNKNOWN_GPC', itemId, `Reader ${reader.id} follows unknown correspondence ${reader.afterGpcId}`);
+        continue;
+      }
+      readersByGpc.set(reader.afterGpcId, [...(readersByGpc.get(reader.afterGpcId) ?? []), { phaseId: phase.id, reader }]);
+    }
+  }
+  const trickyAvailableIn = (phaseId: number) =>
+    new Set(programme.phases.filter((phase) => phase.id <= phaseId).flatMap((phase) => phase.trickyWords.map((w) => w.toLowerCase())));
+
+  const checkReaders = (gpcId: string) => {
+    for (const { phaseId, reader } of readersByGpc.get(gpcId) ?? []) {
+      const tricky = trickyAvailableIn(phaseId);
+      for (const page of reader.pages) {
+        for (const word of page.words) {
+          if (word.startsWith('*')) {
+            const text = word.slice(1);
+            if (!tricky.has(text.toLowerCase())) {
+              add('UNTAUGHT_TRICKY_WORD', `reader.${reader.id}:${text}`, `"${text}" is not a tricky word taught by Phase ${phaseId}`);
+            }
+          } else {
+            checkWord(`reader.${reader.id}`, word, 'any');
+          }
+        }
+      }
     }
   };
 
@@ -130,10 +171,11 @@ export function validateLettersAndSounds(programme: LettersAndSoundsProgramme): 
           if (isDoubledConsonant(grapheme)) allowDoubledConsonants = true;
         }
         for (const word of gpc.words) checkWord(gpc.id, word, targets);
+        checkReaders(gpc.id);
       }
     }
 
-    for (const word of phase.adjacentConsonantWords ?? []) checkWord(`phase.${phase.id}`, word, null);
+    for (const word of phase.adjacentConsonantWords ?? []) checkWord(`phase.${phase.id}`, word, 'adjacent');
 
     for (const tricky of phase.trickyWords) {
       const key = tricky.toLowerCase();

@@ -197,3 +197,50 @@ describe('Letters and Sounds programme data', () => {
     expect(LETTERS_AND_SOUNDS.phases.map((p) => p.id)).toEqual([1, 2, 3, 4, 5]);
   });
 });
+
+describe('readers', () => {
+  const reader = (overrides: Record<string, unknown> = {}) => ({
+    id: 'r1',
+    title: 'Sam',
+    afterGpcId: 'gpc.m',
+    pages: [{ words: ['S.a.m', 's.a.t'], end: '.', picture: '🧒' }],
+    ...overrides,
+  });
+  const withReaders = (readers: unknown[], trickyWords: string[] = []) =>
+    programme([
+      phase({
+        sets: [{ id: 'set.1', title: 'Set 1', gpcs: [gpc('s'), gpc('a'), gpc('t'), gpc('m'), gpc('p')] }],
+        trickyWords,
+        readers: readers as LettersAndSoundsPhase['readers'],
+      }),
+    ]);
+
+  it('passes a reader decodable at its correspondence', () => {
+    expect(codes(withReaders([reader()]))).toEqual([]);
+  });
+
+  it('flags a reader word that needs a sound taught after its correspondence', () => {
+    expect(codes(withReaders([reader({ pages: [{ words: ['p.a.t'], end: '.', picture: '🐶' }] })]))).toContain('UNTAUGHT_GRAPHEME:reader.r1:pat');
+  });
+
+  it('accepts tricky words of the same phase and flags unknown ones', () => {
+    const page = { words: ['*the', 'c.a.t'], end: '.', picture: '🐱' };
+    expect(codes(withReaders([reader({ pages: [{ words: ['*the', 'm.a.t'], end: '.', picture: '🧘' }] })], ['the']))).toEqual([]);
+    expect(codes(withReaders([reader({ pages: [page] })], []))).toContain('UNTAUGHT_TRICKY_WORD:reader.r1:the');
+  });
+
+  it('flags an unknown correspondence, duplicate reader IDs, and empty pages', () => {
+    const found = codes(withReaders([reader({ afterGpcId: 'gpc.zz' }), reader(), reader({ id: 'r2', pages: [] })]));
+    expect(found).toContain('UNKNOWN_GPC:reader.r1');
+    expect(found).toContain('DUPLICATE_ID:reader.r1');
+    expect(found).toContain('EMPTY_READER:reader.r2');
+  });
+
+  it('has Phase 2 and Phase 3 readers in the programme with four pages each', () => {
+    for (const phaseId of [2, 3]) {
+      const readers = LETTERS_AND_SOUNDS.phases.find((p) => p.id === phaseId)?.readers ?? [];
+      expect(readers.length, `phase ${phaseId}`).toBeGreaterThanOrEqual(3);
+      for (const r of readers) expect(r.pages, r.id).toHaveLength(4);
+    }
+  });
+});

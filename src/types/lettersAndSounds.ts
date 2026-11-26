@@ -37,6 +37,21 @@ export interface PhaseOneAspect {
   readonly activityIdeas: readonly string[];
 }
 
+export interface ReaderPage {
+  /** Segmented words; a leading `*` marks a tricky word, e.g. `*the`. */
+  readonly words: readonly string[];
+  readonly end: '.' | '!' | '?';
+  readonly picture: string;
+}
+
+/** A short decodable reader, readable once `afterGpcId` has been taught. */
+export interface LettersAndSoundsReader {
+  readonly id: string;
+  readonly title: string;
+  readonly afterGpcId: string;
+  readonly pages: readonly ReaderPage[];
+}
+
 export interface LettersAndSoundsPhase {
   readonly id: LettersAndSoundsPhaseId;
   readonly title: string;
@@ -48,6 +63,8 @@ export interface LettersAndSoundsPhase {
   readonly aspects?: readonly PhaseOneAspect[];
   /** Phase 4 only: words with adjacent consonants, built from known correspondences. */
   readonly adjacentConsonantWords?: readonly string[];
+  /** Short decodable readers using this phase's sounds and tricky words up to this phase. */
+  readonly readers?: readonly LettersAndSoundsReader[];
 }
 
 export interface LettersAndSoundsProgramme {
