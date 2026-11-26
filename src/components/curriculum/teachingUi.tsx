@@ -1,4 +1,6 @@
 import React from 'react';
+import { LETTERS_AND_SOUNDS } from '../../data/lettersAndSounds';
+import { hasWholeWordAudio, wordSoundSymbols } from '../../curriculum/soundPage';
 import { audioService } from '../../services/audioService';
 import { teachingProgressStore } from '../../services/teachingProgressStore';
 import { DEFAULT_CHILD_ID, markItem } from '../../services/teachingProgress';
@@ -58,4 +60,15 @@ export async function playSymbols(symbols: readonly string[], isCurrent: () => b
     await audioService.playOxfordSound(symbol, 'isolation', { interrupt: true });
     await new Promise((resolve) => setTimeout(resolve, 150));
   }
+}
+
+/** Play a word sound by sound, then the whole word where a recording exists. */
+export async function playWordSoundBySound(
+  segmented: string,
+  text: string,
+  isCurrent: () => boolean,
+  preferredGpcId?: string,
+): Promise<void> {
+  await playSymbols(wordSoundSymbols(LETTERS_AND_SOUNDS, segmented, preferredGpcId).flat(), isCurrent);
+  if (isCurrent() && hasWholeWordAudio(text)) await audioService.playCvcWord(text);
 }

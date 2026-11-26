@@ -18,10 +18,12 @@ function pickWords(seed: number) {
 
 interface SoundBoxesActivityProps {
   readonly onExit: () => void;
+  /** Where the back and finish buttons go, e.g. "curriculum map" or "today's session". */
+  readonly exitTo?: string;
 }
 
 /** Oral segmenting: tap one box per sound, then hear the whole word. No letters are shown. */
-export const SoundBoxesActivity: React.FC<SoundBoxesActivityProps> = ({ onExit }) => {
+export const SoundBoxesActivity: React.FC<SoundBoxesActivityProps> = ({ onExit, exitTo = 'curriculum map' }) => {
   const doc = useTeachingProgress();
   const [words, setWords] = useState(() => pickWords(Date.now()));
   const [index, setIndex] = useState(0);
@@ -59,7 +61,7 @@ export const SoundBoxesActivity: React.FC<SoundBoxesActivityProps> = ({ onExit }
         <button
           type="button"
           onClick={onExit}
-          aria-label="Back to curriculum map"
+          aria-label={`Back to ${exitTo}`}
           className="min-h-[56px] min-w-[56px] rounded-2xl bg-white border-2 border-gray-200 flex items-center justify-center cursor-pointer"
         >
           <ArrowLeft className="w-6 h-6" />
@@ -134,7 +136,7 @@ export const SoundBoxesActivity: React.FC<SoundBoxesActivityProps> = ({ onExit }
               Play again
             </button>
             <button type="button" onClick={onExit} className="min-h-[72px] px-6 rounded-3xl bg-white border-2 border-gray-200 font-black cursor-pointer">
-              Back to map
+              {exitTo === 'curriculum map' ? 'Back to map' : `Back to ${exitTo}`}
             </button>
           </div>
         </section>
