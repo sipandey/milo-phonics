@@ -4,6 +4,8 @@ import { BLENDING_WORDS } from '../src/data/blendingData.ts';
 import { cvcAudioManifest } from '../src/data/cvcAudioManifest.ts';
 import { CURRICULUM_LEVELS } from '../src/data/curriculumData.ts';
 import { validateCurriculum } from './curriculumValidation.ts';
+import { LETTERS_AND_SOUNDS } from '../src/data/lettersAndSounds/index.ts';
+import { validateLettersAndSounds } from '../src/curriculum/lettersAndSoundsValidation.ts';
 
 const audioIds = new Set<string>();
 const localAssetPaths = new Set<string>();
@@ -32,4 +34,25 @@ if (findings.length > 0) {
   process.exitCode = 1;
 } else {
   console.log(`Curriculum validation passed for ${BLENDING_WORDS.length} blending entries.`);
+}
+
+const programmeFindings = validateLettersAndSounds(LETTERS_AND_SOUNDS);
+const programmeWordCount = LETTERS_AND_SOUNDS.phases.reduce(
+  (total, phase) =>
+    total +
+    (phase.adjacentConsonantWords?.length ?? 0) +
+    phase.sets.reduce((setTotal, set) => setTotal + set.gpcs.reduce((n, gpc) => n + gpc.words.length, 0), 0),
+  0,
+);
+
+if (programmeFindings.length > 0) {
+  console.error(`Letters and Sounds validation found ${programmeFindings.length} finding(s):`);
+  for (const finding of programmeFindings) {
+    console.error(`- [${finding.code}] ${finding.itemId}: ${finding.message}`);
+  }
+  process.exitCode = 1;
+} else {
+  console.log(
+    `Letters and Sounds validation passed for ${LETTERS_AND_SOUNDS.phases.length} phase(s) and ${programmeWordCount} words.`,
+  );
 }
