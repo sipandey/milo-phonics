@@ -8,9 +8,11 @@ interface KeyValueStorage {
   setItem(key: string, value: string): void;
 }
 
-type Listener = (doc: TeachingProgressDoc) => void;
+export type TeachingProgressChangeSource = 'local' | 'cloud';
 
-/** Keeps teaching progress on this device and tells subscribers about local changes. */
+type Listener = (doc: TeachingProgressDoc, source: TeachingProgressChangeSource) => void;
+
+/** Keeps teaching progress on this device and tells subscribers about every change and its source. */
 export class TeachingProgressStore {
   private doc: TeachingProgressDoc;
   private readonly listeners = new Set<Listener>();
@@ -42,20 +44,27 @@ export class TeachingProgressStore {
 
   public subscribe(listener: Listener): () => void {
     this.listeners.add(listener);
-    return () => this.listeners.delete(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  }
+
+  private notify(source: TeachingProgressChangeSource): void {
+    this.listeners.forEach((listener) => listener(this.doc, source));
   }
 
   /** Apply a local change (a parent mark), save it, and notify subscribers. */
   public update(change: (doc: TeachingProgressDoc) => TeachingProgressDoc): void {
     this.doc = change(this.doc);
     this.write();
-    this.listeners.forEach((listener) => listener(this.doc));
+    this.notify('local');
   }
 
-  /** Merge data from Clerk and save it without notifying, so it does not trigger another upload. */
+  /** Merge data from Clerk and save it. Sync listeners should ignore `cloud` changes to avoid re-uploading. */
   public mergeFromCloud(raw: unknown): void {
     this.doc = mergeTeachingProgress(this.doc, sanitizeTeachingProgress(raw));
     this.write();
+    this.notify('cloud');
   }
 }
 

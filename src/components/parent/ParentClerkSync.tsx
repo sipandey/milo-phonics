@@ -89,7 +89,9 @@ const ClerkActiveSync: React.FC = () => {
       }, 800);
     };
     const unsubscribeProgress = progressService.subscribe(scheduleSync);
-    const unsubscribeTeaching = teachingProgressStore.subscribe(scheduleSync);
+    const unsubscribeTeaching = teachingProgressStore.subscribe((_doc, source) => {
+      if (source === 'local') scheduleSync();
+    });
 
     void handleSyncToCloud(true);
 
