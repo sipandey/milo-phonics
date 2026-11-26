@@ -6,9 +6,7 @@ import './index.css';
 import { isClerkEnabled, CLERK_PUBLISHABLE_KEY, CLERK_PROXY_URL } from './components/parent/ParentClerkSync';
 import { ClerkAuthPage } from './components/parent/ClerkAuthPage';
 import { getClerkAuthRoute } from './components/parent/clerkAuthRoutes';
-import { initializeSentry } from './observability/sentry';
-
-initializeSentry();
+import { AppErrorBoundary } from './components/common/AppErrorBoundary';
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -30,14 +28,18 @@ if (isClerkEnabled && CLERK_PUBLISHABLE_KEY) {
         signInFallbackRedirectUrl="/"
         signUpFallbackRedirectUrl="/"
       >
-        {clerkAuthRoute ? <ClerkAuthPage route={clerkAuthRoute} /> : <App />}
+        <AppErrorBoundary>
+          {clerkAuthRoute ? <ClerkAuthPage route={clerkAuthRoute} /> : <App />}
+        </AppErrorBoundary>
       </ClerkProvider>
     </React.StrictMode>,
   );
 } else {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
-      <App />
+      <AppErrorBoundary>
+        <App />
+      </AppErrorBoundary>
     </React.StrictMode>,
   );
 }
