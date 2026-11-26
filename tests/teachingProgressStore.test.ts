@@ -35,7 +35,7 @@ describe('TeachingProgressStore', () => {
     expect(listener).toHaveBeenCalledTimes(1);
   });
 
-  it('merges synced data without notifying, so applying cloud data does not trigger another upload', () => {
+  it('tags each change as local or cloud, so screens refresh but sync does not re-upload cloud data', () => {
     const store = new TeachingProgressStore(memoryStorage());
     const listener = vi.fn();
     store.subscribe(listener);
@@ -43,7 +43,10 @@ describe('TeachingProgressStore', () => {
 
     store.mergeFromCloud(JSON.parse(JSON.stringify(cloud)));
     expect(getItemState(store.get(), DEFAULT_CHILD_ID, 'gpc.t')?.status).toBe('with-help');
-    expect(listener).not.toHaveBeenCalled();
+    expect(listener).toHaveBeenLastCalledWith(store.get(), 'cloud');
+
+    store.update((doc) => markItem(doc, DEFAULT_CHILD_ID, 'gpc.s', 'secure', now));
+    expect(listener).toHaveBeenLastCalledWith(store.get(), 'local');
   });
 
   it('keeps working when storage writes fail', () => {

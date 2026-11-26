@@ -9,6 +9,8 @@ import { OxfordSoundsScreen } from './components/sounds/OxfordSoundsScreen';
 import { SoundTrainScreen } from './components/train/SoundTrainScreen';
 import { BubblePopScreen } from './components/game/BubblePopScreen';
 import { FeedMiloScreen } from './components/game/FeedMiloScreen';
+import { CurriculumMapScreen } from './components/curriculum/CurriculumMapScreen';
+import { SoundPageScreen } from './components/curriculum/SoundPageScreen';
 import { ParentGateModal } from './components/common/ParentGateModal';
 import { ParentDashboard } from './components/parent/ParentDashboard';
 import { TeaserModal } from './components/common/TeaserModal';
@@ -16,6 +18,7 @@ import { TeaserModal } from './components/common/TeaserModal';
 export function App() {
   const [currentScreen, setCurrentScreen] = useState<ScreenType>('home');
   const [selectedLetterId, setSelectedLetterId] = useState<string>('m');
+  const [selectedGpcId, setSelectedGpcId] = useState<string>('gpc.s');
   const [isParentGateOpen, setIsParentGateOpen] = useState(false);
   const [isParentDashboardOpen, setIsParentDashboardOpen] = useState(false);
   const [teaser, setTeaser] = useState<{ isOpen: boolean; title: string; message: string }>({
@@ -63,6 +66,16 @@ export function App() {
 
   const handleGoHome = () => {
     setCurrentScreen('home');
+  };
+
+  const handleOpenCurriculumMap = () => {
+    setIsParentDashboardOpen(false);
+    setCurrentScreen('curriculum-map');
+  };
+
+  const handleOpenSound = (gpcId: string) => {
+    setSelectedGpcId(gpcId);
+    setCurrentScreen('sound-page');
   };
 
   const handleOpenParentGate = () => {
@@ -150,6 +163,14 @@ export function App() {
         />
       )}
 
+      {currentScreen === 'curriculum-map' && (
+        <CurriculumMapScreen onBack={handleGoHome} onOpenSound={handleOpenSound} />
+      )}
+
+      {currentScreen === 'sound-page' && (
+        <SoundPageScreen gpcId={selectedGpcId} onBack={() => setCurrentScreen('curriculum-map')} />
+      )}
+
       {/* Parent Gate Modal */}
       <ParentGateModal
         isOpen={isParentGateOpen}
@@ -159,7 +180,10 @@ export function App() {
 
       {/* Parent Dashboard Modal */}
       {isParentDashboardOpen && (
-        <ParentDashboard onClose={() => setIsParentDashboardOpen(false)} />
+        <ParentDashboard
+          onClose={() => setIsParentDashboardOpen(false)}
+          onOpenCurriculumMap={handleOpenCurriculumMap}
+        />
       )}
 
       {/* Teaser Modal for upcoming Safari & Stories */}

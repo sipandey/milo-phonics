@@ -17,7 +17,7 @@ The core child flow is designed to work without an account. Parent-only settings
 | Word blending | CVC/VC blending entries and sequential audio interaction | Implemented through manifest-backed records; content review pending |
 | Games | Let's Play, Sound Train, Bubble Pop, and Feed Milo flows are present | Implemented surface; release evidence pending |
 | Progress | LocalStorage persistence, v1 migration, exploration/practice evidence, star tracking, level unlocking, and resume position | Implemented |
-| Parent controls | Arithmetic gate, dashboard, reset, and optional parent sync | Gate now uses browser crypto randomness when available and a bounded retry lockout; identity, legal-consent, account deletion, and future purchase/support protections remain open |
+| Parent controls | Arithmetic gate, dashboard, reset, optional parent sync, and a Letters and Sounds curriculum map with sound pages for recording teaching progress | Gate now uses browser crypto randomness when available and a bounded retry lockout; identity, legal-consent, account deletion, and future purchase/support protections remain open |
 | Audio runtime | Local pre-recorded assets through semantic IDs; Web Audio procedural SFX; HTML audio playback | Implemented |
 | PWA/offline install | E6.1 manifest/icons and E6.2 generated service worker are implemented; the worker precaches the built shell and bundled media | HTTPS install/offline browser verification pending; no fully-offline claim |
 | Android | No native Android project or Play release | Planned |
