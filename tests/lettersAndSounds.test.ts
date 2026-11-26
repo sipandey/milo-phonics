@@ -48,6 +48,12 @@ describe('parseSegmentedWord', () => {
     expect(parseSegmentedWord('T.i.m').graphemes).toEqual(['t', 'i', 'm']);
   });
 
+  it('ignores a pronunciation mark when building text and graphemes', () => {
+    expect(parseSegmentedWord('a.s=z')).toEqual({ text: 'as', graphemes: ['a', 's'] });
+    expect(parseSegmentedWord('th=ð.e.n')).toEqual({ text: 'then', graphemes: ['th', 'e', 'n'] });
+    expect(() => parseSegmentedWord('a.s=')).toThrow();
+  });
+
   it('rejects empty graphemes', () => {
     expect(() => parseSegmentedWord('s..t')).toThrow();
     expect(() => parseSegmentedWord('')).toThrow();

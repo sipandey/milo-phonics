@@ -21,6 +21,11 @@ describe('graphemeMarks', () => {
     ]);
   });
 
+  it('hides pronunciation marks', () => {
+    expect(graphemeMarks('a.s=z')).toEqual([{ text: 'a', mark: 'dot' }, { text: 's', mark: 'dot' }]);
+    expect(readerPageText({ words: ['th=ð.e.n', '*we', 's.ee'], end: '!', picture: '☀️' })).toBe('Then we see!');
+  });
+
   it('keeps capitals and hyphens', () => {
     expect(graphemeMarks('S.a.m')[0]).toEqual({ text: 'S', mark: 'dot' });
     expect(graphemeMarks('z.i.g|z.a.g').map((g) => g.text).join('')).toBe('zig-zag');

@@ -53,6 +53,28 @@ describe('wordSoundSymbols', () => {
     expect(wordSoundSymbols(LETTERS_AND_SOUNDS, 'qu.i.t')).toEqual([['k', 'w'], ['ɪ'], ['t']]);
   });
 
+  it('uses a word’s own pronunciation where a letter makes a different sound', () => {
+    expect(wordSoundSymbols(LETTERS_AND_SOUNDS, 'a.s=z')).toEqual([['æ'], ['z']]);
+    expect(wordSoundSymbols(LETTERS_AND_SOUNDS, 'th=ð.e.n')[0]).toEqual(['ð']);
+    expect(wordSoundSymbols(LETTERS_AND_SOUNDS, 'o.f=v')[1]).toEqual(['v']);
+  });
+
+  it('marks as, is, his, of, that, has, and then with their real sounds', () => {
+    const all = JSON.stringify(LETTERS_AND_SOUNDS);
+    for (const word of ['a.s=z', 'i.s=z', 'h.i.s=z', 'o.f=v', 'th=ð.a.t', 'h.a.s=z', 'th=ð.e.n']) expect(all, word).toContain(`"${word}"`);
+    expect(all).not.toMatch(/"(a\.s|i\.s|h\.i\.s|o\.f|h\.a\.s|th\.a\.t|th\.e\.n)"/);
+  });
+
+  it('has a bundled sound file for every pronunciation used in a word', () => {
+    const overrides = [...JSON.stringify(LETTERS_AND_SOUNDS).matchAll(/=([^.|"]+)/g)].map((m) => m[1]!);
+    expect(overrides.length).toBeGreaterThan(0);
+    for (const phoneme of overrides) {
+      for (const symbol of phonemeAudioSymbols(phoneme)) {
+        expect(existsSync(resolve('public/audio', `${symbol}_isolation.mp3`)), phoneme).toBe(true);
+      }
+    }
+  });
+
   it('uses the preferred correspondence when a grapheme has two sounds', () => {
     expect(wordSoundSymbols(LETTERS_AND_SOUNDS, 'b.oo.k', 'gpc.oo-short')[1]).toEqual(['ʊ']);
     expect(wordSoundSymbols(LETTERS_AND_SOUNDS, 'm.oo.n', 'gpc.oo-long')[1]).toEqual(['uː']);

@@ -30,7 +30,23 @@ export interface DecodabilityOptions {
 const VOWEL_LETTERS = /[aeiou]/;
 const SPLIT_DIGRAPH = /^[a-z]-e$/i;
 
-/** Parse a segmented word such as `k.i.ck`, `m.a-e.k`, or `z.i.g|z.a.g`. */
+/**
+ * Split a token into its grapheme and an optional pronunciation, written
+ * `grapheme=IPA` when a letter makes a different sound in this word (`s=z` in "as").
+ */
+function splitToken(token: string, segmented: string): { grapheme: string; pronunciation: string | null } {
+  const [grapheme = '', pronunciation, ...rest] = token.split('=');
+  if (pronunciation === undefined) return { grapheme, pronunciation: null };
+  if (grapheme === '' || pronunciation === '' || rest.length > 0) throw new Error(`Malformed pronunciation "${token}" in "${segmented}"`);
+  return { grapheme, pronunciation };
+}
+
+/** The pronunciation mark for each grapheme of a word, or null where it makes its usual sound. */
+export function parsePronunciations(segmented: string): (string | null)[] {
+  return segmented.split('|').flatMap((part) => part.split('.').map((token) => splitToken(token, segmented).pronunciation));
+}
+
+/** Parse a segmented word such as `k.i.ck`, `m.a-e.k`, `a.s=z`, or `z.i.g|z.a.g`. */
 export function parseSegmentedWord(segmented: string): ParsedWord {
   if (segmented.trim() === '') throw new Error('Segmented word is empty');
 
@@ -39,8 +55,9 @@ export function parseSegmentedWord(segmented: string): ParsedWord {
     const tokens = part.split('.');
     let text = '';
     let pendingE = '';
-    tokens.forEach((token, index) => {
-      if (token === '') throw new Error(`Empty grapheme in "${segmented}"`);
+    tokens.forEach((rawToken, index) => {
+      if (rawToken === '') throw new Error(`Empty grapheme in "${segmented}"`);
+      const token = splitToken(rawToken, segmented).grapheme;
       if (SPLIT_DIGRAPH.test(token)) {
         if (index === tokens.length - 1) throw new Error(`Split digraph has no following grapheme in "${segmented}"`);
         text += token[0];

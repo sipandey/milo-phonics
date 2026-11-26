@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { LETTERS_AND_SOUNDS } from '../../data/lettersAndSounds';
 import { readerPageText } from '../../curriculum/graphemeMarks';
+import { parseSegmentedWord } from '../../curriculum/lettersAndSoundsValidation';
 import { useTeachingProgress } from '../../hooks/useTeachingProgress';
 import { DEFAULT_CHILD_ID, getItemState } from '../../services/teachingProgress';
 import { GraphemeWord } from './GraphemeWord';
@@ -42,7 +43,7 @@ export const ReaderScreen: React.FC<ReaderScreenProps> = ({ readerId, onBack }) 
       return;
     }
     setTrickyHint(null);
-    const text = token.replace(/\./g, '').replace(/\|/g, '-');
+    const text = parseSegmentedWord(token).text;
     void playWordSoundBySound(token, text, () => tokenRef.current === playToken);
   };
 
@@ -81,7 +82,7 @@ export const ReaderScreen: React.FC<ReaderScreenProps> = ({ readerId, onBack }) 
                 <button
                   type="button"
                   onClick={() => tapWord(token)}
-                  aria-label={token.startsWith('*') ? `Tricky word ${token.slice(1)}` : `Hear ${token.replace(/\./g, '')} sound by sound`}
+                  aria-label={token.startsWith('*') ? `Tricky word ${token.slice(1)}` : `Hear ${parseSegmentedWord(token).text} sound by sound`}
                   className="min-h-[72px] px-2 rounded-2xl cursor-pointer hover:bg-amber-50"
                 >
                   {token.startsWith('*') ? (
