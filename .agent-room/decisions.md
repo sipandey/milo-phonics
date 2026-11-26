@@ -16,6 +16,12 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-26 — Store parent-recorded teaching progress as a separate v3 record
+
+**Decision:** Add `milo_teaching_progress_v3` alongside the existing progress record instead of rewriting it. Items are sounds, tricky words, blending per set, and Phase 1 aspects (about 126), each stored as a compact tuple [status, last practised day, count, updated time], keyed by child ID. Sync merges per item with the newest change winning, including removals. The new record starts empty rather than migrating old taps and stars. When Clerk metadata would exceed about 8 KB, the legacy record is left out of the upload before teaching progress. This replaces the design's "migrate existing progress" wording for this step.
+**Why:** The current screens still depend on the legacy record until step 4. Taps are not evidence of knowing a sound, so carrying them over would mislead. Per-word records would need about 14 KB and exceed Clerk's limit; per-set blending keeps a fully marked record under 5 KB.
+**Rejected:** Per-word progress, seeding statuses from explored letters, dropping unknown item IDs on load (would lose data across content versions), and failing the whole sync when the legacy record is large.
+
 ### 2026-11-26 — Model Letters and Sounds as a separate, checked programme
 
 **Decision:** Add Phases 1–5 as typed data in `src/data/lettersAndSounds/`, with words written as segmented strings (`k.i.ck`, `m.a-e.k`) and a checker that walks the programme in teaching order. Words must be decodable at the exact correspondence they are listed under, not just by the end of the set. Doubled consonants count once ff/ll/ss are taught. The existing 7-level catalogue stays in place until the screens move over (design step 4).

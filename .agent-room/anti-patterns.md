@@ -21,6 +21,12 @@ Append a new entry every time:
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-26 — Adding synced data to Clerk metadata without measuring the total
+
+**What happened:** Planning a new synced record showed that the existing synced progress could reach about 6 KB on its own (84 explored objects and per-letter practice evidence), so adding more could silently push the account past Clerk's roughly 8 KB metadata limit.
+**Root cause:** Each record was sized on its own; nothing checked the combined `unsafeMetadata` size before `user.update`.
+**Avoid:** Build Clerk updates through `buildClerkMetadata`, which measures the whole metadata object, and add a worst-case size test for any new synced record.
+
 ### 2026-11-26 — Trusting per-letter source word lists as decodable at that letter
 
 **What happened:** The supplied Letters and Sounds lists put "Ken" under k, "pocket" under ck, and "run" under u, but each uses a letter taught later in the sequence; "carrot" needs rr, which Phase 2 never teaches.

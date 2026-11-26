@@ -11,11 +11,11 @@ This draft describes the repository and reviewed deployment as they currently ex
 
 Milo Phonics can be used without an account. Core progress is kept in this browser using LocalStorage, including the current level, stars, explored letters and objects, tap counts, last-played position, and focus-mode setting.
 
-The current progress key is `playful_phonics_progress_v2`; an older `playful_phonics_progress_v1` key may be read once for migration. Browser storage remains on this device unless a parent signs in to sync progress. Clearing site data or using **Reset All Progress** removes the local progress held by this app.
+The current progress key is `playful_phonics_progress_v2`; an older `playful_phonics_progress_v1` key may be read once for migration. Browser storage remains on this device unless a parent signs in to sync progress. Teaching progress that a parent records (sounds introduced; not yet, with help, or secure; last practised date; and practice count) is kept under `milo_teaching_progress_v3`. Clearing site data or using **Reset All Progress** removes the local progress held by this app.
 
 ## Parent account and cloud backup
 
-If a parent chooses to sign in, the optional Clerk integration may process parent account details such as an email address or name, authentication data, and the progress metadata that the parent chooses to sync across devices. The current implementation stores the exported progress in the Clerk user profile metadata and merges it back into this browser.
+If a parent chooses to sign in, the optional Clerk integration may process parent account details such as an email address or name, authentication data, and the progress metadata that the parent chooses to sync across devices, including recorded teaching progress. The current implementation stores the exported progress in the Clerk user profile metadata and merges it back into this browser.
 
 The sign-in and sync path is parent-gated, but the arithmetic gate is a product access control and is not proof of age, parental responsibility, legal consent, or identity. Account deletion, export, retention, controller/processor roles, and international-transfer details still require privacy-owner and vendor review.
 
