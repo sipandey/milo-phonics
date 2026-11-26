@@ -16,6 +16,12 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-26 — Use Playwright MCP for browser checks before pushing
+
+**Decision:** Register `@playwright/mcp@0.0.86` in the project `.mcp.json`, running the installed Google Chrome with `--isolated`, and require a Playwright walkthrough of every changed screen before pushing (documented in `CLAUDE.md`).
+**Why:** The desktop app's built-in browser refused to open localhost, so step 4 screens were only checked by server-render tests. Playwright MCP was verified to open the dev server and return a page snapshot. An isolated profile keeps the user's Chrome data out of test runs, and pinning keeps behaviour reproducible.
+**Rejected:** `@latest` (unpinned), Playwright's bundled Chromium (would need a browser download), using the user's own Chrome profile, and relying on server-render tests alone for UI work.
+
 ### 2026-11-26 — Put the curriculum map and sound pages in the parent area
 
 **Decision:** Open the curriculum map from the parent dashboard (behind the arithmetic gate). The map shows Phases 1–5, sound tiles coloured by status, blending per set, tricky words, and a Practise these bar. Each sound page plays the sound from the bundled sound library, records marks, and lists words; words are played sound by sound, then whole where a recorded file exists. Practice words must contain a focus sound and use only introduced or focus sounds. Linking sound pages to Bubble Pop and Feed Milo is left to step 5, because those games are tied to the old 7 levels.
