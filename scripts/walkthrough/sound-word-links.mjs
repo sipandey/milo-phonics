@@ -35,6 +35,20 @@ await r.step('a Teach picture plays the sound, then the word', async () => {
   const played = await newAudio();
   if (played.length < 2 || played[0] !== 's_isolation.mp3' || !/words\/word\.sun/.test(played[1])) throw new Error(`played ${played.join(' → ')}`);
 });
+/** Tap each picture until one is accepted; each must play a sound (optionally `sameSound`) then a word. */
+const checkPicks = async (label, sameSound) => {
+  const names = (await s.snapshot()).split('\n').map((l) => l.match(/button "Picture: ([^"]+)"/)?.[1]).filter(Boolean);
+  if (names.length !== 3) throw new Error(`${label}: ${names.length} pictures`);
+  await newAudio();
+  for (const name of names) {
+    await s.click(new RegExp(`button "Picture: ${name}"`)); await wait(4);
+    const played = await newAudio();
+    if (played.length < 2 || !isSound(played[0]) || !isWord(played[1])) throw new Error(`${label} ${name}: played ${played.join(' → ') || 'nothing'}`);
+    if (sameSound && played[0] !== sameSound) throw new Error(`${label} ${name}: started with ${played[0]}, expected ${sameSound}`);
+    if (await s.has(/button "Next"/)) return name;
+  }
+  throw new Error(`${label}: no picture accepted`);
+};
 let game = '';
 await r.step("today's game practises the taught sound", async () => {
   await s.click(/button "With help"/); await s.click(/button "Next step"/);
@@ -44,28 +58,20 @@ await r.step("today's game practises the taught sound", async () => {
   if (/Robot Milo|First sounds/.test(game)) {
     const played = await newAudio();
     if (played[0] !== 's_isolation.mp3') throw new Error(`${game}: prompt started with ${played[0]}`);
+    if (/Robot Milo/.test(game)) await checkPicks('Robot Milo from Today', 's_isolation.mp3');
   } else {
     console.log(`  (today's game is ${game}; focus check runs for Robot Milo and First sounds only)`);
   }
 });
-const checkPicks = async (label) => {
-  const names = (await s.snapshot()).split('\n').map((l) => l.match(/button "Picture: ([^"]+)"/)?.[1]).filter(Boolean);
-  if (names.length !== 3) throw new Error(`${label}: ${names.length} pictures`);
-  await newAudio();
-  for (const name of names) {
-    await s.click(new RegExp(`button "Picture: ${name}"`)); await wait(4);
-    const played = await newAudio();
-    if (played.length < 2 || !isSound(played[0]) || !isWord(played[1])) throw new Error(`${label} ${name}: played ${played.join(' → ') || 'nothing'}`);
-    if (await s.has(/button "Next"/)) return name;
-  }
-  throw new Error(`${label}: no picture accepted`);
-};
-await r.step('Robot Milo: every pick plays its first sound, then its word', async () => {
+await r.step("Robot Milo: every pick plays the round's sound, then its own word", async () => {
   await s.tool('browser_navigate', { url });
   await installPlayLog();
   await s.click(/button "Parents Dashboard"/); await s.solveParentGate(); await s.click(/button "Curriculum map/); await s.click(/button "Phase 1"/);
-  await s.click(/button "[^"]*Robot Milo/); await wait(3);
-  await checkPicks('Robot Milo');
+  await s.click(/button "[^"]*Robot Milo/); await wait(4);
+  const prompt = await newAudio();
+  const promptSound = prompt.find(isSound);
+  if (!promptSound) throw new Error(`no prompt sound: ${prompt.join(' → ')}`);
+  await checkPicks('Robot Milo', promptSound);
 });
 await r.step('First sounds: every pick plays its first sound, then its word', async () => {
   await s.click(/button "Back to curriculum map"/); await s.click(/button "Phase 1"/);

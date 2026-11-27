@@ -56,8 +56,8 @@ const ACTIVITIES: Record<PictureChoiceActivityId, {
 const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /** Play a picture's first sound, then its word, stopping if another tap starts. */
-async function playSoundThenWord(choice: PictureChoice, isCurrent: () => boolean): Promise<void> {
-  for (const step of choicePlayback(choice)) {
+async function playSoundThenWord(choice: PictureChoice, roundSound: readonly string[] | undefined, isCurrent: () => boolean): Promise<void> {
+  for (const step of choicePlayback(choice, roundSound)) {
     if (!isCurrent()) return;
     if (step.kind === 'sound') {
       await playSymbols(step.symbols, isCurrent);
@@ -131,7 +131,7 @@ export const PictureChoiceActivity: React.FC<PictureChoiceActivityProps> = ({ ac
       setWrongId(choice.id);
     }
     if (config.playsSoundThenWord) {
-      await playSoundThenWord(choice, isCurrent);
+      await playSoundThenWord(choice, round.choiceSound, isCurrent);
       if (correct && isCurrent()) audioService.playChime();
     } else if (correct) {
       audioService.playChime();

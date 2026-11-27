@@ -55,20 +55,36 @@ describe('First sounds practises the taught sound', () => {
   });
 });
 
-describe('every picture plays its first sound, then the word', () => {
-  it('gives each choice its own first sound and word audio', () => {
-    const round = buildBlendingRounds(1, random(), 'gpc.s')[0]!;
-    for (const choice of round.choices) {
-      expect(choicePlayback(choice)).toEqual([
-        { kind: 'sound', symbols: [firstSound(byText.get(choice.id)!.segmented)] },
-        byText.get(choice.id)!.audioId ? { kind: 'word', audioId: byText.get(choice.id)!.audioId } : { kind: 'cvc', word: choice.id },
-      ]);
+describe('Robot Milo picks all say the round’s sound, then their own word', () => {
+  it('plays the focus sound before every picture’s word, right or wrong', () => {
+    for (const round of buildBlendingRounds(5, random(), 'gpc.s')) {
+      for (const choice of round.choices) {
+        const word = byText.get(choice.id)!;
+        expect(choicePlayback(choice, round.choiceSound)).toEqual([
+          { kind: 'sound', symbols: ['s'] },
+          word.audioId ? { kind: 'word', audioId: word.audioId } : { kind: 'cvc', word: choice.id },
+        ]);
+      }
     }
   });
 
-  it('uses the word’s real first sound, including x words that start with another letter', () => {
-    const six = buildBlendingRounds(20, random()).flatMap((r) => r.choices).find((c) => c.id === 'six');
-    if (six) expect(choicePlayback(six)[0]).toEqual({ kind: 'sound', symbols: ['s'] });
+  it('without a focus, uses the target word’s first sound for every picture', () => {
+    for (const round of buildBlendingRounds(5, random())) {
+      const targetSound = wordSoundSymbols(LETTERS_AND_SOUNDS, byText.get(round.correctId)!.segmented)[0];
+      expect(round.choiceSound).toEqual(targetSound);
+      for (const choice of round.choices) expect(choicePlayback(choice, round.choiceSound)[0]).toEqual({ kind: 'sound', symbols: targetSound });
+    }
+  });
+});
+
+describe('First sounds picks say their own first sound', () => {
+  it('keeps each picture’s own first sound', () => {
+    const round = buildFirstSoundRounds(1, random())[0]!;
+    expect(round.choiceSound).toBeUndefined();
+    const byId = new Map(FIRST_SOUND_PICTURES.map((p) => [p.id, p]));
+    for (const choice of round.choices) {
+      expect(choicePlayback(choice, round.choiceSound)[0]).toEqual({ kind: 'sound', symbols: byId.get(choice.id)!.initialSoundSymbols });
+    }
   });
 });
 

@@ -16,6 +16,12 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-27 — Robot Milo picks all say the round's sound
+
+**Decision:** In Robot Milo, every picture tapped in a round plays the same sound before its own word: the focus sound when the game opens from Today with Milo (/s/ … sock, /s/ … egg), otherwise the target word's first sound. First sounds keeps each picture's own first sound. This refines the 2026-11-27 sound-then-word decision for Robot Milo.
+**Why:** The parent found picks saying /s/, /e/, and /k/ in one round confusing and asked for one sound, the one being practised, on every pick.
+**Rejected:** Each picture's own first sound in Robot Milo (the previous behaviour).
+
 ### 2026-11-27 — Link sounds to words: focused games, sound-then-word taps, and sound pictures
 
 **Decision:** When a game opens from Today with Milo, Robot Milo, First sounds, and Sound boxes practise the sound just taught (targets start with it, or contain it if none start with it; distractors start with a different sound). Tapping any picture in Robot Milo or First sounds, right or wrong, plays its first sound then its word, then the feedback; Odd one out keeps playing the word only. The Teach step and sound pages show "Things that start with …" pictures from the letter data (x pictures end with the sound); tapping one plays the sound then the word. Robot Milo's pool adds 14 recorded picture words (sock, star, snake, ant, tie, train, pen, pig, nest, nose, milk, moon, duck, drum).
