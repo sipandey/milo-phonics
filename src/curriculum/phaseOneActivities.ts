@@ -24,10 +24,10 @@ export type PlaybackStep =
   | { readonly kind: 'word'; readonly audioId: string }
   | { readonly kind: 'cvc'; readonly word: string };
 
-/** What a tapped picture plays: its first sound, then the whole word. */
-export function choicePlayback(choice: PictureChoice): PlaybackStep[] {
+/** What a tapped picture plays: a sound (the round's, or its own first sound), then the whole word. */
+export function choicePlayback(choice: PictureChoice, roundSound?: readonly string[]): PlaybackStep[] {
   return [
-    { kind: 'sound', symbols: choice.soundSymbols },
+    { kind: 'sound', symbols: roundSound ?? choice.soundSymbols },
     choice.audioId ? { kind: 'word', audioId: choice.audioId } : { kind: 'cvc', word: choice.id },
   ];
 }
@@ -41,6 +41,8 @@ export interface PictureRound {
   readonly promptWords: readonly string[];
   /** CVC word to say after a correct blend. */
   readonly answerWord?: string;
+  /** When set, every picture plays this sound before its word (Robot Milo's sound for the round). */
+  readonly choiceSound?: readonly string[];
 }
 
 /** Recorded CVC words whose picture clearly shows the word. */
@@ -198,6 +200,8 @@ export function buildBlendingRounds(count: number, random: () => number, focusGp
   const containing = focus ? BLENDING_PICTURE_WORDS.filter((w) => graphemeSounds(w.segmented).some((s) => s.join('') === focus)) : [];
   const targets = starting.length > 0 ? starting : containing.length > 0 ? containing : BLENDING_PICTURE_WORDS;
   const targetFirst = (word: BlendingPictureWord) => firstSoundKey(word.segmented);
+  const focusGpc = focusGpcId ? findGpc(LETTERS_AND_SOUNDS, focusGpcId)?.gpc : undefined;
+  const focusSymbols = focusGpc ? phonemeAudioSymbols(focusGpc.phoneme) : null;
   return fillTo(focus ? targets : shuffle(targets, random), count, random).map((target) => {
     const distractors = pickDistractors(BLENDING_PICTURE_WORDS, target, random, (c) => targetFirst(c) === targetFirst(target) || (focus !== null && targetFirst(c) === focus));
     return {
@@ -206,6 +210,7 @@ export function buildBlendingRounds(count: number, random: () => number, focusGp
       promptSymbols: wordSoundSymbols(LETTERS_AND_SOUNDS, target.segmented).flat(),
       promptWords: [],
       answerWord: target.text,
+      choiceSound: focusSymbols ?? graphemeSounds(target.segmented)[0] ?? [],
     };
   });
 }
