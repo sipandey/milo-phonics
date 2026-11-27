@@ -10,6 +10,7 @@ import { DEFAULT_CHILD_ID, getItemState } from '../../services/teachingProgress'
 import { StatusButtons, playSymbols, playWordSoundBySound, recordMark } from '../curriculum/teachingUi';
 import { GraphemeWord } from '../curriculum/GraphemeWord';
 import { LetterOnLines } from '../curriculum/LetterOnLines';
+import { SoundPictures } from '../curriculum/SoundPictures';
 import { PictureChoiceActivity } from '../phase1/PictureChoiceActivity';
 import { SoundBoxesActivity } from '../phase1/SoundBoxesActivity';
 
@@ -48,9 +49,9 @@ export const TodaySessionScreen: React.FC<TodaySessionScreenProps> = ({ onExit }
   if (playingGame) {
     const exit = () => setPlayingGame(false);
     return plan.practise.gameId === 'sound-boxes' ? (
-      <SoundBoxesActivity onExit={exit} exitTo="today's session" />
+      <SoundBoxesActivity onExit={exit} exitTo="today's session" focusGpcId={plan.teach.gpcId} />
     ) : (
-      <PictureChoiceActivity activityId={plan.practise.gameId} onExit={exit} exitTo="today's session" />
+      <PictureChoiceActivity activityId={plan.practise.gameId} onExit={exit} exitTo="today's session" focusGpcId={plan.teach.gpcId} />
     );
   }
 
@@ -155,6 +156,7 @@ export const TodaySessionScreen: React.FC<TodaySessionScreenProps> = ({ onExit }
                   <Volume2 className="w-8 h-8" /> Hear it
                 </button>
                 <p className="text-sm mt-4">Say the sound together three times, then look for it in the room.</p>
+                <SoundPictures gpcId={teachGpc.id} />
               </div>
               <StatusButtons itemLabel={`the sound ${teachGpc.grapheme}`} current={status(teachGpc.id)} onMark={(next) => recordMark(teachGpc.id, next)} />
             </>

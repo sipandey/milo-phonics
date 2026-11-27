@@ -15,6 +15,7 @@ import {
 } from '../../services/teachingProgress';
 import { GraphemeWord } from './GraphemeWord';
 import { LetterOnLines } from './LetterOnLines';
+import { SoundPictures } from './SoundPictures';
 import { STATUS_STYLES, StatusButtons, playSymbols, recordMark } from './teachingUi';
 
 interface SoundPageScreenProps {
@@ -139,6 +140,8 @@ export const SoundPageScreen: React.FC<SoundPageScreenProps> = ({ gpcId, onBack 
           <ul className="list-disc pl-5">{gpc.notes?.map((note) => <li key={note}>{note}</li>)}</ul>
         </section>
       )}
+
+      <SoundPictures gpcId={gpc.id} />
 
       <section className="mt-6">
         <h2 className="font-black text-lg mb-2">Words to blend</h2>
