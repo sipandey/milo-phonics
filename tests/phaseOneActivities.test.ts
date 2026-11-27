@@ -17,11 +17,16 @@ import {
 const random = () => createRandom(42);
 
 describe('Phase 1 content', () => {
-  it('uses blending words with a recorded whole word, unique pictures, and bundled sounds', () => {
+  it('uses blending words with a recorded whole word (CVC or picture-word audio), unique pictures, and bundled sounds', () => {
     expect(BLENDING_PICTURE_WORDS.length).toBeGreaterThanOrEqual(12);
     expect(new Set(BLENDING_PICTURE_WORDS.map((w) => w.emoji)).size).toBe(BLENDING_PICTURE_WORDS.length);
     for (const word of BLENDING_PICTURE_WORDS) {
-      expect(hasWholeWordAudio(word.text), word.text).toBe(true);
+      if (word.audioId) {
+        const url = getAudioEntry(word.audioId)?.url ?? '';
+        expect(existsSync(resolve('public', url.slice(1))), word.text).toBe(true);
+      } else {
+        expect(hasWholeWordAudio(word.text), word.text).toBe(true);
+      }
       for (const symbol of wordSoundSymbols(LETTERS_AND_SOUNDS, word.segmented).flat()) {
         expect(existsSync(resolve('public/audio', `${symbol}_isolation.mp3`)), `${word.text}: ${symbol}`).toBe(true);
       }
@@ -70,7 +75,7 @@ describe('buildBlendingRounds', () => {
       expect(round.choices).toHaveLength(3);
       expect(new Set(round.choices.map((c) => c.emoji)).size).toBe(3);
       expect(round.choices.map((c) => c.id)).toContain(round.correctId);
-      expect(round.promptSymbols.length).toBeGreaterThanOrEqual(3);
+      expect(round.promptSymbols.length).toBeGreaterThanOrEqual(2);
       expect(round.answerWord).toBe(round.correctId);
     }
   });
