@@ -16,6 +16,12 @@ have to re-derive it from scratch by reading git history.
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-27 — Link sounds to words: focused games, sound-then-word taps, and sound pictures
+
+**Decision:** When a game opens from Today with Milo, Robot Milo, First sounds, and Sound boxes practise the sound just taught (targets start with it, or contain it if none start with it; distractors start with a different sound). Tapping any picture in Robot Milo or First sounds, right or wrong, plays its first sound then its word, then the feedback; Odd one out keeps playing the word only. The Teach step and sound pages show "Things that start with …" pictures from the letter data (x pictures end with the sound); tapping one plays the sound then the word. Robot Milo's pool adds 14 recorded picture words (sock, star, snake, ant, tie, train, pen, pig, nest, nose, milk, moon, duck, drum).
+**Why:** The parent found Robot Milo practising unrelated words after the Teach step and asked for every tapped picture to model sound then word, so the link between sound and word builds. The original 20 CVC pictures gave only two /s/ words.
+**Rejected:** Playing the full sound-by-sound word on every tap (too long for repeated taps), focusing Odd one out (it is about rhyme), and pictures for multi-letter sounds before their words are recorded.
+
 ### 2026-11-26 — Show only lowercase letters to the child
 
 **Decision:** Everything a child reads is lowercase: letter symbols in the old letter data, the Letters board, letter detail, Let's Play, Bubble Pop, Feed Milo, Sound Train, the sound library's example words, word labels, names in word lists and readers, reader titles on the reader screen, and the first word of reader sentences. The tricky word "I" stays a capital. Adult labels (buttons, the parent area, map titles) keep ordinary English. Capitals are to be taught later as their own activity, with a parent switch for names and sentence starts (Phase 3–4).

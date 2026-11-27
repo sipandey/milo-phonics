@@ -21,6 +21,12 @@ Append a new entry every time:
 
 <!-- Entries go below this line, newest first. -->
 
+### 2026-11-27 — Checking audio order from network requests
+
+**What happened:** A walkthrough read the browser's network requests to check that a tapped picture played its sound then its word; it reported only the word, because the sound file was already cached and no new request was made.
+**Root cause:** Network logs show downloads, not playback.
+**Avoid:** Record playback in the page (wrap `HTMLMediaElement.prototype.play`, as in `scripts/walkthrough/sound-word-links.mjs`) when checking what plays and in what order.
+
 ### 2026-11-26 — Capitalising letters through CSS classes
 
 **What happened:** After the letter data was made lowercase, Bubble Pop bubbles, Sound Train carriages, and word labels still showed capitals because of Tailwind `capitalize` and `uppercase` classes, which change the rendered text without changing the data.

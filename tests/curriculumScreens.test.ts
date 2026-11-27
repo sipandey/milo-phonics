@@ -58,3 +58,17 @@ describe('SoundPageScreen', () => {
     expect(renderToStaticMarkup(createElement(SoundPageScreen, { gpcId: 'gpc.nope', onBack: noop }))).toContain('Back');
   });
 });
+
+describe('sound pictures on the sound page', () => {
+  it('shows pictures that start with the sound, each playing the sound then the word', () => {
+    const markup = renderToStaticMarkup(createElement(SoundPageScreen, { gpcId: 'gpc.s', onBack: noop }));
+    expect(markup).toContain('Things that start with');
+    expect(markup).toContain('aria-label="Hear s then sun"');
+    expect(markup).toContain('aria-label="Hear s then sock"');
+    expect(markup).not.toContain('sheep');
+  });
+
+  it('shows no pictures for a sound without recorded picture words', () => {
+    expect(renderToStaticMarkup(createElement(SoundPageScreen, { gpcId: 'gpc.sh', onBack: noop }))).not.toContain('Things that');
+  });
+});

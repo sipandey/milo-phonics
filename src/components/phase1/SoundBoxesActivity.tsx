@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { ArrowLeft, Volume2 } from 'lucide-react';
-import { BLENDING_PICTURE_WORDS, createRandom } from '../../curriculum/phaseOneActivities';
+import { createRandom, selectSoundBoxWords } from '../../curriculum/phaseOneActivities';
 import { wordSoundSymbols } from '../../curriculum/soundPage';
 import { LETTERS_AND_SOUNDS } from '../../data/lettersAndSounds';
 import { useTeachingProgress } from '../../hooks/useTeachingProgress';
@@ -11,21 +11,23 @@ import { StatusButtons, playSymbols, recordMark } from '../curriculum/teachingUi
 const ROUNDS = 5;
 const ASPECT_ID = 'p1.oral-blending';
 
-function pickWords(seed: number) {
-  const random = createRandom(seed);
-  return [...BLENDING_PICTURE_WORDS].sort(() => random() - 0.5).slice(0, ROUNDS);
-}
+const pickWords = (seed: number, focusGpcId?: string) => selectSoundBoxWords(ROUNDS, createRandom(seed), focusGpcId);
+
+const playWholeWord = (word: { text: string; audioId?: string }) =>
+  word.audioId ? audioService.playVoice(word.audioId, { interrupt: true }) : audioService.playCvcWord(word.text);
 
 interface SoundBoxesActivityProps {
   readonly onExit: () => void;
   /** Where the back and finish buttons go, e.g. "curriculum map" or "today's session". */
   readonly exitTo?: string;
+  /** Prefer words containing this sound (e.g. the sound taught in today's session). */
+  readonly focusGpcId?: string;
 }
 
 /** Oral segmenting: tap one box per sound, then hear the whole word. No letters are shown. */
-export const SoundBoxesActivity: React.FC<SoundBoxesActivityProps> = ({ onExit, exitTo = 'curriculum map' }) => {
+export const SoundBoxesActivity: React.FC<SoundBoxesActivityProps> = ({ onExit, exitTo = 'curriculum map', focusGpcId }) => {
   const doc = useTeachingProgress();
-  const [words, setWords] = useState(() => pickWords(Date.now()));
+  const [words, setWords] = useState(() => pickWords(Date.now(), focusGpcId));
   const [index, setIndex] = useState(0);
   const [tapped, setTapped] = useState<ReadonlySet<number>>(new Set());
   const tokenRef = useRef(0);
@@ -46,7 +48,7 @@ export const SoundBoxesActivity: React.FC<SoundBoxesActivityProps> = ({ onExit, 
     setTapped(nextTapped);
     play(async (isCurrent) => {
       await playSymbols(symbols, isCurrent);
-      if (isCurrent() && word && nextTapped.size === sounds.length) await audioService.playCvcWord(word.text);
+      if (isCurrent() && word && nextTapped.size === sounds.length) await playWholeWord(word);
     });
   };
 
@@ -77,7 +79,7 @@ export const SoundBoxesActivity: React.FC<SoundBoxesActivityProps> = ({ onExit, 
             <span className="text-9xl" aria-hidden="true">{word.emoji}</span>
             <button
               type="button"
-              onClick={() => play(() => audioService.playCvcWord(word.text))}
+              onClick={() => play(() => playWholeWord(word))}
               aria-label="Hear the word"
               className="min-h-[88px] min-w-[88px] px-8 rounded-4xl bg-amber-400 text-amber-950 shadow-lg inline-flex items-center cursor-pointer active:scale-95 transition-transform"
             >
@@ -130,7 +132,7 @@ export const SoundBoxesActivity: React.FC<SoundBoxesActivityProps> = ({ onExit, 
           <div className="flex justify-center gap-3 mt-6">
             <button
               type="button"
-              onClick={() => { setWords(pickWords(Date.now())); setIndex(0); setTapped(new Set()); }}
+              onClick={() => { setWords(pickWords(Date.now(), focusGpcId)); setIndex(0); setTapped(new Set()); }}
               className="min-h-[72px] px-6 rounded-3xl bg-amber-400 text-amber-950 font-black cursor-pointer"
             >
               Play again

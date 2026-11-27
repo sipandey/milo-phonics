@@ -4,6 +4,7 @@ import {
   buildBlendingRounds,
   buildFirstSoundRounds,
   buildOddOneOutRounds,
+  choicePlayback,
   createRandom,
   type PictureChoice,
   type PictureRound,
@@ -21,8 +22,10 @@ const ACTIVITIES: Record<PictureChoiceActivityId, {
   readonly title: string;
   readonly aspectId: string;
   readonly adultHint: string;
-  readonly build: (count: number, random: () => number) => PictureRound[];
+  readonly build: (count: number, random: () => number, focusGpcId?: string) => PictureRound[];
   readonly soundGapMs: number;
+  /** Tapping a picture plays its first sound, then the word. */
+  readonly playsSoundThenWord: boolean;
 }> = {
   'robot-blending': {
     title: 'Robot Milo',
@@ -30,6 +33,7 @@ const ACTIVITIES: Record<PictureChoiceActivityId, {
     adultHint: 'Milo says the sounds like a robot. Say them together, then find the picture.',
     build: buildBlendingRounds,
     soundGapMs: 450,
+    playsSoundThenWord: true,
   },
   'first-sounds': {
     title: 'First sounds',
@@ -37,32 +41,48 @@ const ACTIVITIES: Record<PictureChoiceActivityId, {
     adultHint: 'Milo wants something that starts with this sound. Say the sound together and try each picture.',
     build: buildFirstSoundRounds,
     soundGapMs: 300,
+    playsSoundThenWord: true,
   },
   'odd-one-out': {
     title: 'Odd one out',
     aspectId: 'p1.rhythm-rhyme',
     adultHint: 'Two words rhyme. Which one does not? Say all three together.',
-    build: buildOddOneOutRounds,
+    build: (count, random) => buildOddOneOutRounds(count, random),
     soundGapMs: 300,
+    playsSoundThenWord: false,
   },
 };
 
 const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const playChoiceWord = (choice: PictureChoice) =>
-  choice.audioId ? audioService.playVoice(choice.audioId, { interrupt: true }) : audioService.playCvcWord(choice.id);
+/** Play a picture's first sound, then its word, stopping if another tap starts. */
+async function playSoundThenWord(choice: PictureChoice, isCurrent: () => boolean): Promise<void> {
+  for (const step of choicePlayback(choice)) {
+    if (!isCurrent()) return;
+    if (step.kind === 'sound') {
+      await playSymbols(step.symbols, isCurrent);
+      await pause(250);
+    } else if (step.kind === 'word') {
+      await audioService.playVoice(step.audioId, { interrupt: true });
+    } else {
+      await audioService.playCvcWord(step.word);
+    }
+  }
+}
 
 interface PictureChoiceActivityProps {
   readonly activityId: PictureChoiceActivityId;
   readonly onExit: () => void;
   /** Where the back and finish buttons go, e.g. "curriculum map" or "today's session". */
   readonly exitTo?: string;
+  /** Practise this sound in every round (e.g. the sound taught in today's session). */
+  readonly focusGpcId?: string;
 }
 
-export const PictureChoiceActivity: React.FC<PictureChoiceActivityProps> = ({ activityId, onExit, exitTo = 'curriculum map' }) => {
+export const PictureChoiceActivity: React.FC<PictureChoiceActivityProps> = ({ activityId, onExit, exitTo = 'curriculum map', focusGpcId }) => {
   const config = ACTIVITIES[activityId];
   const doc = useTeachingProgress();
-  const [rounds, setRounds] = useState(() => config.build(ROUNDS, createRandom(Date.now())));
+  const [rounds, setRounds] = useState(() => config.build(ROUNDS, createRandom(Date.now()), focusGpcId));
   const [index, setIndex] = useState(0);
   const [solved, setSolved] = useState(false);
   const [wrongId, setWrongId] = useState<string | null>(null);
@@ -100,18 +120,23 @@ export const PictureChoiceActivity: React.FC<PictureChoiceActivityProps> = ({ ac
   const choose = async (choice: PictureChoice) => {
     if (!round || solved) return;
     tokenRef.current += 1;
+    const token = tokenRef.current;
+    const isCurrent = () => tokenRef.current === token;
     setHighlightId(null);
-    if (choice.id === round.correctId) {
+    const correct = choice.id === round.correctId;
+    if (correct) {
       setSolved(true);
       setWrongId(null);
-      audioService.playChime();
-      await pause(300);
-      if (round.answerWord) await audioService.playCvcWord(round.answerWord);
-      else if (activityId === 'first-sounds') await playChoiceWord(choice);
     } else {
       setWrongId(choice.id);
+    }
+    if (config.playsSoundThenWord) {
+      await playSoundThenWord(choice, isCurrent);
+      if (correct && isCurrent()) audioService.playChime();
+    } else if (correct) {
+      audioService.playChime();
+    } else {
       audioService.playBoing();
-      if (activityId === 'first-sounds') await playChoiceWord(choice);
     }
   };
 
@@ -122,7 +147,7 @@ export const PictureChoiceActivity: React.FC<PictureChoiceActivityProps> = ({ ac
   };
 
   const restart = () => {
-    setRounds(config.build(ROUNDS, createRandom(Date.now())));
+    setRounds(config.build(ROUNDS, createRandom(Date.now()), focusGpcId));
     setIndex(0);
     setSolved(false);
     setWrongId(null);
